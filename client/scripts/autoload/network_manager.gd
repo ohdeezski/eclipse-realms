@@ -134,7 +134,12 @@ func connect_to_server(host: String = DEFAULT_HOST, port: int = DEFAULT_PORT) ->
     change_state(ConnectionState.CONNECTING)
     
     # Create WebSocket client
-    ws_client = WebSocketClient.new()
+    ws_client = ClassDB.instantiate("WebSocketClient")
+    if not ws_client:
+        push_error("[NetworkManager] Failed to create WebSocketClient instance")
+        change_state(ConnectionState.DISCONNECTED)
+        connection_failed.emit("Failed to create WebSocketClient")
+        return false
     
     # Connect signals
     ws_client.connected_to_server.connect(_on_ws_connected)
