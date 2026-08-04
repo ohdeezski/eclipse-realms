@@ -1,0 +1,44 @@
+{
+  "moss_slime": {
+    "id": "moss_slime",
+    "name": "Moss Slime",
+    "description": "A slow, squishy blob of forest moss. Easy prey for a beginner.",
+    "level": 1,
+    "stats": {
+      "health": 30,
+      "max_health": 30,
+      "attack": 6,
+      "defense": 1,
+      "speed": 0.5,
+      "experience": 12,
+      "gold": 5
+    },
+    "drops": [
+      {"item": "health_potion", "chance": 0.25},
+      {"item": "moss_essence", "chance": 0.5}
+    ],
+    "zones": ["mosswood_forest"],
+    "behavior": "wander"
+  },
+  "forest_wolf": {
+    "id": "forest_wolf",
+    "name": "Forest Wolf",
+    "description": "A lean pack hunter of Mosswood Forest. Faster and fiercer than the slime.",
+    "level": 2,
+    "stats": {
+      "health": 55,
+      "max_health": 55,
+      "attack": 12,
+      "defense": 3,
+      "speed": 1.4,
+      "experience": 28,
+      "gold": 14
+    },
+    "drops": [
+      {"item": "health_potion", "chance": 0.4},
+      {"item": "wolf_pelt", "chance": 0.6}
+    ],
+    "zones": ["mosswood_forest"],
+    "behavior": "chase"
+  }
+}

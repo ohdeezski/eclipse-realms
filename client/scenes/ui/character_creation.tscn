@@ -1,0 +1,91 @@
+[gd_scene load_steps=4 format=3 uid="uid://charactery7 creation"]
+[ext_resource type="Script" path="res://scripts/ui/character_creation.gd" id="1_char_creation"]
+[ext_resource type="Font" path="res://assets/ui/fonts/default.tres" id="2_font"]
+
+[node name="CharacterCreation" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_type_variation = "VBoxContainer"
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.8)
+mouse_filter = 2
+
+[node name="TitleLabel" type="Label" parent="."]
+text = "CREATE YOUR CHARACTER"
+position = Vector2(0, 40)
+horizontal_alignment = 1
+font = ExtResource("2_font")
+font_size = 28
+add_theme_color_override = {"font_color": Color(1, 1, 1)}
+
+[node name="Panel" type="Panel" parent="." parent="."]
+position = Vector2(0, 100)
+size = Vector2(400, 320)
+anchor_top = 0.5
+anchor_bottom = 0.5
+
+[node name="NameLabel" type="Label" parent="Panel"]
+text = "Name:"
+position = Vector2(20, 30)
+
+[node name="NameInput" type="LineEdit" parent="Panel"]
+position = Vector2(100, 25)
+size = Vector2(200, 24)
+placeholder_text = "Enter character name"
+
+[node name="SpeciesLabel" type="Label" parent="Panel"]
+text = "Species:"
+position = Vector2(20, 70)
+
+[node name="SpeciesSelect" type="OptionButton" parent="Panel"]
+position = Vector2(100, 65)
+size = Vector2(200, 24)
+
+[node name="AppearanceLabel" type="Label" parent="Panel"]
+text = "Appearance:"
+position = Vector2(20, 110)
+
+[node name="FaceSelect" type="OptionButton" parent="Panel"]
+position = Vector2(100, 105)
+size = Vector2(200, 24)
+
+[node name="HairSelect" type="OptionButton" parent="Panel"]
+position = Vector2(100, 145)
+size = Vector2(200, 24)
+
+[node name="BodyLabel" type="Label" parent="Panel"]
+text = "Body Type:"
+position = Vector2(20, 185)
+
+[node name="BodySelect" type="OptionButton" parent="Panel"]
+position = Vector2(100, 180)
+size = Vector2(200, 24)
+
+[node name="Preview" type="ColorRect" parent="."]
+position = Vector2(440, 100)
+size = Vector2(120, 240)
+color = Color(0.15, 0.3, 0.16, 1)
+
+[node name="PreviewSprite" type="ColorRect" parent="Preview"]
+anchor_right = 0.5
+anchor_bottom = 0.5
+position = Vector2(44, 60)
+size = Vector2(32, 32)
+color = Color(0.2, 0.6, 0.9, 1)
+
+[node name="ButtonContainer" type="HBoxContainer" parent="." parent="."]
+position = Vector2(0, 440)
+size = Vector2(400, 40)
+alignment = 2
+
+[node name="BackButton" type="Button" parent="ButtonContainer"]
+text = "Back"
+size = Vector2(180, 32)
+
+[node name="CreateButton" type="Button" parent="ButtonContainer"]
+text = "Create Character"
+size = Vector2(200, 32)
+theme_type_variation = "Button"

@@ -1,0 +1,30 @@
+{
+  "village_elder": {
+    "id": "village_elder",
+    "name": "Village Elder Mira",
+    "role": "quest_giver",
+    "description": "Wise keeper of Oakrest Village. Worried about the wolves creeping too close to town.",
+    "location": "oakrest_village",
+    "dialogue": {
+      "greeting": "Traveler! The forest wolves grow bold. Will you thin their numbers?",
+      "quest_offer": "Hunt 3 Forest Wolves in Mosswood Forest and return to me.",
+      "quest_active": "The wolves still prowl. Return when 3 have fallen.",
+      "quest_complete": "You have done Oakrest a great service. Take this, and welcome."
+    },
+    "services": ["quest_giver"],
+    "related_quest": "wolf_hunt"
+  },
+  "blacksmith": {
+    "id": "blacksmith",
+    "name": "Blacksmith Dorn",
+    "role": "merchant",
+    "description": "Grizzled smith who sells basic gear to those who can pay.",
+    "location": "oakrest_village",
+    "dialogue": {
+      "greeting": "Need steel, traveler? I've wares for those with coin.",
+      "shop": "Take a look. Prices are fair."
+    },
+    "services": ["shop"],
+    "sells": ["wooden_sword", "leather_boots", "health_potion"]
+  }
+}

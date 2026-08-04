@@ -1,0 +1,79 @@
+[gd_scene load_steps=2 format=3 uid="uid://questlog01"]
+
+[ext_resource type="Script" path="res://scripts/ui/quest_log.gd" id="1_questlog"]
+
+[node name="QuestLog" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_questlog")
+
+[node name="Background" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+modulate = Color(0, 0, 0, 0.85)
+
+[node name="TitleBar" type="Panel" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 36.0
+grow_horizontal = 2
+
+[node name="TitleLabel" type="Label" parent="TitleBar"]
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 300.0
+offset_bottom = 28.0
+text = "Quest Log"
+label_settings = null
+
+[node name="CloseButton" type="Button" parent="TitleBar"]
+offset_left = 484.0
+offset_top = 6.0
+offset_right = 512.0
+offset_bottom = 30.0
+text = "X"
+
+[node name="TabContainer" type="TabContainer" parent="."]
+offset_top = 40.0
+offset_right = 310.0
+offset_bottom = 388.0
+
+[node name="ActiveTab" type="ScrollContainer" parent="TabContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ActiveList" type="VBoxContainer" parent="TabContainer/ActiveTab"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="CompletedTab" type="ScrollContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CompletedList" type="VBoxContainer" parent="TabContainer/CompletedTab"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="DetailPanel" type="Panel" parent="."]
+offset_left = 314.0
+offset_top = 40.0
+offset_right = 508.0
+offset_bottom = 388.0
+
+[node name="DetailLabel" type="Label" parent="DetailPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+autowrap_mode = 2
+text = "Select a quest to view details"

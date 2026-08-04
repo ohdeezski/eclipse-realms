@@ -1,0 +1,30 @@
+# GDScript files
+*.gd text eol=lf
+
+# Markdown files  
+*.md text eol=lf
+
+# Godot project files
+*.godot text eol=lf
+
+# JSON files
+*.json text eol=lf
+
+# Binary files
+*.png -text
+*.ogg -text
+*.wav -text
+*.jpg -text
+*.jpeg -text
+
+# Godot specific
+*.translation -text
+*.pck -text
+
+# IDE
+.idea/* -text
+.vscode/* -text
+
+# Language detection
+godot lang=gdscript
+*.gd lang=gdscript

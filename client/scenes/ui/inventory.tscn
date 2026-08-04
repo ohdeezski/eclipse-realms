@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://inventory01"]
+[ext_resource type="Script" path="res://scripts/ui/inventory.gd" id="1_inventory"]
+
+[node name="Inventory" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size = Vector2(640, 480)
+theme_type_variation = "PanelContainer"
+
+[node name="Background" type="Panel" parent="." parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+modulate = Color(0, 0, 0, 0.85)
+
+[node name="TitleBar" type="Panel" parent="."]
+position = Vector2(0, 0)
+size = Vector2(640, 40)
+
+[node name="TitleLabel" type="Label" parent="TitleBar"]
+text = "Inventory"
+position = Vector2(10, 12)
+font_size = 18
+
+[node name="CloseButton" type="Button" parent="TitleBar"]
+text = "X"
+position = Vector2(600, 8)
+size = Vector2(32, 24)
+
+[node name="ItemList" type="GridContainer" parent="."]
+position = Vector2(20, 60)
+size = Vector2(580, 380)
+columns = 5
+theme_type_variation = "GridContainer"

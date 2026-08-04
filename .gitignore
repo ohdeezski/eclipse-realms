@@ -1,0 +1,291 @@
+# Eclipse Realms - Git Ignore File
+# This file specifies intentionally untracked files to ignore
+
+# ============================================================================
+# GODOT SPECIFIC IGNORES
+# ============================================================================
+
+# Godot 4.x specific ignores
+.godot/
+
+# Godot-specific ignores
+*.translation
+
+# Godot swap files
+data_*.swp
+
+# ============================================================================
+# USER DATA
+# ============================================================================
+
+# User-specific save files
+user://*
+
+# Save files
+saves/*
+*.eclipse
+
+# Configuration
+config.cfg
+user://config.cfg
+
+# ============================================================================
+# BUILD OUTPUT
+# ============================================================================
+
+builds/*
+*.exe
+*.x86_64
+*.x86
+*.apk
+*.aab
+*.ipa
+*.pck
+*.zip
+
+# Export templates
+godot-export-*
+
+# ============================================================================
+# LOG FILES
+# ============================================================================
+
+*.log
+*.tmp
+*.swp
+*.bak
+*.old
+
+# Editor logs
+godot_logs/*
+
+# ============================================================================
+# IDE SPECIFIC
+# ============================================================================
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains
+.idea/*
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# ============================================================================
+# OS SPECIFIC
+# ============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DS_Store?
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+iPhoto9Main.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+*~
+
+# Linux
+*~
+
+# ============================================================================
+# DEPENDENCY MANAGEMENT
+# ============================================================================
+
+# Node.js (if used for tools)
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ============================================================================
+# ENVIRONMENT FILES
+# ============================================================================
+
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# ============================================================================
+# ASSETS - PLACEHOLDER/TEMPORARY
+# ============================================================================
+
+# Temporary asset files
+client/assets/*/placeholder/*
+client/assets/*/temp/*
+client/assets/*/temp*.*
+
+# Test assets
+test_assets/*
+
+# ============================================================================
+# CACHE FILES
+# ============================================================================
+
+.cache/
+*.cache
+
+# ============================================================================
+# DOCUMENTATION TEMPORARY FILES
+# ============================================================================
+
+docs/*.tmp
+docs/*.bak
+docs/backup/*
+
+# ============================================================================
+# SERVER SPECIFIC
+# ============================================================================
+
+server/database/*.db
+server/database/*.sqlite
+server/database/*.sqlite-journal
+server/logs/*
+server/temp/*
+server/uploads/*
+
+# Environment and config
+server/.env
+
+# Node.js server
+dist/
+coverage/
+
+# ============================================================================
+# SHARED RESOURCES
+# ============================================================================
+
+shared/schemas/*.backup
+shared/game_data/*.backup
+shared/localization/*.backup
+
+# ============================================================================
+# TOOLS AND BUILD SCRIPTS
+# ============================================================================
+
+tools/bin/
+tools/build/
+tools/dist/
+tools/*.exe
+tools/*.sh
+
+# ============================================================================
+# PACKAGES AND PLUGINS
+# ============================================================================
+
+addons/*/.*
+addons/*/.git*
+addons/*/.gitignore
+addons/*/README* 
+
+# Godot Asset Library
+godot-asset-library/*
+
+# ============================================================================
+# TEST FILES
+# ============================================================================
+
+# Test data that shouldn't be committed
+tests/fixtures/*
+tests/mocks/*
+tests/temp/*
+
+# Test results
+test-results/
+coverage/
+
+# ============================================================================
+# MISC
+# ============================================================================
+
+# Crash reports
+crash.*
+
+# Memory dumps
+*.dmp
+
+# Temporary files
+*.temp
+*.tmp
+
+# Backup files
+*.bak
+*.backup
+*~}
+
+# Swap files
+*.swp
+
+# Emergency recovery files
+*.emergency-recovery
+
+# ============================================================================
+# WHAT TO COMMIT
+# ============================================================================
+# 
+# COMMIT THESE:
+# - Source code (*.gd, *.py, *.js, *.ts, etc.)
+# - Scene files (*.tscn, *.res)
+# - Asset source files (images, sounds, models in source format)
+# - Configuration files (project.godot, *.json, *.yaml)
+# - Documentation (*.md, *.txt)
+# - Shaders (*.shader, *.gdshader)
+# - Scripts and tools
+# - Godot project files
+#
+# DO NOT COMMIT:
+# - Compiled binaries
+# - User data (saves, configs)
+# - Build outputs
+# - Temporary files
+# - IDE-specific files (except essential configs)
+# - Dependency directories (node_modules, etc.)
+# - Large binary assets (use git LFS if necessary)
+#
+# =============================================================================orca-linux.AppImage

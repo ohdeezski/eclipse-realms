@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  eclipse-realms-server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: eclipse-realms-server
+    ports:
+      - "9051:9051"   # WebSocket
+      - "9052:9052"   # HTTP REST API
+    volumes:
+      - ./database:/app/database
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - eclipse-network
+
+  # PostgreSQL for production (SQLite used in dev)
+  postgres:
+    image: postgres:16-alpine
+    container_name: eclipse-realms-db
+    environment:
+      POSTGRES_DB: eclipse_realms
+      POSTGRES_USER: eras_server
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    secrets:
+      - db_password
+    restart: unless-stopped
+    networks:
+      - eclipse-network
+
+volumes:
+  postgres_data:
+
+networks:
+  eclipse-network:
+    driver: bridge
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt

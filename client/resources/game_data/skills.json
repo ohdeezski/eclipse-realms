@@ -1,0 +1,30 @@
+{
+  "basic_attack": {
+    "id": "basic_attack",
+    "name": "Basic Attack",
+    "type": "attack",
+    "description": "A simple melee strike with your equipped weapon.",
+    "cooldown": 0.4,
+    "damage_multiplier": 1.0,
+    "mana_cost": 0
+  },
+  "guard": {
+    "id": "guard",
+    "name": "Guard",
+    "type": "defense",
+    "description": "Raise your guard to halve incoming damage briefly.",
+    "cooldown": 2.0,
+    "damage_multiplier": 0.5,
+    "mana_cost": 0,
+    "duration": 1.0
+  },
+  "use_item": {
+    "id": "use_item",
+    "name": "Use Item",
+    "type": "support",
+    "description": "Consume a health potion to restore HP.",
+    "cooldown": 1.0,
+    "damage_multiplier": 0.0,
+    "mana_cost": 0
+  }
+}

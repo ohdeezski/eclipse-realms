@@ -1,0 +1,313 @@
+[gd_scene load_steps=18 format=3 uid="uid://oakrestvillage01"]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/entities/monster.gd" id="2_monster"]
+[ext_resource type="Script" path="res://scripts/entities/npc.gd" id="3_npc"]
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="4_hud"]
+[ext_resource type="Script" path="res://scripts/world/world.gd" id="5_world"]
+[ext_resource type="Script" path="res://scripts/world/zone_manager.gd" id="6_zone"]
+[ext_resource type="Script" path="res://scripts/world/village_tilemap_builder.gd" id="7_builder"]
+[ext_resource type="TileSet" path="res://resources/tilesets/oakrest_village_tileset.tres" id="8_tileset"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_npc"]
+radius = 16.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_village"]
+size = Vector2(1024, 720)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_forest"]
+size = Vector2(256, 720)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_player"]
+radius = 12.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_monster"]
+radius = 14.0
+
+[node name="OakrestVillage" type="Node2D"]
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = ExtResource("8_tileset")
+collision_layer = 1
+collision_mask = 0
+
+[node name="TilemapBuilder" type="Node" parent="TileMap"]
+script = ExtResource("7_builder")
+
+[node name="ZoneBoundaries" type="Node2D" parent="."]
+
+[node name="Zone_Village" type="Area2D" parent="ZoneBoundaries"]
+position = Vector2(512, 360)
+collision_layer = 32
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ZoneBoundaries/Zone_Village"]
+shape = SubResource("RectangleShape2D_village")
+
+[node name="Zone_Forest" type="Area2D" parent="ZoneBoundaries"]
+position = Vector2(1152, 360)
+collision_layer = 32
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ZoneBoundaries/Zone_Forest"]
+shape = SubResource("RectangleShape2D_forest")
+
+[node name="ZoneLabels" type="Node2D" parent="."]
+
+[node name="VillageLabel" type="Label" parent="ZoneLabels"]
+position = Vector2(100, 8)
+text = "Oakrest Village"
+
+[node name="ForestLabel" type="Label" parent="ZoneLabels"]
+position = Vector2(1050, 8)
+text = "Mosswood Forest"
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(240, 200)
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("CircleShape2D_player")
+
+[node name="Sprite" type="ColorRect" parent="Player"]
+size = Vector2(32, 32)
+color = Color(0.2, 0.6, 0.9, 1)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+zoom = Vector2(2, 2)
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="HitFlash" type="Timer" parent="Player"]
+wait_time = 0.12
+one_shot = true
+
+[node name="ElderNPC" type="Area2D" parent="."]
+position = Vector2(480, 250)
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("3_npc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ElderNPC"]
+shape = SubResource("CircleShape2D_npc")
+
+[node name="Sprite" type="ColorRect" parent="ElderNPC"]
+size = Vector2(32, 32)
+color = Color(0.9, 0.8, 0.3, 1)
+
+[node name="Label" type="Label" parent="ElderNPC"]
+position = Vector2(-20, -40)
+
+[node name="BlacksmithNPC" type="Area2D" parent="."]
+position = Vector2(608, 280)
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("3_npc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BlacksmithNPC"]
+shape = SubResource("CircleShape2D_npc")
+
+[node name="Sprite" type="ColorRect" parent="BlacksmithNPC"]
+size = Vector2(32, 32)
+color = Color(0.7, 0.4, 0.2, 1)
+
+[node name="Label" type="Label" parent="BlacksmithNPC"]
+position = Vector2(-20, -40)
+
+[node name="MerchantNPC" type="Area2D" parent="."]
+position = Vector2(384, 160)
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("3_npc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MerchantNPC"]
+shape = SubResource("CircleShape2D_npc")
+
+[node name="Sprite" type="ColorRect" parent="MerchantNPC"]
+size = Vector2(32, 32)
+color = Color(0.3, 0.7, 0.6, 1)
+
+[node name="Label" type="Label" parent="MerchantNPC"]
+position = Vector2(-20, -40)
+
+[node name="InnkeeperNPC" type="Area2D" parent="."]
+position = Vector2(160, 160)
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("3_npc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InnkeeperNPC"]
+shape = SubResource("CircleShape2D_npc")
+
+[node name="Sprite" type="ColorRect" parent="InnkeeperNPC"]
+size = Vector2(32, 32)
+color = Color(0.6, 0.3, 0.6, 1)
+
+[node name="Label" type="Label" parent="InnkeeperNPC"]
+position = Vector2(-20, -40)
+
+[node name="Wolf1" type="CharacterBody2D" parent="."]
+position = Vector2(1080, 200)
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("2_monster")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wolf1"]
+shape = SubResource("CircleShape2D_monster")
+
+[node name="Sprite" type="ColorRect" parent="Wolf1"]
+size = Vector2(32, 32)
+color = Color(0.5, 0.5, 0.55, 1)
+
+[node name="HPBar" type="ProgressBar" parent="Wolf1"]
+position = Vector2(-16, -44)
+size = Vector2(32, 6)
+
+[node name="HitFlash" type="Timer" parent="Wolf1"]
+wait_time = 0.1
+one_shot = true
+
+[node name="Wolf2" type="CharacterBody2D" parent="."]
+position = Vector2(1120, 400)
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("2_monster")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wolf2"]
+shape = SubResource("CircleShape2D_monster")
+
+[node name="Sprite" type="ColorRect" parent="Wolf2"]
+size = Vector2(32, 32)
+color = Color(0.5, 0.5, 0.55, 1)
+
+[node name="HPBar" type="ProgressBar" parent="Wolf2"]
+position = Vector2(-16, -44)
+size = Vector2(32, 6)
+
+[node name="HitFlash" type="Timer" parent="Wolf2"]
+wait_time = 0.1
+one_shot = true
+
+[node name="Slime1" type="CharacterBody2D" parent="."]
+position = Vector2(1060, 300)
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("2_monster")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Slime1"]
+shape = SubResource("CircleShape2D_monster")
+
+[node name="Sprite" type="ColorRect" parent="Slime1"]
+size = Vector2(28, 28)
+color = Color(0.3, 0.8, 0.4, 1)
+
+[node name="HPBar" type="ProgressBar" parent="Slime1"]
+position = Vector2(-14, -40)
+size = Vector2(28, 6)
+
+[node name="HitFlash" type="Timer" parent="Slime1"]
+wait_time = 0.1
+one_shot = true
+
+[node name="HUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_hud")
+
+[node name="Panel" type="Panel" parent="HUD"]
+layout_mode = 1
+anchors_preset = 0
+offset_right = 260.0
+offset_bottom = 150.0
+
+[node name="HealthBar" type="ProgressBar" parent="HUD/Panel"]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 250.0
+offset_bottom = 28.0
+
+[node name="ManaBar" type="ProgressBar" parent="HUD/Panel"]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 34.0
+offset_right = 250.0
+offset_bottom = 48.0
+modulate = Color(0.3, 0.5, 1, 1)
+
+[node name="HPLabel" type="Label" parent="HUD/Panel"]
+layout_mode = 1
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 248.0
+offset_bottom = 24.0
+
+[node name="MPLabel" type="Label" parent="HUD/Panel"]
+layout_mode = 1
+offset_left = 12.0
+offset_top = 32.0
+offset_right = 248.0
+offset_bottom = 48.0
+
+[node name="GoldLabel" type="Label" parent="HUD/Panel"]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 54.0
+offset_right = 250.0
+offset_bottom = 70.0
+
+[node name="LevelLabel" type="Label" parent="HUD/Panel"]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 74.0
+offset_right = 250.0
+offset_bottom = 90.0
+
+[node name="ExpLabel" type="Label" parent="HUD/Panel"]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 114.0
+offset_right = 250.0
+offset_bottom = 130.0
+
+[node name="QuestLabel" type="Label" parent="HUD/Panel"]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 130.0
+offset_right = 250.0
+offset_bottom = 160.0
+
+[node name="MinimapPanel" type="Panel" parent="HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -140.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 150.0
+
+[node name="MinimapLabel" type="Label" parent="HUD/MinimapPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Minimap
+(Coming Soon)"
+
+[node name="ZoneManager" type="Node" parent="."]
+script = ExtResource("6_zone")
+
+[node name="WorldScript" type="Node" parent="."]
+script = ExtResource("5_world")

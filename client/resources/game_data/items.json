@@ -1,0 +1,59 @@
+{
+  "wooden_sword": {
+    "id": "wooden_sword",
+    "name": "Wooden Sword",
+    "description": "A basic wooden sword for beginners",
+    "type": "weapon",
+    "subtype": "sword",
+    "rarity": "common",
+    "level": 1,
+    "stats": {"attack": 5, "defense": 0, "speed": 1.0},
+    "value": 100,
+    "weight": 2.0,
+    "stackable": false,
+    "icon": "items/wooden_sword"
+  },
+  "health_potion": {
+    "id": "health_potion",
+    "name": "Health Potion",
+    "description": "Restores 50 HP when used",
+    "type": "consumable",
+    "subtype": "potion",
+    "rarity": "common",
+    "level": 1,
+    "effect": {"type": "heal", "amount": 50, "target": "health"},
+    "value": 50,
+    "weight": 0.5,
+    "stackable": true,
+    "max_stack": 99,
+    "icon": "items/health_potion"
+  },
+  "moss_essence": {
+    "id": "moss_essence",
+    "name": "Moss Essence",
+    "description": "A glowing green essence extracted from Moss Slimes. Used in alchemy.",
+    "type": "material",
+    "subtype": "essence",
+    "rarity": "common",
+    "level": 1,
+    "value": 15,
+    "weight": 0.2,
+    "stackable": true,
+    "max_stack": 99,
+    "icon": "items/moss_essence"
+  },
+  "wolf_pelt": {
+    "id": "wolf_pelt",
+    "name": "Wolf Pelt",
+    "description": "A rough pelt from a Forest Wolf. Useful for crafting light armor.",
+    "type": "material",
+    "subtype": "pelt",
+    "rarity": "common",
+    "level": 1,
+    "value": 25,
+    "weight": 1.0,
+    "stackable": true,
+    "max_stack": 50,
+    "icon": "items/wolf_pelt"
+  }
+}

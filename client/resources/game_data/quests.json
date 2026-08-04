@@ -1,0 +1,36 @@
+{
+  "wolf_hunt": {
+    "id": "wolf_hunt",
+    "name": "The Wolf Hunt",
+    "giver": "village_elder",
+    "description": "Hunt 3 Forest Wolves in Mosswood Forest to protect Oakrest Village.",
+    "type": "kill",
+    "objectives": [
+      {"target": "forest_wolf", "count": 3, "current": 0}
+    ],
+    "prerequisites": [],
+    "rewards": {
+      "experience": 60,
+      "gold": 40,
+      "items": ["health_potion", "leather_boots"]
+    },
+    "region": "mosswood_forest"
+  },
+  "tutorial_greeting": {
+    "id": "tutorial_greeting",
+    "name": "Welcome to Greenhaven",
+    "giver": "village_elder",
+    "description": "Speak with the Village Elder to learn your first task.",
+    "type": "talk",
+    "objectives": [
+      {"target": "village_elder", "count": 1, "current": 0}
+    ],
+    "prerequisites": [],
+    "rewards": {
+      "experience": 5,
+      "gold": 0,
+      "items": []
+    },
+    "region": "oakrest_village"
+  }
+}

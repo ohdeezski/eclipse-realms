@@ -1,0 +1,21 @@
+{
+  "human_adept": {
+    "id": "human_adept",
+    "name": "Human Adept",
+    "species": "human",
+    "description": "A balanced newcomer to Greenhaven Valley, quick to learn and quicker to swing.",
+    "base_stats": {
+      "health": 100,
+      "max_health": 100,
+      "mana": 50,
+      "max_mana": 50,
+      "attack": 10,
+      "defense": 5,
+      "speed": 1.0
+    },
+    "start_equipment": ["wooden_sword", "cloth_shirt", "leather_boots"],
+    "start_skills": ["basic_attack", "guard", "use_item"],
+    "spawn_region": "oakrest_village",
+    "spawn_point": "village_spawn"
+  }
+}
