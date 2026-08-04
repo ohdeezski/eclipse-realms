@@ -144,14 +144,21 @@ func connect_to_server(host: String = DEFAULT_HOST, port: int = DEFAULT_PORT) ->
         connection_failed.emit("Failed to create client")
         return false
     
-    # Set up peer
-    server_peer.peer_id = 1  # Client ID
+    # Connect signals (Godot 4.4 WebSocketMultiplayerPeer signals)
+    # The signal names might be different in 4.4
+    if server_peer.has_signal("peer_packet_received"):
+        server_peer.peer_packet_received.connect(_on_peer_packet)
+    elif server_peer.has_signal("peer_packet"):
+        server_peer.peer_packet.connect(_on_peer_packet)
+    else:
+        push_warning("[NetworkManager] Could not find peer packet signal")
     
-    # Connect signals
-    server_peer.peer_packet.connect(_on_peer_packet)
-    server_peer.peer_connected.connect(_on_peer_connected)
-    server_peer.peer_disconnected.connect(_on_peer_disconnected)
-    server_peer.server_disconnected.connect(_on_server_disconnected)
+    if server_peer.has_signal("peer_connected"):
+        server_peer.peer_connected.connect(_on_peer_connected)
+    if server_peer.has_signal("peer_disconnected"):
+        server_peer.peer_disconnected.connect(_on_peer_disconnected)
+    if server_peer.has_signal("server_disconnected"):
+        server_peer.server_disconnected.connect(_on_server_disconnected)
     
     # Set as multiplayer peer (Godot 4.x uses the `multiplayer` singleton)
     multiplayer.multiplayer_peer = server_peer
@@ -206,13 +213,18 @@ func start_server(port: int = DEFAULT_PORT, max_players: int = MAX_PLAYERS) -> b
         change_state(ConnectionState.DISCONNECTED)
         return false
     
-    # Set up peer
-    server_peer.peer_id = 1  # Server ID
+    # Connect signals (Godot 4.4 WebSocketMultiplayerPeer signals)
+    if server_peer.has_signal("peer_packet_received"):
+        server_peer.peer_packet_received.connect(_on_peer_packet)
+    elif server_peer.has_signal("peer_packet"):
+        server_peer.peer_packet.connect(_on_peer_packet)
+    else:
+        push_warning("[NetworkManager] Could not find peer packet signal")
     
-    # Connect signals
-    server_peer.peer_packet.connect(_on_peer_packet)
-    server_peer.peer_connected.connect(_on_peer_connected)
-    server_peer.peer_disconnected.connect(_on_peer_disconnected)
+    if server_peer.has_signal("peer_connected"):
+        server_peer.peer_connected.connect(_on_peer_connected)
+    if server_peer.has_signal("peer_disconnected"):
+        server_peer.peer_disconnected.connect(_on_peer_disconnected)
     
     # Set as multiplayer peer (Godot 4.x uses the `multiplayer` singleton)
     multiplayer.multiplayer_peer = server_peer
@@ -379,6 +391,11 @@ func _on_peer_packet(peer_id: int, packet: PackedByteArray) -> void:
             handler.call(message)
     else:
         push_warning("[NetworkManager] No handler for message type: %d" % message_type)
+
+
+# Godot 4.4 WebSocketMultiplayerPeer uses peer_packet_received signal
+func _on_peer_packet_received(peer_id: int, packet: PackedByteArray) -> void:
+    _on_peer_packet(peer_id, packet)
 
 
 func _on_peer_connected(peer_id: int) -> void:
