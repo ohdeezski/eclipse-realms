@@ -394,18 +394,18 @@ func _should_show_item(item_id: String) -> bool:
     
     var item_type = item.get("type", "")
     
-    switch current_filter:
-        case "all":
+    match current_filter:
+        "all":
             return true
-        case "weapons":
+        "weapons":
             return item_type == "weapon"
-        case "armor":
+        "armor":
             return item_type == "armor"
-        case "consumables":
+        "consumables":
             return item_type == "consumable"
-        case "materials":
+        "materials":
             return item_type in ["material", "misc"]
-        case "quest":
+        "quest":
             return item_type == "quest" or item_type == "key_item"
         _:
             return false
@@ -480,7 +480,7 @@ func _get_item_tooltip_text(item_id: String) -> String:
         tooltip += "\nStats:"
         for stat_key in item["stats"]:
             var stat_value = item["stats"][stat_key]
-            if isinstance(stat_value, float):
+            if stat_value is float:
                 stat_value = int(stat_value)
             tooltip += "\n  %s: %d" % [stat_key.capitalize(), stat_value]
     
@@ -505,84 +505,6 @@ func _filter_inventory_items(items: Array) -> Array:
     return filtered_items
 
 
-# Additional helper methods for enhanced functionality
-func _get_available_filters() -> Array:
-    """Get list of available filters with counts."""
-    var filters: Array = [
-        {"name": "All", "value": "all", "count": INVENTORY_SLOTS},
-        {"name": "Weapons", "value": "weapons", "count": 0},
-        {"name": "Armor", "value": "armor", "count": 0},
-        {"name": "Consumables", "value": "consumables", "count": 0},
-        {"name": "Materials", "value": "materials", "count": 0},
-        {"name": "Quest", "value": "quest", "count": 0}
-    ]
-    
-    if current_player:
-        var inventory = current_player.inventory
-        for item_id in inventory:
-            var item = GameData.get_item(item_id)
-            if not item.is_empty():
-                var item_type = item.get("type", "")
-                if item_type == "weapon":
-                    filters[1]["count"] += 1
-                elif item_type == "armor":
-                    filters[2]["count"] += 1
-                elif item_type == "consumable":
-                    filters[3]["count"] += 1
-                elif item_type in ["material", "misc"]:
-                    filters[4]["count"] += 1
-                elif item_type in ["quest", "key_item"]:
-                    filters[5]["count"] += 1
-    
-    return filters
-
-
-func _get_item_tooltip_text(item_id: String) -> String:
-    """Generate tooltip text for an item."""
-    var item = GameData.get_item(item_id)
-    if item.is_empty():
-        return ""
-    
-    var rarity = item.get("rarity", "common")
-    var rarity_color = _get_rarity_color(rarity)
-    var rarity_text = "[%s]" % rarity.capitalize()
-    
-    var value = item.get("value", 0)
-    var weight = item.get("weight", 0.0)
-    
-    var tooltip = ""
-    tooltip += "%s %s" % [rarity_text, item["name"]]
-    tooltip += "\n"
-    tooltip += "%s" % item["description"]
-    tooltip += "\n"
-    
-    if item.has("stats"):
-        tooltip += "\nStats:"
-        for stat_key in item["stats"]:
-            var stat_value = item["stats"][stat_key]
-            if isinstance(stat_value, float):
-                stat_value = int(stat_value)
-            tooltip += "\n  %s: %d" % [stat_key.capitalize(), stat_value]
-    
-    if value > 0:
-        tooltip += "\nValue: %d gold" % value
-    
-    if weight > 0:
-        tooltip += "\nWeight: %.1f" % weight
-    
-    if item.get("stackable", false):
-        tooltip += "\nStackable"
-    
-    return tooltip
-
-
-func _filter_inventory_items(items: Array) -> Array:
-    """Filter inventory items based on current filter."""
-    var filtered_items: Array = []
-    for item_id in items:
-        if _should_show_item(item_id):
-            filtered_items.append(item_id)
-    return filtered_items
 
 
 # ============================================================================
@@ -614,7 +536,7 @@ func _show_item_tooltip(slot: Control, item_id: String, position: Vector2) -> vo
         var stats_text = "\nStats:"
         for stat_key in item["stats"]:
             var stat_value = item["stats"][stat_key]
-            if isinstance(stat_value, float):
+            if stat_value is float:
                 stat_value = int(stat_value)
             stats_text += "\n  %s: %d" % [stat_key.capitalize(), stat_value]
         tooltip_stats.text = stats_text
@@ -724,7 +646,11 @@ func _update_inventory_header() -> void:
         return
     
     var filters = _get_available_filters()
-    var active_filter = filters[current_filter]
+    var active_filter = filters[0]
+    for f in filters:
+        if f["value"] == current_filter:
+            active_filter = f
+            break
     
     # Update title bar with filter info
     var filter_text = active_filter["name"]

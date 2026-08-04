@@ -32,7 +32,6 @@ const ZONE_DISPLAY_NAMES: Dictionary = {
 	"camp": "Hunter's Camp",
 	"watchtower": "Old Watchtower",
 	"forest_transition": "Mosswood Forest",
-	"village_transition": "Oakrest Village",
 }
 
 ## Which zone the player is currently in

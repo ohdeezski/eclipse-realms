@@ -99,7 +99,7 @@ const CHAR_MAP: Dictionary = {
 	"m": T_MUSHROOM_GLOW,
 	"f": T_FUNGUS,
 	"B": T_BONE_PILE,
-	"W": T_WEBBING,
+	"Y": T_WEBBING,
 	"C": T_CHAINS,
 	"R": T_RUNE,
 	"A": T_ALTAR,
