@@ -1,0 +1,64 @@
+[gd_scene load_steps=2 format=3 uid="uid://equipment01"]
+
+[ext_resource type="Script" path="res://scripts/ui/equipment.gd" id="1_equip"]
+
+[node name="Equipment" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_equip")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.1, 0.15, 0.95)
+
+[node name="TitleBar" type="HBoxContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+offset_bottom = 50.0
+
+[node name="TitleLabel" type="Label" parent="TitleBar"]
+text = "CHARACTER"
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 0.9, 0.7, 1)
+custom_minimum_size = Vector2(300, 40)
+
+[node name="Spacer" type="Control" parent="TitleBar"]
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(200, 0)
+
+[node name="CloseButton" type="Button" parent="TitleBar"]
+text = "Close"
+custom_minimum_size = Vector2(100, 36)
+
+[node name="SlotList" type="VBoxContainer" parent="."]
+anchors_preset = 11
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -180.0
+offset_right = 100.0
+offset_bottom = 40.0
+theme_override_constants/separation = 4
+
+[node name="StatPanel" type="Panel" parent="."]
+anchors_preset = 4
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -180.0
+offset_right = -20.0
+offset_bottom = 40.0
+
+[node name="StatLabel" type="Label" parent="StatPanel"]
+position = Vector2(12, 10)
+size = Vector2(248, 200)
+theme_override_colors/font_color = Color(0.85, 0.95, 0.85, 1)

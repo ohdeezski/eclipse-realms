@@ -40,5 +40,49 @@
     ],
     "zones": ["mosswood_forest"],
     "behavior": "chase"
+  },
+  "thorn_wisp": {
+    "id": "thorn_wisp",
+    "name": "Thorn Wisp",
+    "description": "A flickering spirit of bramble and hate, born of the cavern's whispers.",
+    "level": 4,
+    "stats": {
+      "health": 70,
+      "max_health": 70,
+      "attack": 16,
+      "defense": 4,
+      "speed": 1.1,
+      "experience": 45,
+      "gold": 22
+    },
+    "drops": [
+      {"item": "wisp_essence", "chance": 0.7},
+      {"item": "health_potion", "chance": 0.3}
+    ],
+    "zones": ["whispering_caverns"],
+    "behavior": "wander"
+  },
+  "cave_guardian": {
+    "id": "cave_guardian",
+    "name": "Cave Guardian",
+    "description": "The ancient stone sentinel that guards the deepest chamber of the Whispering Caverns.",
+    "level": 6,
+    "stats": {
+      "health": 220,
+      "max_health": 220,
+      "attack": 28,
+      "defense": 10,
+      "speed": 0.8,
+      "experience": 200,
+      "gold": 150
+    },
+    "drops": [
+      {"item": "iron_sword", "chance": 1.0},
+      {"item": "chainmail", "chance": 0.8},
+      {"item": "wisp_essence", "chance": 0.5}
+    ],
+    "zones": ["whispering_caverns"],
+    "behavior": "chase",
+    "is_boss": true
   }
 }

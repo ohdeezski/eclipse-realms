@@ -212,6 +212,15 @@ func _physics_process(delta: float) -> void:
         if quest_log:
             quest_log.toggle()
 
+    # Character / Equipment panel toggle (C key)
+    if InputManager.is_action_just_pressed("character"):
+        if UIManager.is_menu_open("equipment"):
+            UIManager.close_menu("equipment")
+        else:
+            var equip_menu = UIManager.open_menu("equipment")
+            if equip_menu and equip_menu.has_method("open_equipment"):
+                equip_menu.open_equipment(self)
+
     # Interact input handled by world via Area2D; nothing here.
 
 

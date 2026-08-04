@@ -29,6 +29,8 @@ const ZONE_DISPLAY_NAMES: Dictionary = {
 	"village_transition": "Oakrest Village",
 	"cavern_transition": "Whispering Caverns",
 	"creek": "Silver Creek",
+	"camp": "Hunter's Camp",
+	"watchtower": "Old Watchtower",
 	"forest_transition": "Mosswood Forest",
 	"village_transition": "Oakrest Village",
 }

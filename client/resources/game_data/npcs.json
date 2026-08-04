@@ -26,5 +26,48 @@
     },
     "services": ["shop"],
     "sells": ["wooden_sword", "leather_boots", "health_potion"]
+  },
+  "ranger": {
+    "id": "ranger",
+    "name": "Ranger Silas",
+    "role": "quest_giver",
+    "description": "Weathered hunter of the Hunter's Camp. Tracks the forest's threats and clears the caverns.",
+    "location": "hunters_camp",
+    "dialogue": {
+      "greeting": "The wolves are bold, and the caverns whisper of wisps. Need work, traveler?",
+      "quest_offer": "Clear the Thorn Wisps in the Whispering Caverns, then face the Cave Guardian.",
+      "quest_active": "The wisps still flicker. Return when the caverns are quiet.",
+      "quest_complete": "The caverns are safe. Take this, hunter."
+    },
+    "services": ["quest_giver"],
+    "related_quest": "clear_thorn_wisp"
+  },
+  "merchant": {
+    "id": "merchant",
+    "name": "Merchant Lira",
+    "role": "merchant",
+    "description": "Traveling trader who moves goods between Oakrest and the Hunter's Camp.",
+    "location": "oakrest_village",
+    "dialogue": {
+      "greeting": "Spare coin for wares, friend? Or perhaps you'd escort me safely to the camp?",
+      "quest_offer": "Escort me through the forest to the Hunter's Camp. Danger pays, traveler.",
+      "quest_active": "Stay close, traveler — the woods are not kind.",
+      "quest_complete": "Safe at last. Here's your share, friend."
+    },
+    "services": ["shop", "quest_giver"],
+    "sells": ["health_potion", "mana_potion", "antidote"],
+    "related_quest": "escort_merchant"
+  },
+  "innkeeper": {
+    "id": "innkeeper",
+    "name": "Innkeeper Bram",
+    "role": "innkeeper",
+    "description": "Jolly keeper of The Restful Oak Inn. Knows every rumor in Oakrest.",
+    "location": "oakrest_village",
+    "dialogue": {
+      "greeting": "Welcome, traveler! A warm bed and a hot meal for a few coins.",
+      "inn": "Rest here and recover your strength."
+    },
+    "services": ["inn"]
   }
 }
