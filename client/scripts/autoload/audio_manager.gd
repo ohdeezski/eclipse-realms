@@ -86,7 +86,7 @@ func _initialize() -> void:
 
 	# Load configuration from GameManager
 	music_volume = GameManager.get_game_config("music_volume", 1.0)
-	sfx_volume = GameManager.get_game_config("sfx_volume", 1.0)
+	sfx_volume = GameManager.get_game_config("sfx_volume", 1.0)	master_volume = GameManager.get_game_config("master_volume", GameManager.get_game_config("music_volume", 1.0))
 	music_enabled = music_volume > 0
 	sfx_enabled = sfx_volume > 0
 

@@ -293,3 +293,17 @@ orca-linux.AppImage
 .import
 .remap
 .wasm
+
+# ============================================================================
+# RUNTIME / BUILD CRUFT (added 2026-08-04 audit)
+# ============================================================================
+server/venv/
+server/__pycache__/
+server/**/__pycache__/
+server/server.log
+server/database/*.db
+__pycache__/
+*.pyc
+EclipseRealms_Demo_v0_0_1.zip
+builds/
+.orca-linux.AppImage

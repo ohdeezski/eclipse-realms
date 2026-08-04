@@ -40,11 +40,14 @@ static var previous_scene: String = ""
 static var config: Dictionary = {
     "difficulty": "normal",
     "language": "en",
+    "master_volume": 1.0,
     "sfx_volume": 1.0,
     "music_volume": 1.0,
     "show_tutorials": true,
     "auto_save": true,
-    "target_fps": 60
+    "target_fps": 60,
+    "vsync": true,
+    "fullscreen": false
 }
 
 ## Runtime data

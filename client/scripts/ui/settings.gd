@@ -39,7 +39,14 @@ func _ready() -> void:
 func _load_settings() -> void:
 	var config = GameManager.config
 	
-	master_volume_slider.value = config.get("master_volume", 1.0)
+	# Use master_volume if available, otherwise fall back to music_volume
+	var volume_value = 1.0
+	if config.has("master_volume"):
+		volume_value = config["master_volume"]
+	elif config.has("music_volume"):
+		volume_value = config["music_volume"]
+	
+	master_volume_slider.value = volume_value
 	music_volume_slider.value = config.get("music_volume", 1.0)
 	sfx_volume_slider.value = config.get("sfx_volume", 1.0)
 	vsync_check.button_pressed = config.get("vsync", true)
@@ -96,6 +103,12 @@ func _on_apply_pressed() -> void:
 		get_window().mode = Window.MODE_FULLSCREEN
 	else:
 		get_window().mode = Window.MODE_WINDOWED
+	
+	# Update audio managers with new volumes
+	if AudioManager:
+		AudioManager.set_master_volume(config["master_volume"])
+		AudioManager.set_music_volume(config["music_volume"])
+		AudioManager.set_sfx_volume(config["sfx_volume"])
 	
 	print("[Settings] Settings applied and saved")
 
