@@ -126,12 +126,22 @@ jobs:
         with:
           lfs: true
       
-      - name: Run Godot lint/check
+      - name: Boot smoke (project loads, autoloads init)
         working-directory: ./client
         run: |
-          godot --headless --check-only --script *.gd 2>&1 | head -100 || true
+          godot --headless --path . --quit 2>&1
       
-      - name: Run tests
+      - name: Run test_runner (core assertions; fails build on any failure)
         working-directory: ./client
         run: |
-          godot --headless --path . -s res://tests/test_runner.gd 2>&1 || true
+          godot --headless --path . -s res://tests/test_runner.gd 2>&1
+      
+      - name: Run comprehensive_validation (no false positives)
+        working-directory: ./client
+        run: |
+          godot --headless -s res://tests/comprehensive_validation.gd 2>&1
+      
+      - name: Run multiplayer integration test
+        working-directory: ./client
+        run: |
+          godot --headless -s res://tests/test_multiplayer_integration.gd 2>&1

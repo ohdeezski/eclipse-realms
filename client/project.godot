@@ -5,8 +5,8 @@
 [application]
 
 config/name="Eclipse Realms"
-; run/main_scene="res://scenes/main_menu/main_menu.tscn"  ; Temporarily disabled until scene is created
-config/features=PackedStringArray("4.2", "Forward Plus")
+run/main_scene="res://scenes/main_menu/main_menu.tscn"
+config/features=PackedStringArray("4.4", "Forward Plus")
 ; config/icon="res://icon.svg"  ; Temporarily disabled until icon is created
 
 [autoload]

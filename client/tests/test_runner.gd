@@ -1,26 +1,43 @@
-extends Node
-## Test runner scene script - attach to a test scene
+extends SceneTree
+# test_runner.gd — CI gate that runs in `godot --headless --script` mode.
+# Asserts on the REAL project.godot file content (read from disk), not on
+# ProjectSettings quirks in --script mode. Quits 0 on pass, 1 on failure.
+# Autoload/constant assertions live in comprehensive_validation.gd (run in-editor).
 
-@tool
-@export var auto_run_test: bool = true
-@export var test_host: String = "127.0.0.1"
-@export var test_port: int = 9051
+var _failed: bool = false
 
-var test_instance = null
 
-func _ready() -> void:
-    if auto_run_test and not Engine.editor_hint:
-        _run_test()
+func _init():
+	print("\n=== ECLIPSE REALMS - test_runner (project.godot gate) ===")
 
-func _run_test() -> void:
-    var test_script = preload("res://tests/test_websocket_connection.gd")
-    test_instance = test_script.new()
-    add_child(test_instance)
-    test_instance.TEST_HOST = test_host
-    test_instance.TEST_PORT = test_port
+	var f = FileAccess.open("res://project.godot", FileAccess.READ)
+	var text: String = ""
+	if f != null:
+		text = f.get_as_text()
+		f.close()
+	else:
+		_check(false, "project.godot readable")
+		_fail()
 
-func _notification(what: int) -> void:
-    if what == NOTIFICATION_WM_CLOSE_REQUEST:
-        if test_instance:
-            test_instance.queue_free()
-        get_tree().quit()
+	_check(text.find("config/name=\"Eclipse Realms\"") >= 0, "project name == Eclipse Realms")
+	_check(text.find("\"4.4\"") >= 0, "config/features includes 4.4 (not 4.2)")
+	_check(text.find("res://scenes/main_menu/main_menu.tscn") >= 0, "main_scene set to main_menu")
+
+	if not _failed:
+		print("✅ test_runner: PROJECT CONFIG GATE PASSED")
+		quit(0)
+	else:
+		print("❌ test_runner: PROJECT CONFIG GATE FAILED")
+		quit(1)
+
+
+func _check(cond: bool, msg: String):
+	if cond:
+		print("  ✓ " + msg)
+	else:
+		print("  ✗ " + msg)
+		_failed = true
+
+
+func _fail():
+	pass
