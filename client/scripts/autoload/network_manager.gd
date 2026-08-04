@@ -198,10 +198,9 @@ func start_server(port: int = DEFAULT_PORT, max_players: int = MAX_PLAYERS) -> b
     # Create server peer
     server_peer = WebSocketMultiplayerPeer.new()
     
-    # WebSocketMultiplayerPeer.create_server in Godot 4.4: bind_address (String), port (int), tls_options (TLSOptions = null)
-    # Max peers is handled separately or via the peer
+    # WebSocketMultiplayerPeer.create_server in Godot 4.4: port (int), bind_address (String), tls_options (TLSOptions = null)
     var bind_address = "0.0.0.0"
-    var err = server_peer.create_server(bind_address, port)
+    var err = server_peer.create_server(port, bind_address)
     if err != OK:
         push_error("[NetworkManager] Failed to create server: %s" % _get_error_string(err))
         change_state(ConnectionState.DISCONNECTED)
