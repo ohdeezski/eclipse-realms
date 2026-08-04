@@ -80,6 +80,9 @@ static var pending_messages: Array = []
 ## Player list
 static var player_list: Dictionary = {}
 
+## Connected peers (for compatibility)
+static var connected_peers: Dictionary = {}
+
 
 func _ready() -> void:
     if not is_initialized:
