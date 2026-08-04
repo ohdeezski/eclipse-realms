@@ -104,9 +104,6 @@ func open_inventory(player: Node) -> void:
     current_player = player
     is_open = true
 
-    # Block game input
-    InputManager.set_input_blocked(true)
-
     # Show the inventory
     show()
     center()
@@ -125,9 +122,6 @@ func close_inventory() -> void:
 
     is_open = false
     hide()
-
-    # Unblock game input
-    InputManager.set_input_blocked(false)
 
     # Resume game
     if GameManager.current_state == GameManager.GameState.PAUSED:

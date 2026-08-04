@@ -41,7 +41,6 @@ func open_equipment(player: Node) -> void:
 		return
 	current_player = player
 	is_open = true
-	InputManager.set_input_blocked(true)
 	show()
 	center()
 	_populate()
@@ -54,7 +53,6 @@ func close_equipment() -> void:
 		return
 	is_open = false
 	hide()
-	InputManager.set_input_blocked(false)
 	if GameManager.current_state == GameManager.GameState.PAUSED:
 		GameManager.resume_game()
 	equipment_closed.emit()
@@ -99,7 +97,7 @@ func _populate() -> void:
 		var slot_name := Label.new()
 		slot_name.custom_minimum_size = Vector2(120, 0)
 		slot_name.text = SLOT_LABELS.get(slot, slot.capitalize())
-		slot_name.theme_override_colors["font_color"] = Color(0.8, 0.8, 0.9, 1)
+		slot_name.add_theme_color_override("font_color", Color(0.8, 0.8, 0.9, 1))
 		row.add_child(slot_name)
 
 		var item_label := Label.new()
@@ -109,13 +107,13 @@ func _populate() -> void:
 			var item_data = GameData.get_item(item_id)
 			if not item_data.is_empty():
 				item_label.text = item_data["name"]
-				item_label.theme_override_colors["font_color"] = _rarity_color(item_data.get("rarity", "common"))
+				item_label.add_theme_color_override("font_color", _rarity_color(item_data.get("rarity", "common")))
 			else:
 				item_label.text = item_id
-				item_label.theme_override_colors["font_color"] = Color(0.9, 0.5, 0.5, 1)
+				item_label.add_theme_color_override("font_color", Color(0.9, 0.5, 0.5, 1))
 		else:
 			item_label.text = "— empty —"
-			item_label.theme_override_colors["font_color"] = Color(0.5, 0.5, 0.5, 1)
+			item_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5, 1))
 		row.add_child(item_label)
 
 		if item_id != "":
