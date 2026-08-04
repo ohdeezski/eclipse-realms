@@ -63,7 +63,7 @@ static var client_id: int = 0
 static var session_id: String = ""
 
 ## Network client (WebSocketClient for raw WebSocket)
-static var ws_client: WebSocketClient = null
+static var ws_client: Object = null
 
 ## Timing
 static var last_ping_time: float = 0.0
