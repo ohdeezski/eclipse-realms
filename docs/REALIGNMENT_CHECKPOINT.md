@@ -47,3 +47,18 @@
 
 ---
 *Next check-in: after commit + web re-export. Update this file as items flip.*
+
+---
+
+## UPDATE (22:45 EDT) — CORRECTED STATUS
+
+Agent Zero verified the following, superseding the older audit tables in R_TEAM_DEPLOYMENT.md / REALIGNMENT_AUDIT.md and the summary that was pasted into chat:
+
+- ✅ Protocol mismatch **RESOLVED** — NetworkManager now uses WebSocketMultiplayerPeer on 9051, no ENet refs
+- ✅ Export templates **INSTALLED** — 4.2.2 / 4.3 / 4.4
+- ✅ GitHub repo **EXISTS** — https://github.com/ohdeezski/eclipse-realms.git (main + feat/ci-workflows)
+- ✅ CI/CD workflows **EXIST** — .github/workflows/ (godot-export.yml, docker-build.yml) — but only on feat/ci-workflows and pinning Godot 4.2.2
+
+→ **Read docs/TEAM_SYNC_STEP_1.md for the corrected 3-day plan and the real remaining blockers (B1–B9).**
+
+Key remaining work: commit B1 (test_websocket_connection.gd), merge feat/ci-workflows→main, bump CI Godot version to 4.4, re-export stale web build, add server auth, make DEFAULT_HOST configurable, finish player sprite, then monetization/analytics.
