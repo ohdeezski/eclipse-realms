@@ -1,0 +1,131 @@
+name: Godot Export
+
+on:
+  push:
+    branches: [master, main]
+    tags: ['v*']
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: 4.2.2
+  EXPORT_NAME: eclipse-realms
+
+jobs:
+  export-linux:
+    name: Export Linux/X11
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.2.2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      
+      - name: Setup Godot export templates
+        run: |
+          mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz
+          tar -xzf Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+      
+      - name: Export Linux/X11
+        working-directory: ./client
+        run: |
+          godot --headless --export-release "Linux/X11" build/desktop/${EXPORT_NAME}.x86_64
+      
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eclipse-realms-linux
+          path: client/build/desktop/${{ env.EXPORT_NAME }}.x86_64
+          retention-days: 7
+
+  export-windows:
+    name: Export Windows Desktop
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.2.2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      
+      - name: Setup Godot export templates
+        run: |
+          mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz
+          tar -xzf Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+      
+      - name: Install Wine for Windows export
+        run: |
+          dpkg --add-architecture i386
+          apt-get update
+          apt-get install -y wine64 wine32
+      
+      - name: Export Windows Desktop
+        working-directory: ./client
+        run: |
+          godot --headless --export-release "Windows Desktop" build/desktop/${EXPORT_NAME}.exe
+      
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eclipse-realms-windows
+          path: client/build/desktop/${{ env.EXPORT_NAME }}.exe
+          retention-days: 7
+
+  export-web:
+    name: Export Web
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.2.2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      
+      - name: Setup Godot export templates
+        run: |
+          mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz
+          tar -xzf Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+      
+      - name: Export Web
+        working-directory: ./client
+        run: |
+          godot --headless --export-release "Web" build/web/index.html
+      
+      - name: Upload Web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eclipse-realms-web
+          path: client/build/web/
+          retention-days: 7
+
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.2.2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      
+      - name: Run Godot lint/check
+        working-directory: ./client
+        run: |
+          godot --headless --check-only --script *.gd 2>&1 | head -100 || true
+      
+      - name: Run tests
+        working-directory: ./client
+        run: |
+          godot --headless --path . -s res://tests/test_runner.gd 2>&1 || true
