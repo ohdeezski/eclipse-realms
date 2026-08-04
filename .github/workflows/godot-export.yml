@@ -27,8 +27,8 @@ jobs:
       - name: Setup Godot export templates
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz
-          tar -xzf Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
           ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
       
       - name: Export Linux/X11
@@ -57,8 +57,8 @@ jobs:
       - name: Setup Godot export templates
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz
-          tar -xzf Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
           ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
       
       - name: Install Wine for Windows export
@@ -93,8 +93,8 @@ jobs:
       - name: Setup Godot export templates
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz
-          tar -xzf Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
           ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
       
       - name: Export Web
