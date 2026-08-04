@@ -221,7 +221,7 @@ class GameServer:
         }
         return json.dumps(msg).encode('utf-8')
 
-    async def _handle_websocket_client(self, websocket, path):
+    async def _handle_websocket_client(self, websocket):
         """Handle a WebSocket client connection."""
         peer_id = self.next_peer_id
         self.next_peer_id += 1
@@ -229,7 +229,7 @@ class GameServer:
         player = Player(peer_id, ws=websocket)
         self.players[peer_id] = player
 
-        print(f"[WS] Player {peer_id} connected from {path}")
+        print(f"[WS] Player {peer_id} connected")
 
         try:
             # Send HELLO_REPLY
@@ -265,21 +265,29 @@ class GameServer:
                 "player_data": player.to_dict(),
             }, sender=0))
 
+            print(f"[WS] Sent HELLO_REPLY to player {peer_id}")
+
             await self._broadcast_player_connect(peer_id)
 
             # Listen for messages
             async for message in websocket:
                 try:
                     data = json.loads(message)
+                    print(f"[WS] Received from {peer_id}: {data}")
                     await self._handle_message(peer_id, data)
                 except json.JSONDecodeError:
+                    print(f"[WS] Invalid JSON from {peer_id}")
                     await self._send_error(peer_id, "Invalid JSON")
                 except Exception as e:
                     print(f"[WS] Error handling message from {peer_id}: {e}")
+                    import traceback
+                    traceback.print_exc()
                     await self._send_error(peer_id, str(e))
 
         except Exception as e:
             print(f"[WS] Connection error for player {peer_id}: {e}")
+            import traceback
+            traceback.print_exc()
         finally:
             await self._handle_disconnect(peer_id)
 
