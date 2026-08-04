@@ -95,7 +95,7 @@ const CHAR_MAP: Dictionary = {
 	"c": T_CATTLE,
 	"L": T_FALLEN_LOG,
 	"e": T_FERN,
-	"F": T_FLOWERS,
+	"G": T_FLOWERS,
 }
 
 

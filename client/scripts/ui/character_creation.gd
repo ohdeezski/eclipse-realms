@@ -87,8 +87,11 @@ func _on_name_text_changed(new_text: String) -> void:
         UIManager.show_notification("Name too long! Max 16 characters.", "warning")
     
     # Check for invalid characters (optional)
-    if new_text.contains_any(["\"", "'", ";", "(", ")", "[", "]", "{", "}"]):
-        name_input.add_theme_color_override("font_color", Color(1, 0.5, 0.5))
+    var invalid_chars = ["\"", "'", ";", "(", ")", "[", "]", "{", "}"]
+    for c in invalid_chars:
+        if new_text.contains(c):
+            name_input.add_theme_color_override("font_color", Color(1, 0.5, 0.5))
+            break
 
 
 func _setup_button_interactions() -> void:
@@ -121,6 +124,13 @@ func _on_create_button_entered() -> void:
 func _on_create_button_exited() -> void:
     """Handle create button hover end."""
     create_btn.scale = Vector2(1, 1)
+
+
+func _is_create_button_enabled() -> bool:
+    """Enable Create only when a name is entered and a species is chosen."""
+    var name_ok = name_input != null and not name_input.text.strip_edges().is_empty()
+    var species_ok = species_select != null and species_select.selected >= 0
+    return name_ok and species_ok
 
 
 func _setup_preview_animations() -> void:

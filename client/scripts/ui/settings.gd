@@ -88,10 +88,14 @@ func _on_apply_pressed() -> void:
 	SaveManager.save_config(config)
 	
 	# Apply graphics settings
-	if OS.has_feature("vsync"):
-		OS.vsync_enabled = vsync_check.button_pressed
-	if OS.has_feature("fullscreen"):
-		OS.window_fullscreen = fullscreen_check.button_pressed
+	if vsync_check.button_pressed:
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
+	else:
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+	if fullscreen_check.button_pressed:
+		get_window().mode = Window.MODE_FULLSCREEN
+	else:
+		get_window().mode = Window.MODE_WINDOWED
 	
 	print("[Settings] Settings applied and saved")
 

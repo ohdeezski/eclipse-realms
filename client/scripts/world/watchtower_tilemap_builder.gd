@@ -84,7 +84,7 @@ const CHAR_MAP: Dictionary = {
 	"#": T_STONE_WALL,
 	"D": T_STONE_WALL_DARK,
 	"U": T_STAIRS_UP,
-	"D": T_STAIRS_DOWN,
+	"X": T_STAIRS_DOWN,
 	"W": T_WINDOW,
 	"A": T_ARROW_SLIT,
 	"T": T_TORCH_WALL,

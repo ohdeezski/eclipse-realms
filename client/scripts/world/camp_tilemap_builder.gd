@@ -86,8 +86,8 @@ const CHAR_MAP: Dictionary = {
 	"f": T_FLAG,
 	"o": T_LOOKOUT_TOWER,
 	"P": T_WOOD_PILE,
-	"F": T_FENCE,
-	"T": T_TORCH,
+	"Z": T_FENCE,
+	"R": T_TORCH,
 	"S": T_SUPPLY_WAGON,
 }
 

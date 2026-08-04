@@ -1,4 +1,4 @@
-[gd_resource type="Font" load_steps=2 format=3 uid="uid://default_font"]
+[gd_resource type="FontFile" load_steps=2 format=3 uid="uid://default_font"]
 
 [sub_resource type="FontFile" id="FontFile_i5m3s"]
 path = ""
