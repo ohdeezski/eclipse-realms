@@ -62,7 +62,7 @@ static var server_port: int = DEFAULT_PORT
 static var client_id: int = 0
 static var session_id: String = ""
 
-## Network client (WebSocketClient for raw WebSocket)
+## Network client (WebSocketPeer for raw WebSocket)
 static var ws_client: Object = null
 
 ## Timing
@@ -133,12 +133,12 @@ func connect_to_server(host: String = DEFAULT_HOST, port: int = DEFAULT_PORT) ->
     
     change_state(ConnectionState.CONNECTING)
     
-    # Create WebSocket client
-    ws_client = ClassDB.instantiate("WebSocketClient")
+    # Create WebSocket client (using WebSocketPeer in Godot 4.4)
+    ws_client = WebSocketPeer.new()
     if not ws_client:
-        push_error("[NetworkManager] Failed to create WebSocketClient instance")
+        push_error("[NetworkManager] Failed to create WebSocketPeer instance")
         change_state(ConnectionState.DISCONNECTED)
-        connection_failed.emit("Failed to create WebSocketClient")
+        connection_failed.emit("Failed to create WebSocketPeer")
         return false
     
     # Connect signals
