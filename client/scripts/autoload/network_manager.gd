@@ -171,7 +171,7 @@ func connect_to_server(host: String = DEFAULT_HOST, port: int = DEFAULT_PORT) ->
             signal_names.append(s["name"])
         else:
             signal_names.append(str(s))
-    print("[NetworkManager] Available signals: %s" % signal_names)
+    print("[NetworkManager] Available signals: " + str(signal_names))
     
     # Set as multiplayer peer (Godot 4.x uses the `multiplayer` singleton)
     multiplayer.multiplayer_peer = server_peer
