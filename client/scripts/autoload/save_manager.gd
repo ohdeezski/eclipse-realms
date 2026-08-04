@@ -12,7 +12,6 @@ signal load_completed(success: bool, data: Dictionary)
 signal load_failed(error: String)
 
 ## Constants
-const SAVE_DIR: String = "user://saves/"
 const CONFIG_FILE: String = "user://config.cfg"
 const MAX_SAVES: int = 10
 const SAVE_EXTENSION: String = ".eclipse"
@@ -24,6 +23,8 @@ static var save_slots: Array[Dictionary] = []
 static var is_saving: bool = false
 static var is_loading: bool = false
 
+static var SAVE_DIR: String = ""
+
 
 func _ready() -> void:
     if not is_initialized:
@@ -33,6 +34,9 @@ func _ready() -> void:
 
 func _initialize() -> void:
     print("[SaveManager] Initializing save system")
+    
+    # Initialize save directory from ProjectSettings
+    SAVE_DIR = ProjectSettings.get_setting("application/config/save_path", "user://saves/")
     
     # Create save directory if it doesn't exist
     if not DirAccess.dir_exists_absolute(SAVE_DIR):

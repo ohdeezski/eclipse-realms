@@ -1,0 +1,156 @@
+[gd_resource type="TileSet" load_steps=1 format=3 uid="uid://creektileset01"]
+
+[resource]
+tile_map_array = false
+rendering_quadrant_size = 16
+texture = ExtResource("1")
+
+[ext_resource path="res://assets/environment/silver_creek/creek_tileset.png" type="Texture2D" id="1"]
+
+[source_0]
+name = "Creek Tileset"
+texture = ExtResource("1")
+texture_region = Rect2(0, 0, 320, 64)
+tile_size = Vector2i(32, 32)
+tile_spacing = Vector2i(0, 0)
+tile_offset = Vector2i(0, 0)
+collision_layers = 1
+
+# Tile 0,0 - Grass Light
+[source_0/atlas_coords/0/0]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {}
+
+# Tile 1,0 - Grass Dark
+[source_0/atlas_coords/1/0]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {}
+
+# Tile 2,0 - Dirt
+[source_0/atlas_coords/2/0]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {}
+
+# Tile 3,0 - Sand
+[source_0/atlas_coords/3/0]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {}
+
+# Tile 4,0 - Water Shallow
+[source_0/atlas_coords/4/0]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {}
+
+# Tile 5,0 - Water Deep
+[source_0/atlas_coords/5/0]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {[0] = [{ "bounds": Rect2(0, 0, 32, 32), "points": PackedVector2Array(0, 0, 32, 0, 32, 32, 0, 32) }]}
+
+# Tile 6,0 - Water Flow
+[source_0/atlas_coords/6/0]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {[0] = [{ "bounds": Rect2(0, 0, 32, 32), "points": PackedVector2Array(0, 0, 32, 0, 32, 32, 0, 32) }]}
+
+# Tile 7,0 - Rock
+[source_0/atlas_coords/7/0]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {[0] = [{ "bounds": Rect2(8, 8, 16, 16), "points": PackedVector2Array(8, 8, 24, 8, 24, 24, 8, 24) }]}
+
+# Tile 8,0 - Reeds
+[source_0/atlas_coords/8/0]
+modulate = Color(1, 1, 1, 1)
+z_index = 1
+navigation_polygon = null
+collision_polygons = {[0] = [{ "bounds": Rect2(8, 8, 16, 16), "points": PackedVector2Array(8, 8, 24, 8, 24, 24, 8, 24) }]}
+
+# Tile 9,0 - Lily Pad
+[source_0/atlas_coords/9/0]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {}
+
+# Tile 0,1 - Bridge Wood
+[source_0/atlas_coords/0/1]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {}
+
+# Tile 1,1 - Bridge Rail
+[source_0/atlas_coords/1/1]
+modulate = Color(1, 1, 1, 1)
+z_index = 1
+navigation_polygon = null
+collision_polygons = {[0] = [{ "bounds": Rect2(0, 0, 32, 8), "points": PackedVector2Array(0, 0, 32, 0, 32, 8, 0, 8) }]}
+
+# Tile 2,1 - Bridge Post
+[source_0/atlas_coords/2/1]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygons = {[0] = [{ "bounds": Rect2(8, 16, 16, 16), "points": PackedVector2Array(8, 16, 24, 16, 24, 32, 8, 32) }]}
+
+# Tile 3,1 - Fishing Spot
+[source_0/atlas_coords/3/1]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {}
+
+# Tile 4,1 - Stepping Stone
+[source_0/atlas_coords/4/1]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {[0] = [{ "bounds": Rect2(8, 8, 16, 16), "points": PackedVector2Array(8, 8, 24, 8, 24, 24, 8, 24) }]}
+
+# Tile 5,1 - Moss Rock
+[source_0/atlas_coords/5/1]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {[0] = [{ "bounds": Rect2(8, 8, 16, 16), "points": PackedVector2Array(8, 8, 24, 8, 24, 24, 8, 24) }]}
+
+# Tile 6,1 - Cattail
+[source_0/atlas_coords/6/1]
+modulate = Color(1, 1, 1, 1)
+z_index = 1
+navigation_polygon = null
+collision_polygons = {[0] = [{ "bounds": Rect2(8, 8, 16, 16), "points": PackedVector2Array(8, 8, 24, 8, 24, 24, 8, 24) }]}
+
+# Tile 7,1 - Fallen Log
+[source_0/atlas_coords/7/1]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {[0] = [{ "bounds": Rect2(4, 8, 24, 16), "points": PackedVector2Array(4, 8, 28, 8, 28, 24, 4, 24) }]}
+
+# Tile 8,1 - Fern
+[source_0/atlas_coords/8/1]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {}
+
+# Tile 9,1 - Flowers
+[source_0/atlas_coords/9/1]
+modulate = Color(1, 1, 1, 1)
+z_index = 0
+navigation_polygon = null
+collision_polygons = {}

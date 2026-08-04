@@ -1,6 +1,6 @@
 extends Node
-## World.gd - Oakrest Village controller (v0.2 Phase 2).
-## Initializes tilemap, entities from GameData, zone transitions, and player interaction.
+## CreekWorld.gd - Silver Creek controller.
+## River zone with bridge, fishing spots, water ambience.
 
 @onready var player: Node = $Player
 @onready var tilemap: TileMap = $TileMap if has_node("TileMap") else null
@@ -21,7 +21,12 @@ func _ready() -> void:
 
 	# Show HUD
 	UIManager.set_hud_visible(true)
-	UIManager.show_notification("Welcome to Oakrest Village. Talk to the Elder (E).", "info")
+	
+	# Play creek music
+	if AudioManager:
+		AudioManager.play_music("creek_theme")
+	
+	UIManager.show_notification("Welcome to Silver Creek. The water flows peacefully.", "info")
 
 
 ## ---------------------------------------------------------------------------
@@ -34,9 +39,12 @@ func _build_tilemap() -> void:
 	var builder_node = $TileMap/TilemapBuilder if has_node("TileMap/TilemapBuilder") else null
 	if builder_node and builder_node.has_method("build"):
 		builder_node.build(tilemap)
-		print("[World] Tilemap built successfully")
+		# Add creek details (bridge, reeds, lily pads, rocks, fishing spots)
+		if builder_node.has_method("add_creek_details"):
+			builder_node.add_creek_details(tilemap)
+		print("[CreekWorld] Tilemap built successfully")
 	else:
-		push_warning("[World] TilemapBuilder not found or missing build() method")
+		push_warning("[CreekWorld] TilemapBuilder not found or missing build() method")
 
 
 ## ---------------------------------------------------------------------------
@@ -52,23 +60,20 @@ func _setup_zones() -> void:
 
 
 func _on_zone_entered(zone_id: String, display_name: String) -> void:
-	print("[World] Player entered zone: %s (%s)" % [zone_id, display_name])
+	print("[CreekWorld] Player entered zone: %s (%s)" % [zone_id, display_name])
 
 
 func _on_zone_changed(old_zone: String, new_zone: String) -> void:
-	print("[World] Zone transition: %s -> %s" % [old_zone, new_zone])
+	print("[CreekWorld] Zone transition: %s -> %s" % [old_zone, new_zone])
 	# Handle zone transitions that load new scenes
 	match new_zone:
+		"forest_transition":
+			SceneManager.change_scene("res://scenes/world/mosswood_forest.tscn", "fade")
 		"village_transition":
 			SceneManager.change_scene("res://scenes/world/oakrest_village.tscn", "fade")
-		"cavern_transition":
-			SceneManager.change_scene("res://scenes/world/whispering_caverns.tscn", "fade")
-		"forest":
-			if get_tree().current_scene.scene_file_path != "res://scenes/world/mosswood_forest.tscn":
-				SceneManager.change_scene("res://scenes/world/mosswood_forest.tscn", "fade")
-		"caverns":
-			if get_tree().current_scene.scene_file_path != "res://scenes/world/whispering_caverns.tscn":
-				SceneManager.change_scene("res://scenes/world/whispering_caverns.tscn", "fade")
+		"creek":
+			if get_tree().current_scene.scene_file_path != "res://scenes/world/silver_creek.tscn":
+				SceneManager.change_scene("res://scenes/world/silver_creek.tscn", "fade")
 	# Future: trigger music change, spawn/despawn entities, etc.
 
 
@@ -93,16 +98,6 @@ func _configure_entities() -> void:
 
 func _resolve_npc_id(node_name: String) -> String:
 	"""Map NPC node names to their GameData IDs."""
-	if "Elder" in node_name:
-		return "village_elder"
-	elif "Blacksmith" in node_name:
-		return "blacksmith"
-	elif "Merchant" in node_name:
-		return "merchant"
-	elif "Innkeeper" in node_name:
-		return "innkeeper"
-	elif "Ranger" in node_name:
-		return "ranger"
 	return "village_elder"
 
 

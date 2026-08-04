@@ -467,9 +467,11 @@ func translate_quest_name(quest_id: String) -> String:
     var name = translate(key)
     
     if name == key:
-        var quest = GameData.get_quest(quest_id)
-        if quest.size() > 0 and quest.has("name"):
-            return quest["name"]
+        # Check if GameData is available
+        if has_node("/root/GameData") and GameData.is_initialized:
+            var quest = GameData.get_quest(quest_id)
+            if quest.size() > 0 and quest.has("name"):
+                return quest["name"]
         return quest_id
     
     return name
@@ -481,9 +483,11 @@ func translate_quest_description(quest_id: String) -> String:
     var description = translate(key)
     
     if description == key:
-        var quest = GameData.get_quest(quest_id)
-        if quest.size() > 0 and quest.has("description"):
-            return quest["description"]
+        # Check if GameData is available
+        if has_node("/root/GameData") and GameData.is_initialized:
+            var quest = GameData.get_quest(quest_id)
+            if quest.size() > 0 and quest.has("description"):
+                return quest["description"]
         return ""
     
     return description
@@ -495,9 +499,11 @@ func translate_skill_name(skill_id: String) -> String:
     var name = translate(key)
     
     if name == key:
-        var skill = GameData.get_skill(skill_id)
-        if skill.size() > 0 and skill.has("name"):
-            return skill["name"]
+        # Check if GameData is available
+        if has_node("/root/GameData") and GameData.is_initialized:
+            var skill = GameData.get_skill(skill_id)
+            if skill.size() > 0 and skill.has("name"):
+                return skill["name"]
         return skill_id
     
     return name
@@ -509,9 +515,11 @@ func translate_area_name(area_id: String) -> String:
     var name = translate(key)
     
     if name == key:
-        var area = GameData.get_area(area_id)
-        if area.size() > 0 and area.has("name"):
-            return area["name"]
+        # Check if GameData is available
+        if has_node("/root/GameData") and GameData.is_initialized:
+            var area = GameData.get_area(area_id)
+            if area.size() > 0 and area.has("name"):
+                return area["name"]
         return area_id
     
     return name

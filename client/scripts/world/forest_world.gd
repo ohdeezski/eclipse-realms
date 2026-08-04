@@ -1,6 +1,6 @@
 extends Node
-## World.gd - Oakrest Village controller (v0.2 Phase 2).
-## Initializes tilemap, entities from GameData, zone transitions, and player interaction.
+## ForestWorld.gd - Mosswood Forest controller.
+## Handles tilemap, entities, zone transitions back to village and to caverns.
 
 @onready var player: Node = $Player
 @onready var tilemap: TileMap = $TileMap if has_node("TileMap") else null
@@ -21,7 +21,12 @@ func _ready() -> void:
 
 	# Show HUD
 	UIManager.set_hud_visible(true)
-	UIManager.show_notification("Welcome to Oakrest Village. Talk to the Elder (E).", "info")
+	
+	# Play forest music
+	if AudioManager:
+		AudioManager.play_music("forest_theme")
+	
+	UIManager.show_notification("Welcome to Mosswood Forest. Watch for wolves.", "info")
 
 
 ## ---------------------------------------------------------------------------
@@ -34,9 +39,12 @@ func _build_tilemap() -> void:
 	var builder_node = $TileMap/TilemapBuilder if has_node("TileMap/TilemapBuilder") else null
 	if builder_node and builder_node.has_method("build"):
 		builder_node.build(tilemap)
-		print("[World] Tilemap built successfully")
+		# Add procedural forest details
+		if builder_node.has_method("add_forest_details"):
+			builder_node.add_forest_details(tilemap)
+		print("[ForestWorld] Tilemap built successfully")
 	else:
-		push_warning("[World] TilemapBuilder not found or missing build() method")
+		push_warning("[ForestWorld] TilemapBuilder not found or missing build() method")
 
 
 ## ---------------------------------------------------------------------------
@@ -52,11 +60,11 @@ func _setup_zones() -> void:
 
 
 func _on_zone_entered(zone_id: String, display_name: String) -> void:
-	print("[World] Player entered zone: %s (%s)" % [zone_id, display_name])
+	print("[ForestWorld] Player entered zone: %s (%s)" % [zone_id, display_name])
 
 
 func _on_zone_changed(old_zone: String, new_zone: String) -> void:
-	print("[World] Zone transition: %s -> %s" % [old_zone, new_zone])
+	print("[ForestWorld] Zone transition: %s -> %s" % [old_zone, new_zone])
 	# Handle zone transitions that load new scenes
 	match new_zone:
 		"village_transition":
@@ -93,15 +101,7 @@ func _configure_entities() -> void:
 
 func _resolve_npc_id(node_name: String) -> String:
 	"""Map NPC node names to their GameData IDs."""
-	if "Elder" in node_name:
-		return "village_elder"
-	elif "Blacksmith" in node_name:
-		return "blacksmith"
-	elif "Merchant" in node_name:
-		return "merchant"
-	elif "Innkeeper" in node_name:
-		return "innkeeper"
-	elif "Ranger" in node_name:
+	if "Ranger" in node_name:
 		return "ranger"
 	return "village_elder"
 

@@ -26,6 +26,11 @@ const ZONE_DISPLAY_NAMES: Dictionary = {
 	"clearing": "Mosswood Clearing",
 	"deep_forest": "Deep Forest",
 	"caverns": "Whispering Caverns",
+	"village_transition": "Oakrest Village",
+	"cavern_transition": "Whispering Caverns",
+	"creek": "Silver Creek",
+	"forest_transition": "Mosswood Forest",
+	"village_transition": "Oakrest Village",
 }
 
 ## Which zone the player is currently in

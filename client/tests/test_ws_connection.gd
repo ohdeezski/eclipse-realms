@@ -3,10 +3,9 @@ func _ready():
     var peer = WebSocketPeer.new()
     peer.connect_to_url("ws://localhost:9051/")
     # Poll a few times to establish connection
-    for i in range(100):
+    for i in range(200):
         peer.poll()
         var state = peer.get_ready_state()
-        print("Poll", i, "State:", state, "Available:", peer.get_available_packet_count())
         if state == 0:  # OPEN
             # Try to receive data
             while peer.get_available_packet_count() > 0:

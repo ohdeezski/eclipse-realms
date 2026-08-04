@@ -1,22 +1,25 @@
-[gd_scene load_steps=20 format=3 uid="uid://mosswoodforest01"]
+[gd_scene load_steps=15 format=3 uid="uid://whisperingcaverns01"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="Script" path="res://scripts/entities/monster.gd" id="2_monster"]
 [ext_resource type="Script" path="res://scripts/entities/npc.gd" id="3_npc"]
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="4_hud"]
-[ext_resource type="Script" path="res://scripts/world/forest_world.gd" id="5_world"]
+[ext_resource type="Script" path="res://scripts/world/cavern_world.gd" id="5_world"]
 [ext_resource type="Script" path="res://scripts/world/zone_manager.gd" id="6_zone"]
-[ext_resource type="Script" path="res://scripts/world/forest_tilemap_builder.gd" id="7_builder"]
-[ext_resource type="TileSet" path="res://resources/tilesets/forest_tileset.tres" id="8_tileset"]
+[ext_resource type="Script" path="res://scripts/world/cavern_tilemap_builder.gd" id="7_builder"]
+[ext_resource type="TileSet" path="res://resources/tilesets/cavern_tileset.tres" id="8_tileset"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_npc"]
 radius = 16.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_forest"]
-size = Vector2(2048, 1536)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cavern"]
+size = Vector2(1600, 1280)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_village_transition"]
-size = Vector2(256, 1536)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_forest_transition"]
+size = Vector2(256, 1280)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_boss_chamber"]
+size = Vector2(500, 200)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_player"]
 radius = 12.0
@@ -24,7 +27,7 @@ radius = 12.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_monster"]
 radius = 14.0
 
-[node name="MosswoodForest" type="Node2D"]
+[node name="WhisperingCaverns" type="Node2D"]
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = ExtResource("8_tileset")
@@ -36,46 +39,46 @@ script = ExtResource("7_builder")
 
 [node name="ZoneBoundaries" type="Node2D" parent="."]
 
-[node name="Zone_Forest" type="Area2D" parent="ZoneBoundaries"]
-position = Vector2(1024, 768)
+[node name="Zone_Cavern" type="Area2D" parent="ZoneBoundaries"]
+position = Vector2(800, 640)
 collision_layer = 32
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ZoneBoundaries/Zone_Forest"]
-shape = SubResource("RectangleShape2D_forest")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ZoneBoundaries/Zone_Cavern"]
+shape = SubResource("RectangleShape2D_cavern")
 
-[node name="Zone_Village_Transition" type="Area2D" parent="ZoneBoundaries"]
-position = Vector2(128, 768)
+[node name="Zone_Forest_Transition" type="Area2D" parent="ZoneBoundaries"]
+position = Vector2(128, 640)
 collision_layer = 32
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ZoneBoundaries/Zone_Village_Transition"]
-shape = SubResource("RectangleShape2D_village_transition")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ZoneBoundaries/Zone_Forest_Transition"]
+shape = SubResource("RectangleShape2D_forest_transition")
 
-[node name="Zone_Cavern_Transition" type="Area2D" parent="ZoneBoundaries"]
-position = Vector2(1920, 768)
+[node name="Zone_Boss_Chamber" type="Area2D" parent="ZoneBoundaries"]
+position = Vector2(800, 1200)
 collision_layer = 32
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ZoneBoundaries/Zone_Cavern_Transition"]
-shape = SubResource("RectangleShape2D_village_transition")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ZoneBoundaries/Zone_Boss_Chamber"]
+shape = SubResource("RectangleShape2D_boss_chamber")
 
 [node name="ZoneLabels" type="Node2D" parent="."]
 
-[node name="ForestLabel" type="Label" parent="ZoneLabels"]
+[node name="CavernLabel" type="Label" parent="ZoneLabels"]
 position = Vector2(100, 8)
-text = "Mosswood Forest"
+text = "Whispering Caverns"
 
-[node name="VillageTransitionLabel" type="Label" parent="ZoneLabels"]
-position = Vector2(64, 1400)
-text = "← Oakrest Village"
+[node name="ForestTransitionLabel" type="Label" parent="ZoneLabels"]
+position = Vector2(64, 1200)
+text = "← Mosswood Forest"
 
-[node name="CavernTransitionLabel" type="Label" parent="ZoneLabels"]
-position = Vector2(1800, 1400)
-text = "Whispering Caverns →"
+[node name="BossChamberLabel" type="Label" parent="ZoneLabels"]
+position = Vector2(700, 1150)
+text = "BOSS CHAMBER ↓"
 
 [node name="Player" type="CharacterBody2D" parent="."]
-position = Vector2(256, 768)
+position = Vector2(800, 160)
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1_player")
@@ -96,108 +99,87 @@ position_smoothing_speed = 8.0
 wait_time = 0.12
 one_shot = true
 
-[node name="Slime1" type="CharacterBody2D" parent="."]
-position = Vector2(600, 500)
+[node name="Wisp1" type="CharacterBody2D" parent="."]
+position = Vector2(400, 400)
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("2_monster")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Slime1"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wisp1"]
 shape = SubResource("CircleShape2D_monster")
 
-[node name="Sprite" type="ColorRect" parent="Slime1"]
+[node name="Sprite" type="ColorRect" parent="Wisp1"]
 size = Vector2(28, 28)
-color = Color(0.3, 0.8, 0.4, 1)
+color = Color(0.7, 0.3, 0.9, 1)
 
-[node name="HPBar" type="ProgressBar" parent="Slime1"]
+[node name="HPBar" type="ProgressBar" parent="Wisp1"]
 position = Vector2(-14, -40)
 size = Vector2(28, 6)
 
-[node name="HitFlash" type="Timer" parent="Slime1"]
+[node name="HitFlash" type="Timer" parent="Wisp1"]
 wait_time = 0.1
 one_shot = true
 
-[node name="Slime2" type="CharacterBody2D" parent="."]
-position = Vector2(800, 900)
+[node name="Wisp2" type="CharacterBody2D" parent="."]
+position = Vector2(1200, 500)
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("2_monster")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Slime2"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wisp2"]
 shape = SubResource("CircleShape2D_monster")
 
-[node name="Sprite" type="ColorRect" parent="Slime2"]
+[node name="Sprite" type="ColorRect" parent="Wisp2"]
 size = Vector2(28, 28)
-color = Color(0.3, 0.8, 0.4, 1)
+color = Color(0.7, 0.3, 0.9, 1)
 
-[node name="HPBar" type="ProgressBar" parent="Slime2"]
+[node name="HPBar" type="ProgressBar" parent="Wisp2"]
 position = Vector2(-14, -40)
 size = Vector2(28, 6)
 
-[node name="HitFlash" type="Timer" parent="Slime2"]
+[node name="HitFlash" type="Timer" parent="Wisp2"]
 wait_time = 0.1
 one_shot = true
 
-[node name="Slime3" type="CharacterBody2D" parent="."]
-position = Vector2(1200, 600)
+[node name="Wisp3" type="CharacterBody2D" parent="."]
+position = Vector2(600, 800)
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("2_monster")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Slime3"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wisp3"]
 shape = SubResource("CircleShape2D_monster")
 
-[node name="Sprite" type="ColorRect" parent="Slime3"]
+[node name="Sprite" type="ColorRect" parent="Wisp3"]
 size = Vector2(28, 28)
-color = Color(0.3, 0.8, 0.4, 1)
+color = Color(0.7, 0.3, 0.9, 1)
 
-[node name="HPBar" type="ProgressBar" parent="Slime3"]
+[node name="HPBar" type="ProgressBar" parent="Wisp3"]
 position = Vector2(-14, -40)
 size = Vector2(28, 6)
 
-[node name="HitFlash" type="Timer" parent="Slime3"]
+[node name="HitFlash" type="Timer" parent="Wisp3"]
 wait_time = 0.1
 one_shot = true
 
-[node name="Wolf1" type="CharacterBody2D" parent="."]
-position = Vector2(1000, 1100)
+[node name="CaveGuardian" type="CharacterBody2D" parent="."]
+position = Vector2(800, 1200)
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("2_monster")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Wolf1"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CaveGuardian"]
 shape = SubResource("CircleShape2D_monster")
 
-[node name="Sprite" type="ColorRect" parent="Wolf1"]
-size = Vector2(32, 32)
-color = Color(0.5, 0.5, 0.55, 1)
+[node name="Sprite" type="ColorRect" parent="CaveGuardian"]
+size = Vector2(48, 48)
+color = Color(0.9, 0.2, 0.2, 1)
 
-[node name="HPBar" type="ProgressBar" parent="Wolf1"]
-position = Vector2(-16, -44)
-size = Vector2(32, 6)
+[node name="HPBar" type="ProgressBar" parent="CaveGuardian"]
+position = Vector2(-24, -60)
+size = Vector2(48, 8)
 
-[node name="HitFlash" type="Timer" parent="Wolf1"]
-wait_time = 0.1
-one_shot = true
-
-[node name="Wolf2" type="CharacterBody2D" parent="."]
-position = Vector2(1400, 400)
-collision_layer = 4
-collision_mask = 1
-script = ExtResource("2_monster")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Wolf2"]
-shape = SubResource("CircleShape2D_monster")
-
-[node name="Sprite" type="ColorRect" parent="Wolf2"]
-size = Vector2(32, 32)
-color = Color(0.5, 0.5, 0.55, 1)
-
-[node name="HPBar" type="ProgressBar" parent="Wolf2"]
-position = Vector2(-16, -44)
-size = Vector2(32, 6)
-
-[node name="HitFlash" type="Timer" parent="Wolf2"]
+[node name="HitFlash" type="Timer" parent="CaveGuardian"]
 wait_time = 0.1
 one_shot = true
 

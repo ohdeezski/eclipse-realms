@@ -270,11 +270,13 @@ func load_equipment() -> bool:
 
 
 func load_world_data() -> bool:
-    # Load world data from shared resources
-    var world_file = "res://shared/game_data/world.json"
+    # Load world data from shared resources (try user:// first, then res://)
+    var world_file_user = "user://shared/game_data/world.json"
+    var world_file_res = "res://shared/game_data/world.json"
     
-    if ResourceLoader.exists(world_file):
-        var file = FileAccess.open(world_file, FileAccess.READ)
+    # Try user:// first (where we save)
+    if FileAccess.file_exists(world_file_user):
+        var file = FileAccess.open(world_file_user, FileAccess.READ)
         if file:
             var content = file.get_as_text()
             file.close()
@@ -284,7 +286,22 @@ func load_world_data() -> bool:
             
             if err == OK:
                 world_data = json.data
-                print("[GameData] Loaded world data")
+                print("[GameData] Loaded world data from user://")
+                return true
+    
+    # Fall back to res://
+    if ResourceLoader.exists(world_file_res):
+        var file = FileAccess.open(world_file_res, FileAccess.READ)
+        if file:
+            var content = file.get_as_text()
+            file.close()
+            
+            var json = JSON.new()
+            var err = json.parse(content)
+            
+            if err == OK:
+                world_data = json.data
+                print("[GameData] Loaded world data from res://")
                 return true
     
     _create_default_world_data()
@@ -311,8 +328,8 @@ func _save_data(data: Dictionary, file_path: String) -> void:
         return
     
     var json = JSON.new()
-    json.stringify(data)
-    file.store_string(json.get_data())
+    var json_string = json.stringify(data)
+    file.store_string(json_string)
     file.close()
     
     print("[GameData] Saved data to: %s" % file_path)
@@ -520,6 +537,9 @@ func _create_default_items() -> void:
     
     print("[GameData] Created default items")
     data_changed.emit("items")
+    
+    # Save to file
+    _save_data(items, ITEMS_FILE)
 
 
 func _create_default_characters() -> void:
@@ -596,6 +616,9 @@ func _create_default_characters() -> void:
     
     print("[GameData] Created default characters")
     data_changed.emit("characters")
+    
+    # Save to file
+    _save_data(characters, CHARACTERS_FILE)
 
 
 func _create_default_monsters() -> void:
@@ -673,6 +696,9 @@ func _create_default_monsters() -> void:
     
     print("[GameData] Created default monsters")
     data_changed.emit("monsters")
+    
+    # Save to file
+    _save_data(monsters, MONSTERS_FILE)
 
 
 func _create_default_npcs() -> void:
@@ -1005,6 +1031,9 @@ func _create_default_npcs() -> void:
 
     print("[GameData] Created default NPCs")
     data_changed.emit("npcs")
+    
+    # Save to file
+    _save_data(npcs, NPCS_FILE)
 
 
 func _create_default_quests() -> void:
@@ -1081,6 +1110,9 @@ func _create_default_quests() -> void:
     
     print("[GameData] Created default quests")
     data_changed.emit("quests")
+    
+    # Save to file
+    _save_data(quests, QUESTS_FILE)
 
 
 func _create_default_skills() -> void:
@@ -1151,6 +1183,9 @@ func _create_default_skills() -> void:
     
     print("[GameData] Created default skills")
     data_changed.emit("skills")
+    
+    # Save to file
+    _save_data(skills, SKILLS_FILE)
 
 
 func _create_default_equipment() -> void:
@@ -1183,6 +1218,9 @@ func _create_default_equipment() -> void:
     
     print("[GameData] Created default equipment")
     data_changed.emit("equipment")
+    
+    # Save to file
+    _save_data(equipment, EQUIPMENT_FILE)
 
 
 func _create_default_world_data() -> void:
@@ -1246,6 +1284,13 @@ func _create_default_world_data() -> void:
     
     print("[GameData] Created default world data")
     data_changed.emit("world")
+    
+    # Save to file
+    var world_file = "user://shared/game_data/world.json"
+    var world_dir = "user://shared/game_data/"
+    if not DirAccess.dir_exists_absolute(world_dir):
+        DirAccess.make_dir_recursive_absolute(world_dir)
+    _save_data(world_data, world_file)
 
 
 # ============================================================================
