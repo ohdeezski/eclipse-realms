@@ -289,3 +289,4 @@ crash.*
 # - Large binary assets (use git LFS if necessary)
 #
 # =============================================================================orca-linux.AppImage
+orca-linux.AppImage
