@@ -17,13 +17,16 @@ var failure_reason = ""
 func _ready() -> void:
     print("[Test] WebSocket Connection Test Starting...")
     
-    # Get NetworkManager instance (it's an autoload)
-    if not has_singleton("NetworkManager"):
+    # Get NetworkManager instance - in Godot 4, autoloads are globals
+    # The autoload name is "NetworkManager" as defined in project.godot
+    # We can access it directly as a global variable
+    if typeof(NetworkManager) != TYPE_NIL:
+        network_manager = NetworkManager
+        print("[Test] Found NetworkManager as global")
+    else:
         push_error("[Test] NetworkManager not found in autoloads")
         _fail("NetworkManager not found")
         return
-    
-    network_manager = get_singleton("NetworkManager")
     
     # Set up test timeout
     connection_timer = Timer.new()

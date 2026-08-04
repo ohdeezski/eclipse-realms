@@ -146,10 +146,13 @@ func connect_to_server(host: String = DEFAULT_HOST, port: int = DEFAULT_PORT) ->
     
     # Connect signals (Godot 4.4 WebSocketMultiplayerPeer signals)
     # The signal names might be different in 4.4
+    var connected = false
     if server_peer.has_signal("peer_packet_received"):
         server_peer.peer_packet_received.connect(_on_peer_packet)
+        connected = true
     elif server_peer.has_signal("peer_packet"):
         server_peer.peer_packet.connect(_on_peer_packet)
+        connected = true
     else:
         push_warning("[NetworkManager] Could not find peer packet signal")
     
@@ -159,6 +162,10 @@ func connect_to_server(host: String = DEFAULT_HOST, port: int = DEFAULT_PORT) ->
         server_peer.peer_disconnected.connect(_on_peer_disconnected)
     if server_peer.has_signal("server_disconnected"):
         server_peer.server_disconnected.connect(_on_server_disconnected)
+    
+    # Print available signals for debugging
+    var signals = server_peer.get_signal_list()
+    print("[NetworkManager] Available signals: %s" % signals)
     
     # Set as multiplayer peer (Godot 4.x uses the `multiplayer` singleton)
     multiplayer.multiplayer_peer = server_peer

@@ -1,0 +1,16 @@
+[gd_resource type="Font" load_steps=2 format=3 uid="uid://default_font"]
+
+[sub_resource type="FontFile" id="FontFile_i5m3s"]
+path = ""
+
+[resource]
+font_data = SubResource("FontFile_i5m3s")
+size = 16
+antialiased = true
+multichannel_signed_distance_field = false
+generate_mipmaps = true
+fixed_size = false
+disable_ligatures = false
+filter = 1
+outline_size = 0
+outline_color = Color(1, 1, 1, 1)
