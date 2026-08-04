@@ -1,8 +1,9 @@
 extends Node
 func _ready():
     var peer = WebSocketPeer.new()
-    print("WebSocketPeer ready state constants:")
-    for k in dir(peer):
-        if "ready" in k.lower() or "state" in k.lower():
-            print("  ", k, ":", getattr(peer, k))
+    print("CONNECTING:", peer.get_ready_state())
+    peer.connect_to_url("ws://localhost:9051/")
+    for i in range(10):
+        peer.poll()
+        print("State after poll", i, ":", peer.get_ready_state())
     get_tree().quit()
