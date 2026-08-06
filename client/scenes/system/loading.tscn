@@ -1,11 +1,30 @@
-[gd_scene load_steps=2 format=3 uid="uid://c8n2t4v7w9y1"]
+[gd_scene load_steps=1 format=3 uid://d6h5q8r9t2y7u]
 
-[node name="Loading" type="Node2D"]
+[node name="LoadingScreen" type="CanvasLayer"]
+layer = 100
+
+[node name="FadeRect" type="ColorRect" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0)
+visible = false
 
 [node name="LoadingLabel" type="Label" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -30.0
+offset_right = 200.0
+offset_bottom = 30.0
+horizontal_alignment = 1
+vertical_alignment = 1
 text = "Loading..."
-position = Vector2(0, 0)
-
-[node name="ProgressBar" type="ProgressBar" parent="."]
-position = Vector2(0, 50)
-size = Vector2(200, 20)
+theme_override_font_size = 32
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+visible = false

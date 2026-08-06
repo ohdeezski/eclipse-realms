@@ -1,33 +1,149 @@
-[gd_scene load_steps=3 format=3 uid="uid://inventory01"]
+[gd_scene load_steps=10 format=3 uid="uid://inventory01"]
+
 [ext_resource type="Script" path="res://scripts/ui/inventory.gd" id="1_inventory"]
 
 [node name="Inventory" type="Control"]
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-size = Vector2(640, 480)
-theme_type_variation = "PanelContainer"
+script = ExtResource("1_inventory")
 
-[node name="Background" type="Panel" parent="." parent="."]
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-modulate = Color(0, 0, 0, 0.85)
+color = Color(0.1, 0.1, 0.15, 0.95)
 
-[node name="TitleBar" type="Panel" parent="."]
-position = Vector2(0, 0)
-size = Vector2(640, 40)
+[node name="TitleBar" type="HBoxContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+offset_bottom = 50.0
 
 [node name="TitleLabel" type="Label" parent="TitleBar"]
-text = "Inventory"
-position = Vector2(10, 12)
-font_size = 18
+text = "INVENTORY"
+theme_override_font_size = 24
+theme_override_colors/font_color = Color(1, 0.9, 0.7, 1)
+custom_minimum_size = Vector2(200, 40)
+
+[node name="GoldContainer" type="HBoxContainer" parent="TitleBar"]
+alignment = 2
+
+[node name="GoldIcon" type="Label" parent="TitleBar/GoldContainer"]
+text = "💰"
+theme_override_font_size = 20
+
+[node name="GoldLabel" type="Label" parent="TitleBar/GoldContainer"]
+text = "0"
+name = "GoldLabel"
+theme_override_font_size = 20
+theme_override_colors/font_color = Color(1, 0.85, 0.1, 1)
+custom_minimum_size = Vector2(100, 30)
 
 [node name="CloseButton" type="Button" parent="TitleBar"]
-text = "X"
-position = Vector2(600, 8)
-size = Vector2(32, 24)
+text = "✕"
+custom_minimum_size = Vector2(40, 40)
+theme_override_font_size = 20
 
-[node name="ItemList" type="GridContainer" parent="."]
-position = Vector2(20, 60)
-size = Vector2(580, 380)
-columns = 5
-theme_type_variation = "GridContainer"
+[node name="TabContainer" type="HBoxContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+offset_top = 50.0
+offset_bottom = 90.0
+
+[node name="AllTab" type="Button" parent="TabContainer"]
+text = "All"
+toggle_mode = true
+button_group = "InventoryTabs"
+custom_minimum_size = Vector2(80, 40)
+
+[node name="WeaponsTab" type="Button" parent="TabContainer"]
+text = "Weapons"
+toggle_mode = true
+button_group = "InventoryTabs"
+custom_minimum_size = Vector2(80, 40)
+
+[node name="ArmorTab" type="Button" parent="TabContainer"]
+text = "Armor"
+toggle_mode = true
+button_group = "InventoryTabs"
+custom_minimum_size = Vector2(80, 40)
+
+[node name="ConsumablesTab" type="Button" parent="TabContainer"]
+text = "Consumables"
+toggle_mode = true
+button_group = "InventoryTabs"
+custom_minimum_size = Vector2(100, 40)
+
+[node name="MaterialsTab" type="Button" parent="TabContainer"]
+text = "Materials"
+toggle_mode = true
+button_group = "InventoryTabs"
+custom_minimum_size = Vector2(100, 40)
+
+[node name="QuestTab" type="Button" parent="TabContainer"]
+text = "Quest"
+toggle_mode = true
+button_group = "InventoryTabs"
+custom_minimum_size = Vector2(80, 40)
+
+[node name="GridContainer" type="GridContainer" parent="."]
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 90.0
+offset_bottom = 10.0
+offset_left = 10.0
+offset_right = 10.0
+columns = 8
+horizontal_spacing = 4
+vertical_spacing = 4
+
+[node name="ItemTooltip" type="Panel" parent="."]
+visible = false
+anchors_preset = 0
+offset_right = 280.0
+offset_bottom = 180.0
+
+[node name="TooltipName" type="Label" parent="ItemTooltip"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 268.0
+offset_bottom = 36.0
+theme_override_font_size = 18
+theme_override_colors/font_color = Color(1, 0.9, 0.7, 1)
+
+[node name="TooltipDescription" type="Label" parent="ItemTooltip"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 40.0
+offset_right = 268.0
+offset_bottom = 100.0
+autowrap_mode = 1
+theme_override_font_size = 14
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
+
+[node name="TooltipStats" type="Label" parent="ItemTooltip"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 104.0
+offset_right = 268.0
+offset_bottom = 140.0
+autowrap_mode = 1
+theme_override_font_size = 13
+theme_override_colors/font_color = Color(0.6, 0.9, 0.6, 1)
+
+[node name="TooltipValue" type="Label" parent="ItemTooltip"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 144.0
+offset_right = 268.0
+offset_bottom = 168.0
+theme_override_font_size = 14
+theme_override_colors/font_color = Color(1, 0.85, 0.1, 1)

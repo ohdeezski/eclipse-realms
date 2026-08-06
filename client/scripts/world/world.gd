@@ -57,6 +57,18 @@ func _on_zone_entered(zone_id: String, display_name: String) -> void:
 
 func _on_zone_changed(old_zone: String, new_zone: String) -> void:
 	print("[World] Zone transition: %s -> %s" % [old_zone, new_zone])
+	# Handle zone transitions that load new scenes
+	match new_zone:
+		"village_transition":
+			SceneManager.change_scene("res://scenes/world/oakrest_village.tscn", "fade")
+		"cavern_transition":
+			SceneManager.change_scene("res://scenes/world/whispering_caverns.tscn", "fade")
+		"forest":
+			if get_tree().current_scene.scene_file_path != "res://scenes/world/mosswood_forest.tscn":
+				SceneManager.change_scene("res://scenes/world/mosswood_forest.tscn", "fade")
+		"caverns":
+			if get_tree().current_scene.scene_file_path != "res://scenes/world/whispering_caverns.tscn":
+				SceneManager.change_scene("res://scenes/world/whispering_caverns.tscn", "fade")
 	# Future: trigger music change, spawn/despawn entities, etc.
 
 
@@ -89,6 +101,8 @@ func _resolve_npc_id(node_name: String) -> String:
 		return "merchant"
 	elif "Innkeeper" in node_name:
 		return "innkeeper"
+	elif "Ranger" in node_name:
+		return "ranger"
 	return "village_elder"
 
 

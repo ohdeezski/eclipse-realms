@@ -270,11 +270,13 @@ func load_equipment() -> bool:
 
 
 func load_world_data() -> bool:
-    # Load world data from shared resources
-    var world_file = "res://shared/game_data/world.json"
+    # Load world data from shared resources (try user:// first, then res://)
+    var world_file_user = "user://shared/game_data/world.json"
+    var world_file_res = "res://shared/game_data/world.json"
     
-    if ResourceLoader.exists(world_file):
-        var file = FileAccess.open(world_file, FileAccess.READ)
+    # Try user:// first (where we save)
+    if FileAccess.file_exists(world_file_user):
+        var file = FileAccess.open(world_file_user, FileAccess.READ)
         if file:
             var content = file.get_as_text()
             file.close()
@@ -284,7 +286,22 @@ func load_world_data() -> bool:
             
             if err == OK:
                 world_data = json.data
-                print("[GameData] Loaded world data")
+                print("[GameData] Loaded world data from user://")
+                return true
+    
+    # Fall back to res://
+    if ResourceLoader.exists(world_file_res):
+        var file = FileAccess.open(world_file_res, FileAccess.READ)
+        if file:
+            var content = file.get_as_text()
+            file.close()
+            
+            var json = JSON.new()
+            var err = json.parse(content)
+            
+            if err == OK:
+                world_data = json.data
+                print("[GameData] Loaded world data from res://")
                 return true
     
     _create_default_world_data()
@@ -311,8 +328,8 @@ func _save_data(data: Dictionary, file_path: String) -> void:
         return
     
     var json = JSON.new()
-    json.stringify(data)
-    file.store_string(json.get_data())
+    var json_string = json.stringify(data)
+    file.store_string(json_string)
     file.close()
     
     print("[GameData] Saved data to: %s" % file_path)
@@ -515,11 +532,88 @@ func _create_default_items() -> void:
             "max_stack": 99,
             "icon": "items/antidote",
             "tags": ["consumable", "potion", "cure"]
+        },
+        "wolf_pelt": {
+            "id": "wolf_pelt",
+            "name": "Wolf Pelt",
+            "description": "A thick pelt from a forest wolf, valuable for crafting",
+            "type": "material",
+            "subtype": "pelt",
+            "rarity": "common",
+            "level": 1,
+            "value": 75,
+            "weight": 2.0,
+            "stackable": true,
+            "max_stack": 99,
+            "icon": "items/wolf_pelt",
+            "tags": ["material", "pelt", "crafting"]
+        },
+        "wisp_essence": {
+            "id": "wisp_essence",
+            "name": "Wisp Essence",
+            "description": "Glowing essence from a Thorn Wisp, used in enchanting",
+            "type": "material",
+            "subtype": "essence",
+            "rarity": "uncommon",
+            "level": 5,
+            "value": 150,
+            "weight": 0.5,
+            "stackable": true,
+            "max_stack": 99,
+            "icon": "items/wisp_essence",
+            "tags": ["material", "essence", "crafting", "magic"]
+        },
+        "elder_amulet": {
+            "id": "elder_amulet",
+            "name": "Elder's Amulet",
+            "description": "A sentimental amulet belonging to Elder Alric",
+            "type": "quest",
+            "subtype": "key_item",
+            "rarity": "rare",
+            "level": 1,
+            "value": 0,
+            "weight": 0.1,
+            "stackable": false,
+            "icon": "items/elder_amulet",
+            "tags": ["quest", "key_item"]
+        },
+        "moss_essence": {
+            "id": "moss_essence",
+            "name": "Moss Essence",
+            "description": "Vibrant green essence from a Moss Slime, used in alchemy",
+            "type": "material",
+            "subtype": "essence",
+            "rarity": "common",
+            "level": 1,
+            "value": 25,
+            "weight": 0.3,
+            "stackable": true,
+            "max_stack": 99,
+            "icon": "items/moss_essence",
+            "tags": ["material", "essence", "crafting", "alchemy"]
+        },
+        "thorn": {
+            "id": "thorn",
+            "name": "Thorn",
+            "description": "A sharp thorn from a Thorn Wisp, used in crafting",
+            "type": "material",
+            "subtype": "thorn",
+            "rarity": "common",
+            "level": 5,
+            "value": 40,
+            "weight": 0.2,
+            "stackable": true,
+            "max_stack": 99,
+            "icon": "items/thorn",
+            "tags": ["material", "thorn", "crafting"]
         }
     }
     
     print("[GameData] Created default items")
     data_changed.emit("items")
+    
+    # Save to file
+    _save_data(items, ITEMS_FILE)
 
 
 func _create_default_characters() -> void:
@@ -596,6 +690,9 @@ func _create_default_characters() -> void:
     
     print("[GameData] Created default characters")
     data_changed.emit("characters")
+    
+    # Save to file
+    _save_data(characters, CHARACTERS_FILE)
 
 
 func _create_default_monsters() -> void:
@@ -673,6 +770,9 @@ func _create_default_monsters() -> void:
     
     print("[GameData] Created default monsters")
     data_changed.emit("monsters")
+    
+    # Save to file
+    _save_data(monsters, MONSTERS_FILE)
 
 
 func _create_default_npcs() -> void:
@@ -1005,6 +1105,9 @@ func _create_default_npcs() -> void:
 
     print("[GameData] Created default NPCs")
     data_changed.emit("npcs")
+    
+    # Save to file
+    _save_data(npcs, NPCS_FILE)
 
 
 func _create_default_quests() -> void:
@@ -1076,11 +1179,63 @@ func _create_default_quests() -> void:
             "next_quests": ["clear_thorn_wisp"],
             "repeatable": true,
             "daily_limit": 5
+        },
+        "clear_thorn_wisp": {
+            "id": "clear_thorn_wisp",
+            "name": "Clearing the Wisps",
+            "description": "Thorn Wisps have infested the Whispering Caverns. Clear them out.",
+            "giver": "ranger",
+            "category": "dungeon",
+            "level": 5,
+            "requirements": {
+                "level": 5,
+                "completed_quests": ["hunt_forest_wolf"]
+            },
+            "objectives": [
+                {"type": "kill", "target": "thorn_wisp", "amount": 5, "completed": false},
+                {"type": "kill", "target": "cave_guardian", "amount": 1, "completed": false},
+                {"type": "return", "target": "ranger", "completed": false}
+            ],
+            "rewards": {
+                "experience": 300,
+                "gold": 500,
+                "items": ["wisp_essence", "iron_sword"]
+            },
+            "next_quests": ["escort_merchant"],
+            "repeatable": true,
+            "daily_limit": 3
+        },
+        "escort_merchant": {
+            "id": "escort_merchant",
+            "name": "Merchant Escort",
+            "description": "Escort Merchant Lira safely through the forest to the Hunter's Camp.",
+            "giver": "merchant",
+            "category": "escort",
+            "level": 4,
+            "requirements": {
+                "level": 4,
+                "completed_quests": ["find_missing_item"]
+            },
+            "objectives": [
+                {"type": "escort", "target": "merchant", "amount": 1, "completed": false},
+                {"type": "return", "target": "ranger", "completed": false}
+            ],
+            "rewards": {
+                "experience": 200,
+                "gold": 400,
+                "items": ["chainmail", "health_potion", "health_potion"]
+            },
+            "next_quests": [],
+            "repeatable": true,
+            "daily_limit": 2
         }
     }
     
     print("[GameData] Created default quests")
     data_changed.emit("quests")
+    
+    # Save to file
+    _save_data(quests, QUESTS_FILE)
 
 
 func _create_default_skills() -> void:
@@ -1151,6 +1306,9 @@ func _create_default_skills() -> void:
     
     print("[GameData] Created default skills")
     data_changed.emit("skills")
+    
+    # Save to file
+    _save_data(skills, SKILLS_FILE)
 
 
 func _create_default_equipment() -> void:
@@ -1183,6 +1341,9 @@ func _create_default_equipment() -> void:
     
     print("[GameData] Created default equipment")
     data_changed.emit("equipment")
+    
+    # Save to file
+    _save_data(equipment, EQUIPMENT_FILE)
 
 
 func _create_default_world_data() -> void:
@@ -1246,6 +1407,13 @@ func _create_default_world_data() -> void:
     
     print("[GameData] Created default world data")
     data_changed.emit("world")
+    
+    # Save to file
+    var world_file = "user://shared/game_data/world.json"
+    var world_dir = "user://shared/game_data/"
+    if not DirAccess.dir_exists_absolute(world_dir):
+        DirAccess.make_dir_recursive_absolute(world_dir)
+    _save_data(world_data, world_file)
 
 
 # ============================================================================

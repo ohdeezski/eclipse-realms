@@ -15,7 +15,7 @@ signal notification_shown(message: String, type: String)
 ## Constants
 const UI_DIR: String = "res://scenes/ui/"
 const DIALOG_DIR: String = UI_DIR + "dialogs/"
-const MENU_DIR: String = UI_DIR + "menus/"
+const MENU_DIR: String = UI_DIR
 const HUD_DIR: String = UI_DIR + "hud/"
 
 const NOTIFICATION_DURATION: float = 3.0  # seconds
@@ -579,7 +579,7 @@ func _create_menu_layer() -> void:
         ui_canvas.add_child(menu_layer)
     else:
         get_tree().root.add_child(menu_layer)
-    menu_layer.z_index = 100
+    menu_layer.layer = 100
 
 
 func _create_dialog_layer() -> void:
@@ -589,7 +589,7 @@ func _create_dialog_layer() -> void:
         ui_canvas.add_child(dialog_layer)
     else:
         get_tree().root.add_child(dialog_layer)
-    dialog_layer.z_index = 200
+    dialog_layer.layer = 200
 
 
 func _create_notification_layer() -> void:
@@ -599,7 +599,7 @@ func _create_notification_layer() -> void:
         ui_canvas.add_child(notification_layer)
     else:
         get_tree().root.add_child(notification_layer)
-    notification_layer.z_index = 300
+    notification_layer.layer = 300
 
 
 func _center_control(control: Control) -> void:

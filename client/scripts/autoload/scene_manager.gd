@@ -69,6 +69,9 @@ func _initialize() -> void:
     # Check if GameManager is available
     if not has_node("/root/GameManager"):
         push_error("[SceneManager] GameManager not found - scene transitions may not work correctly")
+    else:
+        # GameManager is available
+        pass
     
     # Load initial scene
     if get_tree().root.get_child_count() > 1:  # Already has scenes
@@ -116,7 +119,7 @@ func go_to_main_menu() -> void:
 
 func _change_scene_instant() -> void:
     is_transitioning = true
-    var from_path = current_scene.scene_file_path if current_scene and current_scene != null else ""
+    var from_path = current_scene.scene_file_path if current_scene else ""
     
     # Free current scene
     if current_scene:

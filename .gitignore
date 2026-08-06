@@ -290,3 +290,6 @@ crash.*
 #
 # =============================================================================orca-linux.AppImage
 orca-linux.AppImage
+.import
+.remap
+.wasm
