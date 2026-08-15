@@ -193,6 +193,10 @@ server/uploads/*
 # Environment and config
 server/.env
 
+# Secret files (e.g. db_password.txt placeholder + real secrets) — never commit
+secrets/
+server/secrets/
+
 # Node.js server
 dist/
 coverage/

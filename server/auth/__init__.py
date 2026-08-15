@@ -10,8 +10,9 @@ Minimal, dependency-light auth for the REST API (port 9052):
 Security notes (for Shiki / CISO review — NOT production-hardened yet):
   * Passwords hashed with PBKDF2-HMAC-SHA256 (100k iters), per-peer salt.
   * Sessions are random 32-byte hex tokens, stored in `sessions` table with expiry.
-  * CORS is open by default (see CORS_ORIGINS) — tighten before prod.
-  * No rate limiting yet — add at reverse proxy / in start_http.
+  * CORS restricted by default to https://streetsmartnyc.online + localhost
+    (overridable via ECLIPSE_CORS_ORIGINS; set "*" only for local dev).
+  * Per-IP rate limiting (100 req/min) enforced in server.py's start_http.
   * No email verification — out of scope for v0.1.0.
 This module is wired but must pass Shiki's G-S1 security review before multiplayer persistence is trusted.
 """
@@ -26,7 +27,7 @@ from datetime import datetime, timedelta
 # Configurable via env (so staging/prod don't hardcode 127.0.0.1).
 SESSION_TTL_SECONDS = int(os.environ.get("ECLIPSE_SESSION_TTL", "86400"))
 PBKDF2_ITERS = 100_000
-CORS_ORIGINS = os.environ.get("ECLIPSE_CORS_ORIGINS", "*").split(",")
+CORS_ORIGINS = os.environ.get("ECLIPSE_CORS_ORIGINS", "https://streetsmartnyc.online,http://localhost,http://127.0.0.1:9052").split(",")
 
 
 def _hash_password(password: str, salt: bytes = None) -> tuple[str, str]:
