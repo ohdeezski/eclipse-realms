@@ -41,7 +41,7 @@ var interaction_range: float = 60.0
 var can_interact: bool = true
 
 ## Visual Components
-@onready var sprite: ColorRect = $Sprite
+@onready var sprite: Sprite2D = $Sprite
 @onready var label: Label = $Label
 @onready var interaction_indicator: Sprite2D = $InteractionIndicator if has_node("InteractionIndicator") else null
 @onready var cooldown_timer: Timer = $CooldownTimer if has_node("CooldownTimer") else null
@@ -112,9 +112,23 @@ func configure(data: Dictionary) -> void:
         if npc_title:
             label.text += "\n" + npc_title
     
-    # Set sprite position
+    # Set sprite position and load sprite texture
     if sprite:
         sprite.position = Vector2(-16, -16)
+        # Apply drop_shadow shader material
+        if sprite is Sprite2D:
+            var mat = (sprite.material if sprite.material else CanvasItemMaterial.new())
+            if mat.shader == null:
+                var shader = load("res://assets/shaders/drop_shadow.gdshader")
+                if shader:
+                    mat.shader = shader
+            sprite.material = mat
+        if sprite is Sprite2D and data.has("sprite"):
+            var sprite_path = data["sprite"]
+            if ResourceLoader.exists("res://%s" % sprite_path):
+                sprite.texture = load("res://%s" % sprite_path)
+                sprite.centered = true
+                sprite.offset = Vector2.ZERO
     
     # Initialize dialogue tree if not provided
     if dialogue_tree.is_empty():

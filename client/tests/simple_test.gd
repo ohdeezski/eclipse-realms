@@ -37,28 +37,28 @@ func _init():
     var save_manager = SaveManager
     if save_manager != null:
         _assert(true, "SaveManager should be autoloaded")
-    else
+    else:
         _assert(false, "SaveManager should be autoloaded")
     
     # Test 8: AudioManager is autoloaded
     var audio_manager = AudioManager
     if audio_manager != null:
         _assert(true, "AudioManager should be autoloaded")
-    else
+    else:
         _assert(false, "AudioManager should be autoloaded")
     
     # Test 9: SceneManager is autoloaded
     var scene_manager = SceneManager
     if scene_manager != null:
         _assert(true, "SceneManager should be autoloaded")
-    else
+    else:
         _assert(false, "SceneManager should be autoloaded")
     
     # Test 10: UIManager is autoloaded
     var ui_manager = UIManager
     if ui_manager != null:
         _assert(true, "UIManager should be autoloaded")
-    else
+    else:
         _assert(false, "UIManager should be autoloaded")
     
     print("\n========== Test Results: %d passed, %d failed =========\n" % [test_results["passed"], test_results["failed"]])

@@ -99,6 +99,21 @@ func setup(data: Dictionary) -> void:
 		npc_title_label.text = npc_title
 		npc_title_label.visible = npc_title != ""
 	
+	# Load portrait if available
+	if portrait_rect:
+		var npc_data = GameData.get_npc(npc_id) if npc_id != "" else {}
+		if not npc_data.is_empty() and npc_data.has("portrait"):
+			var portrait_path = "res://%s" % npc_data["portrait"]
+			if ResourceLoader.exists(portrait_path):
+				portrait_rect.texture = load(portrait_path)
+				portrait_rect.visible = true
+			else:
+				portrait_rect.texture = null
+				portrait_rect.visible = false
+		else:
+			portrait_rect.texture = null
+			portrait_rect.visible = false
+	
 	# Get the header text
 	var header = data.get("header", "Hello, traveler.")
 	

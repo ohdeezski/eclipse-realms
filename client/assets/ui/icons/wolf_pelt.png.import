@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://daws0u7sa6bfi"
-path="res://.godot/imported/npc_villager.png-06ac9c37d1300b58f61ff2b82930ef90.ctex"
+uid="uid://dl47kl1e7k4gi"
+path="res://.godot/imported/wolf_pelt.png-3693819d3553642dac4d5a3fa34d155e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/npcs/npc_villager.png"
-dest_files=["res://.godot/imported/npc_villager.png-06ac9c37d1300b58f61ff2b82930ef90.ctex"]
+source_file="res://assets/ui/icons/wolf_pelt.png"
+dest_files=["res://.godot/imported/wolf_pelt.png-3693819d3553642dac4d5a3fa34d155e.ctex"]
 
 [params]
 

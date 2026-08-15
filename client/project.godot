@@ -7,7 +7,7 @@
 config/name="Eclipse Realms"
 run/main_scene="res://scenes/main_menu/main_menu.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
-; config/icon="res://icon.svg"  ; Temporarily disabled until icon is created
+config/icon="res://icon.svg"
 
 [autoload]
 
@@ -154,3 +154,8 @@ renderer/shadows/visible_shadow_region="false"
 
 ; Post-processing
 renderer/post_processing/auto_exposure/enable="false"
+
+[export]
+
+export/default_filename="eclipse-realms"
+export/disable_3d=false

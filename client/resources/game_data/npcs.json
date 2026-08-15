@@ -12,7 +12,9 @@
       "quest_complete": "You have done Oakrest a great service. Take this, and welcome."
     },
     "services": ["quest_giver"],
-    "related_quest": "wolf_hunt"
+    "related_quest": "wolf_hunt",
+    "sprite": "assets/characters/npcs/npc_elder_alric.png",
+    "portrait": "assets/characters/portraits/por_elder.png"
   },
   "blacksmith": {
     "id": "blacksmith",
@@ -25,7 +27,9 @@
       "shop": "Take a look. Prices are fair."
     },
     "services": ["shop"],
-    "sells": ["wooden_sword", "leather_boots", "health_potion"]
+    "sells": ["wooden_sword", "leather_boots", "health_potion"],
+    "sprite": "assets/characters/npcs/npc_blacksmith.png",
+    "portrait": "assets/characters/portraits/por_blacksmith.png"
   },
   "ranger": {
     "id": "ranger",
@@ -40,7 +44,9 @@
       "quest_complete": "The caverns are safe. Take this, hunter."
     },
     "services": ["quest_giver"],
-    "related_quest": "clear_thorn_wisp"
+    "related_quest": "clear_thorn_wisp",
+    "sprite": "assets/characters/npcs/npc_ranger.png",
+    "portrait": "assets/characters/portraits/por_ranger.png"
   },
   "merchant": {
     "id": "merchant",
@@ -56,7 +62,9 @@
     },
     "services": ["shop", "quest_giver"],
     "sells": ["health_potion", "mana_potion", "antidote"],
-    "related_quest": "escort_merchant"
+    "related_quest": "escort_merchant",
+    "sprite": "assets/characters/npcs/npc_merchant_lira.png",
+    "portrait": "assets/characters/portraits/por_merchant.png"
   },
   "innkeeper": {
     "id": "innkeeper",
@@ -68,6 +76,8 @@
       "greeting": "Welcome, traveler! A warm bed and a hot meal for a few coins.",
       "inn": "Rest here and recover your strength."
     },
-    "services": ["inn"]
+    "services": ["inn"],
+    "sprite": "assets/characters/npcs/npc_innkeeper.png",
+    "portrait": "assets/characters/portraits/por_innkeeper.png"
   }
 }

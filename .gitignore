@@ -307,3 +307,9 @@ __pycache__/
 EclipseRealms_Demo_v0_0_1.zip
 builds/
 .orca-linux.AppImage
+
+# ============================================================================
+# AGENT / SOURCE-ART CRUFT (added 2026-08-15 WS-1 commit)
+# ============================================================================
+.omniagent/
+client/_masters/

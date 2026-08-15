@@ -34,6 +34,23 @@ const ZONE_DISPLAY_NAMES: Dictionary = {
 	"forest_transition": "Mosswood Forest",
 }
 
+## Music track per zone (maps zone_id → audio track key in AudioConfig)
+const ZONE_MUSIC: Dictionary = {
+	"village": "village",
+	"forest": "forest",
+	"training": "training",
+	"blacksmith": "blacksmith",
+	"inn": "inn",
+	"merchant": "merchant",
+	"entrance": "forest",
+	"clearing": "forest",
+	"deep_forest": "forest",
+	"caverns": "caverns",
+	"creek": "creek",
+	"camp": "hunters_camp",
+	"watchtower": "forest",
+}
+
 ## Which zone the player is currently in
 var current_zone: String = ""
 var previous_zone: String = ""
@@ -76,6 +93,10 @@ func _on_zone_body_entered(body: Node, zone_id: String) -> void:
 	var display_name = ZONE_DISPLAY_NAMES.get(zone_id, zone_id.capitalize())
 
 	zone_entered.emit(zone_id, display_name)
+
+	# Trigger zone-based music via AudioManager
+	if has_node("/root/AudioManager"):
+		AudioManager.enter_zone(zone_id)
 
 	if previous_zone != zone_id and previous_zone != "":
 		zone_changed.emit(previous_zone, zone_id)

@@ -53,18 +53,44 @@ var facing_direction: Vector2 = Vector2.DOWN
 var is_running: bool = false
 var _facing_name: String = "down"
 
-@onready var sprite: ColorRect = $Sprite
+@onready var sprite: Sprite2D = $Sprite
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var camera: Camera2D = $Camera2D
 @onready var hit_flash: Timer = $HitFlash
 @onready var combat_effects: CombatEffects = null
 var combat_feedback: CombatFeedback = null
 
+# Sprite animation state
+const FRAME_COUNT: int = 4
+const ANIM_SPEED: float = 8.0  # frames per second
+var _anim_timer: float = 0.0
+var _current_frame: int = 0
+var _is_moving: bool = false
+
+var _idle_tex: Texture2D = null
+var _walk_tex: Texture2D = null
+
 func _ready() -> void:
     add_to_group("player")
     # Center the sprite on the body
     if sprite:
         sprite.position = Vector2(-16, -16)
+        sprite.hframes = FRAME_COUNT
+        sprite.vframes = 1
+        sprite.frame = 0
+        # Apply drop_shadow shader material (consistent with monster & NPC sprites)
+        if sprite.material == null or (sprite.material as ShaderMaterial).shader == null:
+            var mat = sprite.material if sprite.material else ShaderMaterial.new()
+            var shader = load("res://assets/shaders/drop_shadow.gdshader")
+            if shader:
+                mat.shader = shader
+                sprite.material = mat
+        # Load textures from GameData character sprite fields
+        var char_data = GameData.get_character("human_adept")
+        _idle_tex = load("res://assets/characters/player/player_idle.png")
+        _walk_tex = load("res://assets/characters/player/player_walk.png")
+        if _idle_tex:
+            sprite.texture = _idle_tex
     # Load character base if available
     var char_data = GameData.get_character("human_adept")
     if char_data.has("base_stats"):
@@ -129,28 +155,28 @@ func _update_visual(dir: Vector2) -> void:
         return
     # Hit flash takes priority
     if not hit_flash.is_stopped():
-        sprite.color = Color(1.0, 1.0, 1.0)
+        sprite.modulate = Color(1.0, 1.0, 1.0)
         return
     if dir == Vector2.ZERO:
-        sprite.color = Color(0.2, 0.6, 0.9, 1.0)
+        sprite.modulate = Color(0.2, 0.6, 0.9, 1.0)
     else:
         match _facing_name:
             "down":
-                sprite.color = Color(0.2, 0.6, 0.9, 1.0)
+                sprite.modulate = Color(0.2, 0.6, 0.9, 1.0)
             "up":
-                sprite.color = Color(0.3, 0.75, 0.95, 1.0)
+                sprite.modulate = Color(0.3, 0.75, 0.95, 1.0)
             "left":
-                sprite.color = Color(0.15, 0.55, 0.85, 1.0)
+                sprite.modulate = Color(0.15, 0.55, 0.85, 1.0)
             "right":
-                sprite.color = Color(0.25, 0.65, 0.95, 1.0)
+                sprite.modulate = Color(0.25, 0.65, 0.95, 1.0)
 
 
 func _play_attack_visual() -> void:
     if not sprite:
         return
     var tween = create_tween()
-    tween.tween_property(sprite, "color", Color(1.0, 0.3, 0.3, 1.0), 0.05)
-    tween.tween_property(sprite, "color", Color(0.2, 0.6, 0.9, 1.0), 0.15)
+    tween.tween_property(sprite, "modulate", Color(1.0, 0.3, 0.3, 1.0), 0.05)
+    tween.tween_property(sprite, "modulate", Color(0.2, 0.6, 0.9, 1.0), 0.15)
 
 
 func _physics_process(delta: float) -> void:
@@ -178,6 +204,37 @@ func _physics_process(delta: float) -> void:
 
     velocity = dir * current_speed
     move_and_slide()
+
+    # Update sprite animation based on movement
+    var was_moving = _is_moving
+    _is_moving = dir != Vector2.ZERO
+    if sprite and _idle_tex and _walk_tex:
+        if _is_moving and not was_moving:
+            # Transition to walk texture
+            sprite.texture = _walk_tex
+            _anim_timer = 0.0
+            _current_frame = 0
+            sprite.frame = 0
+        elif not _is_moving and was_moving:
+            # Transition back to idle texture
+            sprite.texture = _idle_tex
+            _anim_timer = 0.0
+            _current_frame = 0
+            sprite.frame = 0
+        elif _is_moving:
+            # Advance walk animation frames
+            _anim_timer += delta
+            if _anim_timer >= 1.0 / ANIM_SPEED:
+                _anim_timer = 0.0
+                _current_frame = (_current_frame + 1) % FRAME_COUNT
+                sprite.frame = _current_frame
+        else:
+            # Advance idle animation frames (subtle breathing)
+            _anim_timer += delta
+            if _anim_timer >= 1.0 / (ANIM_SPEED * 0.5):
+                _anim_timer = 0.0
+                _current_frame = (_current_frame + 1) % FRAME_COUNT
+                sprite.frame = _current_frame
 
     # Update visual feedback
     _update_visual(dir)

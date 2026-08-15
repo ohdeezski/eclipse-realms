@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f4c4g8y5gy4t"
-path="res://.godot/imported/monster_slime.png-aae37d65a31ee7d37a29b762eb8ea7a5.ctex"
+uid="uid://d4kwa0fpl3lja"
+path="res://.godot/imported/main_menu_bg.png-59bbb07c119e9d6cb9f1531a340441b6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/monsters/monster_slime.png"
-dest_files=["res://.godot/imported/monster_slime.png-aae37d65a31ee7d37a29b762eb8ea7a5.ctex"]
+source_file="res://assets/ui/main_menu_bg.png"
+dest_files=["res://.godot/imported/main_menu_bg.png-59bbb07c119e9d6cb9f1531a340441b6.ctex"]
 
 [params]
 

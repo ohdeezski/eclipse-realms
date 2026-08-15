@@ -42,7 +42,7 @@ var _knockback_velocity: Vector2 = Vector2.ZERO
 var _stun_timer: float = 0.0
 
 ## Node References
-@onready var sprite: ColorRect = $Sprite
+@onready var sprite: Sprite2D = $Sprite
 @onready var hp_bar: ProgressBar = $HPBar
 @onready var hit_flash: Timer = $HitFlash
 @onready var aggro_area: Area2D = $AggroArea if has_node("AggroArea") else null
@@ -96,6 +96,20 @@ func configure(data: Dictionary) -> void:
         hp_bar.value = max_health
     if sprite:
         sprite.position = Vector2(-16, -16)
+        # Apply drop_shadow shader material
+        if sprite is Sprite2D:
+            var mat = (sprite.material if sprite.material else CanvasItemMaterial.new())
+            if mat.shader == null:
+                var shader = load("res://assets/shaders/drop_shadow.gdshader")
+                if shader:
+                    mat.shader = shader
+            sprite.material = mat
+        if sprite is Sprite2D and data.has("sprite"):
+            var sprite_path = data["sprite"]
+            if ResourceLoader.exists("res://%s" % sprite_path):
+                sprite.texture = load("res://%s" % sprite_path)
+                sprite.centered = true
+                sprite.offset = Vector2.ZERO
 
 
 func _physics_process(delta: float) -> void:

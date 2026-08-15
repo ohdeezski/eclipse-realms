@@ -18,7 +18,8 @@
       {"item": "moss_essence", "chance": 0.5}
     ],
     "zones": ["mosswood_forest"],
-    "behavior": "wander"
+    "behavior": "wander",
+    "sprite": "assets/characters/monsters/mon_slime.png"
   },
   "forest_wolf": {
     "id": "forest_wolf",
@@ -39,7 +40,8 @@
       {"item": "wolf_pelt", "chance": 0.6}
     ],
     "zones": ["mosswood_forest"],
-    "behavior": "chase"
+    "behavior": "chase",
+    "sprite": "assets/characters/monsters/mon_forest_wolf.png"
   },
   "thorn_wisp": {
     "id": "thorn_wisp",
@@ -60,7 +62,8 @@
       {"item": "health_potion", "chance": 0.3}
     ],
     "zones": ["whispering_caverns"],
-    "behavior": "wander"
+    "behavior": "wander",
+    "sprite": "assets/characters/monsters/mon_thorn_wisp.png"
   },
   "cave_guardian": {
     "id": "cave_guardian",
@@ -83,6 +86,7 @@
     ],
     "zones": ["whispering_caverns"],
     "behavior": "chase",
-    "is_boss": true
+    "is_boss": true,
+    "sprite": "assets/characters/monsters/mon_cave_guardian.png"
   }
 }
