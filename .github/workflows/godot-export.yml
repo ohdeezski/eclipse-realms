@@ -28,10 +28,18 @@ jobs:
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
           if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux/x11_64/release.cfg ]; then
-            wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+            echo "Downloading Godot ${GODOT_VERSION} export templates..."
+            curl -fSL -o Godot_v${GODOT_VERSION}-stable_export_templates.tpz \
+              "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
+              || { echo "FAILED: curl exit code $?"; ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/; exit 1; }
+            echo "Extracting..."
             tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            echo "Verifying..."
+            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          else
+            echo "Export templates already present, skipping download."
+            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
           fi
-          ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
 
       - name: Export Linux/X11
         working-directory: ./client
@@ -60,10 +68,18 @@ jobs:
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
           if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux/x11_64/release.cfg ]; then
-            wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+            echo "Downloading Godot ${GODOT_VERSION} export templates..."
+            curl -fSL -o Godot_v${GODOT_VERSION}-stable_export_templates.tpz \
+              "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
+              || { echo "FAILED: curl exit code $?"; ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/; exit 1; }
+            echo "Extracting..."
             tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            echo "Verifying..."
+            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          else
+            echo "Export templates already present, skipping download."
+            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
           fi
-          ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
       
       - name: Install Wine for Windows export
         run: |
@@ -98,10 +114,18 @@ jobs:
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
           if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux/x11_64/release.cfg ]; then
-            wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+            echo "Downloading Godot ${GODOT_VERSION} export templates..."
+            curl -fSL -o Godot_v${GODOT_VERSION}-stable_export_templates.tpz \
+              "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
+              || { echo "FAILED: curl exit code $?"; ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/; exit 1; }
+            echo "Extracting..."
             tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            echo "Verifying..."
+            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          else
+            echo "Export templates already present, skipping download."
+            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
           fi
-          ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
       
       - name: Export Web
         working-directory: ./client
