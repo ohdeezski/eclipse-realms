@@ -27,12 +27,12 @@ jobs:
       - name: Setup Godot export templates
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux_x11_64_release.apk ]; then
+          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux/x11_64/release.cfg ]; then
             wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
             tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
           fi
           ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
-      
+
       - name: Export Linux/X11
         working-directory: ./client
         run: |
@@ -59,7 +59,7 @@ jobs:
       - name: Setup Godot export templates
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux_x11_64_release.apk ]; then
+          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux/x11_64/release.cfg ]; then
             wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
             tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
           fi
@@ -97,7 +97,7 @@ jobs:
       - name: Setup Godot export templates
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux_x11_64_release.apk ]; then
+          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux/x11_64/release.cfg ]; then
             wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
             tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
           fi
