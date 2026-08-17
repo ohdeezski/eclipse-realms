@@ -40,7 +40,7 @@ jobs:
             echo "Export templates already present, skipping download."
             ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
           fi
-
+      
       - name: Export Linux/X11
         working-directory: ./client
         run: |
