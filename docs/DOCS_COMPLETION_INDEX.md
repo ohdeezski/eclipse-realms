@@ -8,7 +8,7 @@ This file tracks the completion status of major planning documents in the Eclips
 |----------|----------|--------|-------|
 | Phase 2 Avatar Visual Resolver & Planning | `docs/PHASE_2_AVATAR_PLAN.md` | **Filed** | Visual resolver implemented; sprites pending; design reference for Phase 2 work |
 | Release Readiness Master Plan | `docs/production/RELEASE_READINESS_MASTER_PLAN.md` | **Filed** | Complete 347-line plan covering P0-P9 phases; first paid PC prologue path; online co-op program deferred |
-| Reality Audit V2 | `docs/REALITY_AUDIT_V2.md` | **Filed** | Definitive re-audit (2026-08-16, updated 2026-08-18); relocated from project root |
+| Reality Audit V2 | `docs/REALITY_AUDIT_V2.md` | **Filed (restored 2026-08-18)** | Definitive re-audit (2026-08-16); full 163-line report restored from git history after placeholder overwrite; relocated from project root |
 | Reality Audit (original) | `docs/archive/REALITY_AUDIT.md` | **Archived** | Superseded by V2; historical evidence only |
 
 ## Active Work
