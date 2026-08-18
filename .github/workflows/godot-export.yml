@@ -28,7 +28,7 @@ jobs:
       
       - name: Setup Godot export templates
         run: |
-          TEMPLATES_DIR="/root/.local/share/godot/export_templates/4.4.stable"
+          TEMPLATES_DIR="${HOME}/.local/share/godot/export_templates/4.4.stable"
           mkdir -p "$TEMPLATES_DIR"
           if [ ! -f "$TEMPLATES_DIR/version.txt" ]; then
             echo "Downloading Godot 4.4 export templates..."
@@ -93,7 +93,7 @@ jobs:
       
       - name: Setup Godot export templates
         run: |
-          TEMPLATES_DIR="/root/.local/share/godot/export_templates/4.4.stable"
+          TEMPLATES_DIR="${HOME}/.local/share/godot/export_templates/4.4.stable"
           mkdir -p "$TEMPLATES_DIR"
           if [ ! -f "$TEMPLATES_DIR/version.txt" ]; then
             echo "Downloading Godot 4.4 export templates..."
@@ -164,7 +164,7 @@ jobs:
       
       - name: Setup Godot export templates
         run: |
-          TEMPLATES_DIR="/root/.local/share/godot/export_templates/4.4.stable"
+          TEMPLATES_DIR="${HOME}/.local/share/godot/export_templates/4.4.stable"
           mkdir -p "$TEMPLATES_DIR"
           if [ ! -f "$TEMPLATES_DIR/version.txt" ]; then
             echo "Downloading Godot 4.4 export templates..."
