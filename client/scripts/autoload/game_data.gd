@@ -19,6 +19,11 @@ const NPCS_FILE: String = DATA_DIR + "npcs.json"
 const QUESTS_FILE: String = DATA_DIR + "quests.json"
 const SKILLS_FILE: String = DATA_DIR + "skills.json"
 const EQUIPMENT_FILE: String = DATA_DIR + "equipment.json"
+const AVATAR_VISUALS_FILE: String = DATA_DIR + "avatar_visuals.json"
+const SPECIES_FILE: String = DATA_DIR + "species.json"
+const JOBS_FILE: String = DATA_DIR + "jobs.json"
+const APPEARANCE_OPTIONS_FILE: String = DATA_DIR + "appearance_options.json"
+const COSMETICS_FILE: String = DATA_DIR + "cosmetics.json"
 
 ## Static variables
 static var is_initialized: bool = false
@@ -33,6 +38,10 @@ static var skills: Dictionary = {}
 static var equipment: Dictionary = {}
 static var species: Dictionary = {}
 static var world_data: Dictionary = {}
+static var avatar_visuals: Dictionary = {}
+static var jobs: Dictionary = {}
+static var appearance_options: Dictionary = {}
+static var cosmetics: Dictionary = {}
 
 ## Indexes for fast lookup
 static var item_index: Dictionary = {}
@@ -70,6 +79,11 @@ func load_all_data() -> void:
     load_quests()
     load_skills()
     load_equipment()
+    load_avatar_visuals()
+    load_species()
+    load_jobs()
+    load_appearance_options()
+    load_cosmetics()
     load_world_data()
 
 
@@ -127,6 +141,32 @@ func load_characters() -> bool:
     push_error("[GameData] Failed to parse characters file")
     _create_default_characters()
     return false
+
+
+func load_avatar_visuals() -> bool:
+    if not ResourceLoader.exists(AVATAR_VISUALS_FILE):
+        push_warning("[GameData] Avatar visual catalog not found: %s" % AVATAR_VISUALS_FILE)
+        avatar_visuals = {}
+        return false
+
+    var file = FileAccess.open(AVATAR_VISUALS_FILE, FileAccess.READ)
+    if file == null:
+        push_error("[GameData] Failed to open avatar visual catalog")
+        avatar_visuals = {}
+        return false
+
+    var json = JSON.new()
+    var err = json.parse(file.get_as_text())
+    file.close()
+    if err != OK or not json.data is Dictionary:
+        push_error("[GameData] Failed to parse avatar visual catalog")
+        avatar_visuals = {}
+        return false
+
+    avatar_visuals = json.data
+    data_loaded.emit("avatar_visuals")
+    print("[GameData] Loaded %d avatar visuals" % avatar_visuals.size())
+    return true
 
 
 func load_monsters() -> bool:
@@ -269,12 +309,53 @@ func load_equipment() -> bool:
     return false
 
 
+func _load_catalog(path: String, catalog_name: String) -> Dictionary:
+    if not ResourceLoader.exists(path):
+        push_error("[GameData] Missing %s catalog: %s" % [catalog_name, path])
+        return {}
+    var file = FileAccess.open(path, FileAccess.READ)
+    if file == null:
+        push_error("[GameData] Failed to open %s catalog" % catalog_name)
+        return {}
+    var json = JSON.new()
+    var err = json.parse(file.get_as_text())
+    file.close()
+    if err != OK or not (json.data is Dictionary):
+        push_error("[GameData] Failed to parse %s catalog" % catalog_name)
+        return {}
+    print("[GameData] Loaded %d %s entries" % [json.data.size(), catalog_name])
+    data_loaded.emit(catalog_name)
+    return json.data
+
+
+func load_species() -> bool:
+    species = _load_catalog(SPECIES_FILE, "species")
+    return not species.is_empty()
+
+
+func load_jobs() -> bool:
+    jobs = _load_catalog(JOBS_FILE, "jobs")
+    return not jobs.is_empty()
+
+
+func load_appearance_options() -> bool:
+    appearance_options = _load_catalog(APPEARANCE_OPTIONS_FILE, "appearance options")
+    return not appearance_options.is_empty()
+
+
+func load_cosmetics() -> bool:
+    cosmetics = _load_catalog(COSMETICS_FILE, "cosmetics")
+    return not cosmetics.is_empty()
+
+
 func load_world_data() -> bool:
-    # Load world data from shared resources
-    var world_file = "res://shared/game_data/world.json"
+    # Load world data from shared resources (try user:// first, then res://)
+    var world_file_user = "user://shared/game_data/world.json"
+    var world_file_res = "res://shared/game_data/world.json"
     
-    if ResourceLoader.exists(world_file):
-        var file = FileAccess.open(world_file, FileAccess.READ)
+    # Try user:// first (where we save)
+    if FileAccess.file_exists(world_file_user):
+        var file = FileAccess.open(world_file_user, FileAccess.READ)
         if file:
             var content = file.get_as_text()
             file.close()
@@ -284,7 +365,22 @@ func load_world_data() -> bool:
             
             if err == OK:
                 world_data = json.data
-                print("[GameData] Loaded world data")
+                print("[GameData] Loaded world data from user://")
+                return true
+    
+    # Fall back to res://
+    if ResourceLoader.exists(world_file_res):
+        var file = FileAccess.open(world_file_res, FileAccess.READ)
+        if file:
+            var content = file.get_as_text()
+            file.close()
+            
+            var json = JSON.new()
+            var err = json.parse(content)
+            
+            if err == OK:
+                world_data = json.data
+                print("[GameData] Loaded world data from res://")
                 return true
     
     _create_default_world_data()
@@ -311,8 +407,8 @@ func _save_data(data: Dictionary, file_path: String) -> void:
         return
     
     var json = JSON.new()
-    json.stringify(data)
-    file.store_string(json.get_data())
+    var json_string = json.stringify(data)
+    file.store_string(json_string)
     file.close()
     
     print("[GameData] Saved data to: %s" % file_path)
@@ -515,11 +611,88 @@ func _create_default_items() -> void:
             "max_stack": 99,
             "icon": "items/antidote",
             "tags": ["consumable", "potion", "cure"]
+        },
+        "wolf_pelt": {
+            "id": "wolf_pelt",
+            "name": "Wolf Pelt",
+            "description": "A thick pelt from a forest wolf, valuable for crafting",
+            "type": "material",
+            "subtype": "pelt",
+            "rarity": "common",
+            "level": 1,
+            "value": 75,
+            "weight": 2.0,
+            "stackable": true,
+            "max_stack": 99,
+            "icon": "items/wolf_pelt",
+            "tags": ["material", "pelt", "crafting"]
+        },
+        "wisp_essence": {
+            "id": "wisp_essence",
+            "name": "Wisp Essence",
+            "description": "Glowing essence from a Thorn Wisp, used in enchanting",
+            "type": "material",
+            "subtype": "essence",
+            "rarity": "uncommon",
+            "level": 5,
+            "value": 150,
+            "weight": 0.5,
+            "stackable": true,
+            "max_stack": 99,
+            "icon": "items/wisp_essence",
+            "tags": ["material", "essence", "crafting", "magic"]
+        },
+        "elder_amulet": {
+            "id": "elder_amulet",
+            "name": "Elder's Amulet",
+            "description": "A sentimental amulet belonging to Elder Alric",
+            "type": "quest",
+            "subtype": "key_item",
+            "rarity": "rare",
+            "level": 1,
+            "value": 0,
+            "weight": 0.1,
+            "stackable": false,
+            "icon": "items/elder_amulet",
+            "tags": ["quest", "key_item"]
+        },
+        "moss_essence": {
+            "id": "moss_essence",
+            "name": "Moss Essence",
+            "description": "Vibrant green essence from a Moss Slime, used in alchemy",
+            "type": "material",
+            "subtype": "essence",
+            "rarity": "common",
+            "level": 1,
+            "value": 25,
+            "weight": 0.3,
+            "stackable": true,
+            "max_stack": 99,
+            "icon": "items/moss_essence",
+            "tags": ["material", "essence", "crafting", "alchemy"]
+        },
+        "thorn": {
+            "id": "thorn",
+            "name": "Thorn",
+            "description": "A sharp thorn from a Thorn Wisp, used in crafting",
+            "type": "material",
+            "subtype": "thorn",
+            "rarity": "common",
+            "level": 5,
+            "value": 40,
+            "weight": 0.2,
+            "stackable": true,
+            "max_stack": 99,
+            "icon": "items/thorn",
+            "tags": ["material", "thorn", "crafting"]
         }
     }
     
     print("[GameData] Created default items")
     data_changed.emit("items")
+    
+    # Save to file
+    _save_data(items, ITEMS_FILE)
 
 
 func _create_default_characters() -> void:
@@ -596,6 +769,9 @@ func _create_default_characters() -> void:
     
     print("[GameData] Created default characters")
     data_changed.emit("characters")
+    
+    # Save to file
+    _save_data(characters, CHARACTERS_FILE)
 
 
 func _create_default_monsters() -> void:
@@ -673,6 +849,9 @@ func _create_default_monsters() -> void:
     
     print("[GameData] Created default monsters")
     data_changed.emit("monsters")
+    
+    # Save to file
+    _save_data(monsters, MONSTERS_FILE)
 
 
 func _create_default_npcs() -> void:
@@ -1005,6 +1184,9 @@ func _create_default_npcs() -> void:
 
     print("[GameData] Created default NPCs")
     data_changed.emit("npcs")
+    
+    # Save to file
+    _save_data(npcs, NPCS_FILE)
 
 
 func _create_default_quests() -> void:
@@ -1076,11 +1258,63 @@ func _create_default_quests() -> void:
             "next_quests": ["clear_thorn_wisp"],
             "repeatable": true,
             "daily_limit": 5
+        },
+        "clear_thorn_wisp": {
+            "id": "clear_thorn_wisp",
+            "name": "Clearing the Wisps",
+            "description": "Thorn Wisps have infested the Whispering Caverns. Clear them out.",
+            "giver": "ranger",
+            "category": "dungeon",
+            "level": 5,
+            "requirements": {
+                "level": 5,
+                "completed_quests": ["hunt_forest_wolf"]
+            },
+            "objectives": [
+                {"type": "kill", "target": "thorn_wisp", "amount": 5, "completed": false},
+                {"type": "kill", "target": "cave_guardian", "amount": 1, "completed": false},
+                {"type": "return", "target": "ranger", "completed": false}
+            ],
+            "rewards": {
+                "experience": 300,
+                "gold": 500,
+                "items": ["wisp_essence", "iron_sword"]
+            },
+            "next_quests": ["escort_merchant"],
+            "repeatable": true,
+            "daily_limit": 3
+        },
+        "escort_merchant": {
+            "id": "escort_merchant",
+            "name": "Merchant Escort",
+            "description": "Escort Merchant Lira safely through the forest to the Hunter's Camp.",
+            "giver": "merchant",
+            "category": "escort",
+            "level": 4,
+            "requirements": {
+                "level": 4,
+                "completed_quests": ["find_missing_item"]
+            },
+            "objectives": [
+                {"type": "escort", "target": "merchant", "amount": 1, "completed": false},
+                {"type": "return", "target": "ranger", "completed": false}
+            ],
+            "rewards": {
+                "experience": 200,
+                "gold": 400,
+                "items": ["chainmail", "health_potion", "health_potion"]
+            },
+            "next_quests": [],
+            "repeatable": true,
+            "daily_limit": 2
         }
     }
     
     print("[GameData] Created default quests")
     data_changed.emit("quests")
+    
+    # Save to file
+    _save_data(quests, QUESTS_FILE)
 
 
 func _create_default_skills() -> void:
@@ -1151,6 +1385,9 @@ func _create_default_skills() -> void:
     
     print("[GameData] Created default skills")
     data_changed.emit("skills")
+    
+    # Save to file
+    _save_data(skills, SKILLS_FILE)
 
 
 func _create_default_equipment() -> void:
@@ -1183,6 +1420,9 @@ func _create_default_equipment() -> void:
     
     print("[GameData] Created default equipment")
     data_changed.emit("equipment")
+    
+    # Save to file
+    _save_data(equipment, EQUIPMENT_FILE)
 
 
 func _create_default_world_data() -> void:
@@ -1246,6 +1486,13 @@ func _create_default_world_data() -> void:
     
     print("[GameData] Created default world data")
     data_changed.emit("world")
+    
+    # Save to file
+    var world_file = "user://shared/game_data/world.json"
+    var world_dir = "user://shared/game_data/"
+    if not DirAccess.dir_exists_absolute(world_dir):
+        DirAccess.make_dir_recursive_absolute(world_dir)
+    _save_data(world_data, world_file)
 
 
 # ============================================================================
@@ -1286,6 +1533,64 @@ func get_character(character_id: String) -> Dictionary:
 
 func get_all_characters() -> Array:
     return characters.values()
+
+
+func get_avatar_visual(visual_id: String) -> Dictionary:
+    return avatar_visuals.get(visual_id, {})
+
+func get_all_avatar_visuals() -> Dictionary:
+    return avatar_visuals
+
+
+func get_species(species_id: String) -> Dictionary:
+    return species.get(species_id, {})
+
+
+func get_enabled_species() -> Array:
+    var result: Array = []
+    for species_id in species:
+        if species[species_id].get("enabled", false):
+            result.append(species[species_id])
+    result.sort_custom(func(a, b): return int(a.get("sort_order", 0)) < int(b.get("sort_order", 0)))
+    return result
+
+
+func resolve_species_id(requested_species_id: String) -> String:
+    var data = get_species(requested_species_id)
+    if not data.is_empty() and data.get("enabled", false):
+        return requested_species_id
+    return "human"
+
+
+func get_job(job_id: String) -> Dictionary:
+    return jobs.get(job_id, {})
+
+
+func get_enabled_jobs() -> Array:
+    var result: Array = []
+    for job_id in jobs:
+        if jobs[job_id].get("enabled", false):
+            result.append(jobs[job_id])
+    return result
+
+
+func resolve_job_id(requested_job_id: String) -> String:
+    var data = get_job(requested_job_id)
+    if not data.is_empty() and data.get("enabled", false):
+        return requested_job_id
+    return "adept"
+
+
+func get_appearance_options(category: String) -> Dictionary:
+    return appearance_options.get(category, {})
+
+
+func get_cosmetic(cosmetic_id: String) -> Dictionary:
+    return cosmetics.get(cosmetic_id, {})
+
+
+func get_default_avatar_for_species(species_id: String) -> String:
+    return get_species(resolve_species_id(species_id)).get("default_avatar_id", "pc_human_adept_01")
 
 
 # Monster functions
@@ -1439,6 +1744,10 @@ func has_data(data_type: String) -> bool:
         "quests": return quests.size() > 0
         "skills": return skills.size() > 0
         "equipment": return equipment.size() > 0
+        "species": return species.size() > 0
+        "jobs": return jobs.size() > 0
+        "appearance_options": return appearance_options.size() > 0
+        "cosmetics": return cosmetics.size() > 0
         "world": return world_data.size() > 0
         _: return false
 
@@ -1452,6 +1761,10 @@ func get_data_stats() -> Dictionary:
         "quests": quests.size(),
         "skills": skills.size(),
         "equipment": equipment.size(),
+        "species": species.size(),
+        "jobs": jobs.size(),
+        "appearance_options": appearance_options.size(),
+        "cosmetics": cosmetics.size(),
         "world_areas": world_data.get("areas", {}).size()
     }
 
@@ -1464,6 +1777,10 @@ func clear_all_data() -> void:
     quests.clear()
     skills.clear()
     equipment.clear()
+    species.clear()
+    jobs.clear()
+    appearance_options.clear()
+    cosmetics.clear()
     world_data.clear()
     item_index.clear()
     character_index.clear()

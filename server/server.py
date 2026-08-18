@@ -34,6 +34,28 @@ MAX_PLAYERS = 100
 DB_PATH = os.path.join(os.path.dirname(__file__), "database", "eclipse_realms.db")
 PROTOCOL_VERSION = "0.1.0"
 
+# Auth module (G-S1 — Shiki security review pending)
+from auth import register as _auth_register, login as _auth_login, \
+    logout as _auth_logout, get_peer_for_session as _auth_peer
+
+# G-S1: Restrict CORS by default to known origins instead of "*".
+# Dev override via ECLIPSE_CORS_ORIGINS (comma-separated). Set "*" only for local dev.
+_CORS = os.environ.get(
+    "ECLIPSE_CORS_ORIGINS",
+    "https://streetsmartnyc.online,http://localhost,http://127.0.0.1:9052",
+).split(",")
+
+# G-S1: per-IP rate limiting (alpha). In-memory; 100 requests / minute per client IP.
+RATE_LIMIT_PER_MIN = 100
+_RATE_BUCKETS = defaultdict(list)  # ip -> list of request timestamps (epoch seconds)
+
+
+def _public_player(record: dict) -> dict:
+    """Strip sensitive fields from a player record before sending it to a client (G-S1)."""
+    safe = dict(record)
+    safe.pop("password_hash", None)
+    return safe
+
 # --- Message Types (must match NetworkManager.gd enum) ---
 MSG_HELLO = 0
 MSG_HELLO_REPLY = 1
@@ -416,6 +438,8 @@ class GameServer:
         """Start a simple HTTP REST API using aiohttp."""
         from aiohttp import web
         app = web.Application()
+        app.middlewares.append(self._cors_middleware())
+        app.middlewares.append(self._rate_limit_middleware())
 
         async def handle_hello(request):
             return web.json_response({"status": "ok", "service": "Eclipse Realms Server", "version": PROTOCOL_VERSION})
@@ -424,7 +448,7 @@ class GameServer:
             peer_id = int(request.query.get("peer_id", 0))
             player = self.db.get_player(peer_id)
             if player:
-                return web.json_response(player)
+                return web.json_response(_public_player(player))
             return web.json_response({"error": "Player not found"}, status=404)
 
         async def handle_save(request):
@@ -435,9 +459,51 @@ class GameServer:
                 return web.json_response({"status": "saved"})
             return web.json_response({"error": "Player not connected"}, status=404)
 
+        async def handle_register(request):
+            try:
+                data = await request.json()
+            except Exception:
+                return web.json_response({"error": "invalid json"}, status=400)
+            res = _auth_register(DB_PATH, data.get("username", ""), data.get("password", ""), data.get("email"))
+            if not res.get("ok"):
+                return web.json_response({"error": res.get("error")}, status=400)
+            return web.json_response({"session_token": res["session_token"], "peer_id": res["peer_id"]})
+
+        async def handle_login(request):
+            try:
+                data = await request.json()
+            except Exception:
+                return web.json_response({"error": "invalid json"}, status=400)
+            res = _auth_login(DB_PATH, data.get("username", ""), data.get("password", ""))
+            if not res.get("ok"):
+                return web.json_response({"error": res.get("error")}, status=401)
+            return web.json_response({"session_token": res["session_token"], "peer_id": res["peer_id"]})
+
+        async def handle_logout(request):
+            try:
+                data = await request.json()
+            except Exception:
+                return web.json_response({"error": "invalid json"}, status=400)
+            _auth_logout(DB_PATH, data.get("session_token", ""))
+            return web.json_response({"status": "logged out"})
+
+        async def handle_me(request):
+            token = request.query.get("session_token", "")
+            peer_id = _auth_peer(DB_PATH, token)
+            if peer_id is None:
+                return web.json_response({"error": "unauthorized"}, status=401)
+            player = self.db.get_player(peer_id)
+            if player:
+                return web.json_response(_public_player(player))
+            return web.json_response({"error": "Player not found"}, status=404)
+
         app.router.add_get("/api/hello", handle_hello)
         app.router.add_get("/api/player", handle_player)
         app.router.add_post("/api/save", handle_save)
+        app.router.add_post("/api/register", handle_register)
+        app.router.add_post("/api/login", handle_login)
+        app.router.add_post("/api/logout", handle_logout)
+        app.router.add_get("/api/me", handle_me)
 
         runner = web.AppRunner(app)
         await runner.setup()
@@ -447,6 +513,39 @@ class GameServer:
 
         # Keep running
         await asyncio.Future()
+
+    def _cors_middleware(self):
+        from aiohttp import web
+        async def _mw(request, handler):
+            resp = await handler(request)
+            origin = request.headers.get("Origin", "")
+            allow = "*" if "*" in _CORS else origin if origin in _CORS else ""
+            if allow:
+                resp.headers["Access-Control-Allow-Origin"] = allow
+                resp.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
+                resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+            return resp
+        return _mw
+
+    def _rate_limit_middleware(self):
+        """Reject requests beyond RATE_LIMIT_PER_MIN per client IP (G-S1)."""
+        from aiohttp import web
+
+        async def _mw(request, handler):
+            client_ip = request.remote or "127.0.0.1"
+            now = time.time()
+            bucket = _RATE_BUCKETS[client_ip]
+            # Drop timestamps older than 60 seconds.
+            while bucket and now - bucket[0] > 60:
+                bucket.pop(0)
+            if len(bucket) >= RATE_LIMIT_PER_MIN:
+                return web.json_response(
+                    {"error": "rate limit exceeded"}, status=429
+                )
+            bucket.append(now)
+            return await handler(request)
+
+        return _mw
 
     async def start(self):
         """Start all server components."""

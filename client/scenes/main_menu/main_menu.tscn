@@ -1,86 +1,72 @@
-[gd_scene load_steps=3 format=3 uid="uid://b5m9r7k8x5z2"]
-[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_mainmenu"]
+[gd_scene load_steps=4 format=3 uid="uid://mainmenu-eclipse-0002"]
+
+[ext_resource type="Texture2D" path="res://assets/ui/main_menu_bg.png" id="1_main_bg"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu_bg.png" id="2_bg"]
+[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="3_script"]
 
 [node name="MainMenu" type="Control"]
-layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_mainmenu")
+script = ExtResource("3_script")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
+[node name="MainBackground" type="TextureRect" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.12, 0.2, 0.15, 1)
-mouse_filter = 2
+texture = ExtResource("1_main_bg")
+stretch_mode = 2
+expand_mode = 1
+z_index = -1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 8
+[node name="Background" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+stretch_mode = 2
+expand_mode = 1
+
+[node name="MenuContainer" type="VBoxContainer" parent="."]
+anchors_preset = 4
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -120.0
-offset_top = -140.0
-offset_right = 120.0
-offset_bottom = 140.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 16
-alignment = 1
 
-[node name="TitleLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-text = "Eclipse Realms"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 40
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-
-[node name="Spacer1" type="Control" parent="VBoxContainer"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 20)
-
-[node name="NewGameButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-custom_minimum_size = Vector2(200, 40)
-size_flags_horizontal = 4
+[node name="NewGameButton" type="Button" parent="MenuContainer"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 200.0
+offset_bottom = 40.0
 text = "New Game"
-theme_override_font_sizes/font_size = 18
+theme_type_variation = "Button"
 
-[node name="SettingsButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-custom_minimum_size = Vector2(200, 40)
-size_flags_horizontal = 4
+[node name="SettingsButton" type="Button" parent="MenuContainer"]
+offset_left = 0.0
+offset_top = 48.0
+offset_right = 200.0
+offset_bottom = 88.0
 text = "Settings"
-theme_override_font_sizes/font_size = 18
 
-[node name="QuitButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-custom_minimum_size = Vector2(200, 40)
-size_flags_horizontal = 4
+[node name="CreditsButton" type="Button" parent="MenuContainer"]
+offset_left = 0.0
+offset_top = 96.0
+offset_right = 200.0
+offset_bottom = 136.0
+text = "Credits"
+
+[node name="QuitButton" type="Button" parent="MenuContainer"]
+offset_left = 0.0
+offset_top = 144.0
+offset_right = 200.0
+offset_bottom = 184.0
 text = "Quit"
-theme_override_font_sizes/font_size = 18
-
-[node name="VersionLabel" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -30.0
-grow_horizontal = 2
-grow_vertical = 0
-text = "v0.1.0 - Phase 3"
-horizontal_alignment = 2
-theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 0.7)

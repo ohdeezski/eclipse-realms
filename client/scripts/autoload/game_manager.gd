@@ -3,6 +3,8 @@ extends Node
 ## This is the primary singleton that coordinates all game systems
 ## Load order: First
 
+const ReleaseInfoData = preload("res://scripts/release/release_info.gd")
+
 ## Signals
 signal game_started
 signal game_paused
@@ -14,8 +16,8 @@ signal player_logged_out
 
 ## Constants
 const PROJECT_NAME: String = "Eclipse Realms"
-const VERSION: String = "0.1.0"
-const PHASE: String = "First Playable"
+const VERSION: String = ReleaseInfoData.VERSION
+const PHASE: String = ReleaseInfoData.PHASE
 
 ## Game States
 enum GameState {
@@ -40,11 +42,14 @@ static var previous_scene: String = ""
 static var config: Dictionary = {
     "difficulty": "normal",
     "language": "en",
+    "master_volume": 1.0,
     "sfx_volume": 1.0,
     "music_volume": 1.0,
     "show_tutorials": true,
     "auto_save": true,
-    "target_fps": 60
+    "target_fps": 60,
+    "vsync": true,
+    "fullscreen": false
 }
 
 ## Runtime data
@@ -55,6 +60,9 @@ static var session_data: Dictionary = {
     "quests_completed": 0,
     "deaths": 0
 }
+
+static var remote_players: Dictionary = {}
+var _remote_player_scene = preload("res://scenes/player/remote_player.tscn")
 
 
 func _ready() -> void:
@@ -136,7 +144,7 @@ func _handle_initializing() -> void:
 
 func _handle_main_menu() -> void:
     AudioManager.initialize()
-    AudioManager.play_music("main_menu")
+    AudioManager.play_music(AudioConfig.get_special_music("main_menu"))
 
 
 func _handle_loading() -> void:

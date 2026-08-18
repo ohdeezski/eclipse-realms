@@ -87,6 +87,7 @@ func _initialize() -> void:
 	# Load configuration from GameManager
 	music_volume = GameManager.get_game_config("music_volume", 1.0)
 	sfx_volume = GameManager.get_game_config("sfx_volume", 1.0)
+	master_volume = GameManager.get_game_config("master_volume", GameManager.get_game_config("music_volume", 1.0))
 	music_enabled = music_volume > 0
 	sfx_enabled = sfx_volume > 0
 
@@ -407,7 +408,9 @@ func _transition_ambient(new_ambient: Array, volume_scale: float) -> void:
 	for ambient_name in sounds_to_start:
 		play_ambient(ambient_name, volume_scale)
 
-	current_zone_ambient = new_ambient.duplicate()
+	current_zone_ambient.clear()
+	for ambient_name in new_ambient:
+		current_zone_ambient.append(str(ambient_name))
 
 
 func play_ambient(ambient_name: String, volume_scale: float = 0.3) -> AudioStreamPlayer:

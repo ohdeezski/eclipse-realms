@@ -166,7 +166,11 @@ func _refresh_quest() -> void:
         var qid = player_ref.active_quests.keys()[0]
         var q = GameData.get_quest(qid)
         var cur = player_ref.active_quests[qid]["current"]
-        var tgt = q["objectives"][0]["count"]
-        quest_label.text = "Quest: %s (%d/%d)" % [q["name"], cur, tgt]
+        var objectives: Array = q.get("objectives", [])
+        if objectives.is_empty():
+            quest_label.text = "Quest: %s" % q.get("name", qid)
+            return
+        var tgt = objectives[0].get("amount", objectives[0].get("count", 1))
+        quest_label.text = "Quest: %s (%d/%d)" % [q.get("name", qid), cur, tgt]
     else:
         quest_label.text = "Quest: -"

@@ -4,7 +4,7 @@
 **Phase:** Phase 1 - First Playable  
 **Sprint Duration:** 2-4 weeks  
 **Target:** Runnables Godot project with basic functionality  
-**Status:** 🚀 Ready to Start
+**Status:** historical foundation plan — superseded by the [current release ledger](./RELEASE_LEDGER_2026-08-17.md)
 
 ---
 

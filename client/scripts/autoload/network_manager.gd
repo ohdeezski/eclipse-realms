@@ -1,6 +1,6 @@
 extends Node
 ## NetworkManager.gd - WebSocket Network Communication System
-## Handles client-server communication for multiplayer features via WebSocket
+## Handles client-server communication for multiplayer features via WebSocket (raw JSON protocol)
 ## Load order: Sixth
 
 ## Signals
@@ -47,7 +47,8 @@ enum MessageType {
     SYNC_REQUEST = 8,
     SYNC_DATA = 9,
     COMMAND = 10,
-    ERROR = 11
+    ERROR = 11,
+    MONSTER_UPDATE = 12
 }
 
 ## Static variables
@@ -62,10 +63,8 @@ static var server_port: int = DEFAULT_PORT
 static var client_id: int = 0
 static var session_id: String = ""
 
-## Network peers
-static var server_peer: WebSocketMultiplayerPeer = null
-static var connected_peers: Dictionary = {}
-static var player_list: Dictionary = {}
+## Network client (WebSocketPeer for raw WebSocket)
+static var ws_client: Object = null
 
 ## Timing
 static var last_ping_time: float = 0.0
@@ -75,6 +74,15 @@ static var last_reconnect_attempt: float = 0.0
 
 ## Callbacks
 static var message_handlers: Dictionary = {}
+
+## Pending messages queue (for when connection is not ready)
+static var pending_messages: Array = []
+
+## Player list
+static var player_list: Dictionary = {}
+
+## Connected peers (for compatibility)
+static var connected_peers: Dictionary = {}
 
 
 func _ready() -> void:
@@ -88,30 +96,24 @@ func _process(delta: float) -> void:
 
 
 func _update_network(delta: float) -> void:
-    # Placeholder heartbeat / queue flush. Multiplayer is optional and off by default.
-    pass
+    # Poll WebSocket client for incoming messages
+    if ws_client:
+        ws_client.poll()
+    
+    # Send periodic pings
+    if current_state == ConnectionState.CONNECTED or current_state == ConnectionState.READY:
+        var now = Time.get_ticks_msec() / 1000.0
+        if now - last_ping_time >= PING_INTERVAL:
+            _send_ping()
 
 
 func _initialize() -> void:
-    print("[NetworkManager] Initializing WebSocket network system")
+    print("[NetworkManager] Initializing WebSocket network system (raw JSON protocol)")
     
     # Register default message handlers
     _register_default_handlers()
     
-    # Initialize WebSocket
-    if not _init_websocket():
-        push_error("[NetworkManager] Failed to initialize WebSocket")
-        return
-    
     print("[NetworkManager] Network system initialized")
-
-
-func _init_websocket() -> bool:
-    # WebSocket is built into Godot 4, no initialization needed
-    # Just check if it's available
-    if WebSocketMultiplayerPeer == null:
-        return false
-    return true
 
 
 # ============================================================================
@@ -132,37 +134,38 @@ func connect_to_server(host: String = DEFAULT_HOST, port: int = DEFAULT_PORT) ->
     
     change_state(ConnectionState.CONNECTING)
     
-    # Create peer
-    server_peer = WebSocketMultiplayerPeer.new()
-    
-    # WebSocketMultiplayerPeer.create_client expects a WebSocket URL
-    var ws_url = "ws://%s:%d" % [server_host, server_port]
-    var err = server_peer.create_client(ws_url)
-    if err != OK:
-        push_error("[NetworkManager] Failed to create client: %s" % _get_error_string(err))
+    # Create WebSocket client (using WebSocketPeer in Godot 4.4)
+    ws_client = WebSocketPeer.new()
+    if not ws_client:
+        push_error("[NetworkManager] Failed to create WebSocketPeer instance")
         change_state(ConnectionState.DISCONNECTED)
-        connection_failed.emit("Failed to create client")
+        connection_failed.emit("Failed to create WebSocketPeer")
         return false
     
-    # Set up peer
-    server_peer.peer_id = 1  # Client ID
-    
     # Connect signals
-    server_peer.peer_packet.connect(_on_peer_packet)
-    server_peer.peer_connected.connect(_on_peer_connected)
-    server_peer.peer_disconnected.connect(_on_peer_disconnected)
-    server_peer.server_disconnected.connect(_on_server_disconnected)
+    ws_client.connected_to_server.connect(_on_ws_connected)
+    ws_client.disconnected_from_server.connect(_on_ws_disconnected)
+    ws_client.data_received.connect(_on_ws_data_received)
+    ws_client.connection_failed.connect(_on_ws_connection_failed)
     
-    # Set as multiplayer peer (Godot 4.x uses the `multiplayer` singleton)
-    multiplayer.multiplayer_peer = server_peer
+    # Connect to server
+    var ws_url = "ws://%s:%d" % [server_host, server_port]
+    var err = ws_client.connect_to_url(ws_url)
+    if err != OK:
+        push_error("[NetworkManager] Failed to connect: %s" % _get_error_string(err))
+        change_state(ConnectionState.DISCONNECTED)
+        connection_failed.emit("Failed to connect: %s" % _get_error_string(err))
+        return false
     
     print("[NetworkManager] Connecting to %s" % ws_url)
     
     # Start connection timeout
     var timer = Timer.new()
     add_child(timer)
-    timer.timeout.connect(_on_connection_timeout.bind(), CONNECT_ONE_SHOT)
-    timer.start(TIMEOUT)
+    timer.one_shot = true
+    timer.wait_time = TIMEOUT
+    timer.timeout.connect(_on_connection_timeout.bind())
+    timer.start()
     
     return true
 
@@ -174,73 +177,22 @@ func disconnect_from_server() -> void:
     print("[NetworkManager] Disconnecting from server")
     
     # Clean up
-    if server_peer:
-        server_peer.close()
-        server_peer = null
+    if ws_client:
+        ws_client.close()
+        ws_client = null
     
-    # Set multiplayer peer to null (Godot 4.x uses the `multiplayer` singleton)
-    multiplayer.multiplayer_peer = null
     change_state(ConnectionState.DISCONNECTED)
     connection_lost.emit("Manual disconnect")
 
 
+# Server hosting not supported with raw WebSocket (would need separate implementation)
 func start_server(port: int = DEFAULT_PORT, max_players: int = MAX_PLAYERS) -> bool:
-    if current_state != ConnectionState.DISCONNECTED:
-        push_warning("[NetworkManager] Must be disconnected to start server")
-        return false
-    
-    is_server = true
-    is_host = true
-    server_port = port
-    
-    change_state(ConnectionState.CONNECTING)
-    
-    # Create server peer
-    server_peer = WebSocketMultiplayerPeer.new()
-    
-    # WebSocketMultiplayerPeer.create_server in Godot 4.4: bind_address (String), port (int), tls_options (TLSOptions = null)
-    # Max peers is handled separately or via the peer
-    var bind_address = "0.0.0.0"
-    var err = server_peer.create_server(bind_address, port)
-    if err != OK:
-        push_error("[NetworkManager] Failed to create server: %s" % _get_error_string(err))
-        change_state(ConnectionState.DISCONNECTED)
-        return false
-    
-    # Set up peer
-    server_peer.peer_id = 1  # Server ID
-    
-    # Connect signals
-    server_peer.peer_packet.connect(_on_peer_packet)
-    server_peer.peer_connected.connect(_on_peer_connected)
-    server_peer.peer_disconnected.connect(_on_peer_disconnected)
-    
-    # Set as multiplayer peer (Godot 4.x uses the `multiplayer` singleton)
-    multiplayer.multiplayer_peer = server_peer
-    
-    print("[NetworkManager] Server started on port %d" % port)
-    change_state(ConnectionState.READY)
-    connection_established.emit()
-    
-    return true
+    push_error("[NetworkManager] Server hosting not implemented for raw WebSocket protocol. Use dedicated server.")
+    return false
 
 
 func stop_server() -> void:
-    if not is_server:
-        return
-    
-    print("[NetworkManager] Stopping server")
-    
-    if server_peer:
-        server_peer.close()
-        server_peer = null
-    
-    if multiplayer:
-        multiplayer.multiplayer_peer = null
-    is_server = false
-    is_host = false
-    
-    change_state(ConnectionState.DISCONNECTED)
+    pass
 
 
 # ============================================================================
@@ -264,7 +216,11 @@ func get_current_state() -> ConnectionState:
 
 func send_message(message_type: MessageType, data: Dictionary = {}) -> bool:
     if current_state != ConnectionState.CONNECTED and current_state != ConnectionState.READY:
-        push_warning("[NetworkManager] Not connected, cannot send message")
+        # Queue message for later
+        pending_messages.append({
+            "type": message_type,
+            "data": data
+        })
         return false
     
     var message: Dictionary = {
@@ -275,55 +231,43 @@ func send_message(message_type: MessageType, data: Dictionary = {}) -> bool:
         "data": data
     }
     
-    var buffer = _serialize_message(message)
-    
-    if is_server:
-        # Send to all connected clients
-        for peer_id in server_peer.get_peers():
-            server_peer.send(peer_id, buffer)
-    else:
-        # Send to server
-        server_peer.send(1, buffer)  # Server is always ID 1
-    
-    return true
+    return _send_raw_message(message)
 
 
 func send_to_peer(peer_id: int, message_type: MessageType, data: Dictionary = {}) -> bool:
-    if current_state != ConnectionState.CONNECTED and current_state != ConnectionState.READY:
-        return false
-    
-    var message: Dictionary = {
-        "type": message_type,
-        "version": PROTOCOL_VERSION,
-        "timestamp": Time.get_ticks_msec(),
-        "sender": client_id,
-        "data": data
-    }
-    
-    var buffer = _serialize_message(message)
-    server_peer.send(peer_id, buffer)
-    return true
+    # For client, all messages go to server (peer_id ignored)
+    return send_message(message_type, data)
 
 
 func broadcast_message(message_type: MessageType, data: Dictionary = {}, exclude_peer: int = -1) -> bool:
-    if not is_server:
-        return send_message(message_type, data)
+    # For client, same as send_message
+    return send_message(message_type, data)
+
+
+func _send_raw_message(message: Dictionary) -> bool:
+    if not ws_client:
+        return false
     
-    var message: Dictionary = {
-        "type": message_type,
-        "version": PROTOCOL_VERSION,
-        "timestamp": Time.get_ticks_msec(),
-        "sender": client_id,
-        "data": data
-    }
+    var json = JSON.new()
+    var text = json.stringify(message)
     
-    var buffer = _serialize_message(message)
-    
-    for peer_id in server_peer.get_peers():
-        if peer_id != exclude_peer:
-            server_peer.send(peer_id, buffer)
+    var err = ws_client.send(text)
+    if err != OK:
+        push_error("[NetworkManager] Failed to send message: %s" % _get_error_string(err))
+        return false
     
     return true
+
+
+func _send_ping() -> void:
+    last_ping_time = Time.get_ticks_msec() / 1000.0
+    send_message(MessageType.PING, {})
+
+
+func _flush_pending_messages() -> void:
+    for msg in pending_messages:
+        send_message(msg["type"], msg["data"])
+    pending_messages.clear()
 
 
 # ============================================================================
@@ -354,13 +298,69 @@ func _register_default_handlers() -> void:
     register_message_handler(MessageType.ERROR, _handle_error)
 
 
-func _on_peer_packet(peer_id: int, packet: PackedByteArray) -> void:
-    var message = _deserialize_message(packet)
+# WebSocket client signal handlers
+func _on_ws_connected(protocol: String = "") -> void:
+    print("[NetworkManager] WebSocket connected")
+    # Send HELLO message
+    var hello_msg = {
+        "type": MessageType.HELLO,
+        "version": PROTOCOL_VERSION,
+        "timestamp": Time.get_ticks_msec(),
+        "sender": 0,
+        "data": {}
+    }
+    _send_raw_message(hello_msg)
+
+
+func _on_ws_disconnected(was_clean: bool = false, code: int = 0, reason: String = "") -> void:
+    print("[NetworkManager] WebSocket disconnected: clean=%s code=%d reason=%s" % [was_clean, code, reason])
     
-    if message == null:
-        push_error("[NetworkManager] Failed to deserialize message")
+    if current_state == ConnectionState.CONNECTING:
+        connection_failed.emit("Disconnected during connection: %s" % reason)
+    elif current_state == ConnectionState.CONNECTED or current_state == ConnectionState.READY:
+        connection_lost.emit("Disconnected: %s" % reason)
+    
+    connected_peers.clear()
+    player_list.clear()
+    change_state(ConnectionState.DISCONNECTED)
+
+
+func _on_ws_data_received() -> void:
+    if not ws_client:
         return
     
+    # Get all available messages
+    while ws_client.get_available_packet_count() > 0:
+        var packet = ws_client.get_packet()
+        if packet.size() > 0:
+            var text = packet.get_string_from_utf8()
+            var json = JSON.new()
+            var err = json.parse(text)
+            
+            if err != OK:
+                push_error("[NetworkManager] JSON parse error: %s" % json.get_error_message())
+                continue
+            
+            _handle_incoming_message(json.data)
+
+
+func _on_ws_connection_failed() -> void:
+    print("[NetworkManager] WebSocket connection failed")
+    change_state(ConnectionState.DISCONNECTED)
+    connection_failed.emit("Connection failed")
+
+
+func _on_connection_timeout() -> void:
+    if current_state == ConnectionState.CONNECTING:
+        push_error("[NetworkManager] Connection timeout")
+        if ws_client:
+            ws_client.close()
+            ws_client = null
+        change_state(ConnectionState.DISCONNECTED)
+        connection_failed.emit("Connection timeout")
+
+
+func _handle_incoming_message(message: Dictionary) -> void:
     # Validate message
     if not message.has("type") or not message.has("version"):
         push_error("[NetworkManager] Invalid message format")
@@ -382,48 +382,6 @@ func _on_peer_packet(peer_id: int, packet: PackedByteArray) -> void:
         push_warning("[NetworkManager] No handler for message type: %d" % message_type)
 
 
-func _on_peer_connected(peer_id: int) -> void:
-    print("[NetworkManager] Peer connected: %d" % peer_id)
-    connected_peers[peer_id] = true
-    
-    if is_server:
-        # Send welcome message
-        var welcome_data = {
-            "client_id": peer_id,
-            "session_id": session_id,
-            "max_players": MAX_PLAYERS,
-            "player_count": connected_peers.size()
-        }
-        send_to_peer(peer_id, MessageType.HELLO_REPLY, welcome_data)
-
-
-func _on_peer_disconnected(peer_id: int) -> void:
-    print("[NetworkManager] Peer disconnected: %d" % peer_id)
-    
-    if connected_peers.has(peer_id):
-        connected_peers.erase(peer_id)
-    
-    if player_list.has(peer_id):
-        player_disconnected.emit(peer_id)
-        player_list.erase(peer_id)
-
-
-func _on_server_disconnected() -> void:
-    print("[NetworkManager] Server disconnected")
-    connected_peers.clear()
-    player_list.clear()
-    
-    change_state(ConnectionState.DISCONNECTED)
-    connection_lost.emit("Server disconnected")
-
-
-func _on_connection_timeout() -> void:
-    if current_state == ConnectionState.CONNECTING:
-        push_error("[NetworkManager] Connection timeout")
-        disconnect_from_server()
-        connection_failed.emit("Connection timeout")
-
-
 # ============================================================================
 # DEFAULT MESSAGE HANDLERS
 # ============================================================================
@@ -436,21 +394,21 @@ func _handle_hello_reply(message: Dictionary) -> void:
     connection_established.emit()
     
     print("[NetworkManager] Connected to server, client ID: %d" % client_id)
+    
+    # Flush any pending messages
+    _flush_pending_messages()
 
 
 func _handle_ping(message: Dictionary) -> void:
-    if is_server:
-        # Server replies with pong
-        send_to_peer(message["sender"], MessageType.PONG)
-    else:
-        # Client records ping time
-        last_ping_time = Time.get_ticks_msec()
+    # Client doesn't handle incoming PING (server sends PING, client replies with PONG)
+    # But we can send PONG back if needed
+    send_message(MessageType.PONG, {})
 
 
 func _handle_pong(message: Dictionary) -> void:
-    last_pong_time = Time.get_ticks_msec()
+    last_pong_time = Time.get_ticks_msec() / 1000.0
     if last_ping_time > 0:
-        ping = (last_pong_time - last_ping_time) / 1000.0
+        ping = last_pong_time - last_ping_time
 
 
 func _handle_player_connect(message: Dictionary) -> void:
@@ -523,6 +481,15 @@ func send_chat_message(text: String) -> bool:
     }
     return send_message(MessageType.CHAT_MESSAGE, message_data)
 
+func send_monster_update(monster_id: String, position: Vector2, state: String) -> bool:
+    var message_data = {
+        "monster_id": monster_id,
+        "position": {"x": position.x, "y": position.y},
+        "state": state,
+        "peer_id": client_id
+    }
+    return send_message(MessageType.MONSTER_UPDATE, message_data)
+
 
 func send_sync_request(data_type: String, request_data: Dictionary = {}) -> bool:
     var message_data = {
@@ -550,7 +517,7 @@ func get_connected_players() -> Dictionary:
 
 
 func get_peer_count() -> int:
-    return connected_peers.size()
+    return player_list.size()
 
 
 # ============================================================================
@@ -577,24 +544,6 @@ func _get_error_string(error_code: int) -> String:
             return "Unknown error (%d)" % error_code
 
 
-func _serialize_message(message: Dictionary) -> PackedByteArray:
-    var json = JSON.new()
-    var text = json.stringify(message)
-    return text.to_utf8_buffer()
-
-
-func _deserialize_message(data: PackedByteArray) -> Dictionary:
-    var json = JSON.new()
-    var text = data.get_string_from_utf8()
-    var err = json.parse(text)
-    
-    if err != OK:
-        push_error("[NetworkManager] JSON parse error: %s" % json.get_error_message())
-        return {}
-    
-    return json.data
-
-
 func get_ping() -> float:
     return ping
 
@@ -617,5 +566,5 @@ func get_connection_info() -> Dictionary:
         "ping": ping,
         "is_server": is_server,
         "is_host": is_host,
-        "player_count": connected_peers.size()
+        "player_count": player_list.size()
     }

@@ -8,7 +8,7 @@ const TEST_PORT = 9051
 const TEST_TIMEOUT = 10.0
 
 ## State
-var network_manager: NetworkManager = null
+var network_manager = null
 var connection_timer: Timer = null
 var test_passed = false
 var test_failed = false
@@ -17,13 +17,16 @@ var failure_reason = ""
 func _ready() -> void:
     print("[Test] WebSocket Connection Test Starting...")
     
-    # Get NetworkManager instance
-    if NetworkManager == null:
+    # Get NetworkManager instance - in Godot 4, autoloads are globals
+    # The autoload name is "NetworkManager" as defined in project.godot
+    # We can access it directly as a global variable
+    if typeof(NetworkManager) != TYPE_NIL:
+        network_manager = NetworkManager
+        print("[Test] Found NetworkManager as global")
+    else:
         push_error("[Test] NetworkManager not found in autoloads")
         _fail("NetworkManager not found")
         return
-    
-    network_manager = NetworkManager
     
     # Set up test timeout
     connection_timer = Timer.new()
@@ -130,4 +133,4 @@ func _cleanup() -> void:
     
     # Quit if running headless
     if OS.get_name() == "Server" or OS.get_cmdline_args().has("--test"):
-        get_tree().quit(test_passed ? 0 : 1)
+        get_tree().quit(0 if test_passed else 1)

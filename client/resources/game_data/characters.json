@@ -16,6 +16,10 @@
     "start_equipment": ["wooden_sword", "cloth_shirt", "leather_boots"],
     "start_skills": ["basic_attack", "guard", "use_item"],
     "spawn_region": "oakrest_village",
-    "spawn_point": "village_spawn"
+    "spawn_point": "village_spawn",
+    "sprite": "assets/characters/player/hero_human_adept.png",
+    "idle_sprite": "assets/characters/player/player_idle.png",
+    "walk_sprite": "assets/characters/player/player_walk.png",
+    "visual_id": "pc_human_adept_01"
   }
 }

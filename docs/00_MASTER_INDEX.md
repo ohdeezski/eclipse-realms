@@ -457,6 +457,9 @@ A new player should be able to:
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 0.1.0 | 2026-08-03 | StreetSmartNYC | Initial master index created |
+| 0.1.1 | 2026-08-04 | Tomoe | Initial reality audit (REALITY_AUDIT.md, archived 2026-08-18) |
+| 0.1.2 | 2026-08-16 | Tomoe | Comprehensive re-audit (REALITY_AUDIT_V2.md) — truths, false reports, overlooked items |
+| 0.1.3 | 2026-08-18 | Tomoe | CI wget fix applied; docs relocated to docs/ hierarchy; phase 2 avatar + release readiness plans filed |
 
 ---
 

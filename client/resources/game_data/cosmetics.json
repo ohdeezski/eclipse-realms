@@ -1,0 +1,10 @@
+{
+  "cos_starter_tunic": {
+    "id": "cos_starter_tunic",
+    "display_name": "Starter Tunic",
+    "slot": "outfit",
+    "compatibility_tags": ["humanoid"],
+    "entitlement": "free",
+    "visual_only": true
+  }
+}

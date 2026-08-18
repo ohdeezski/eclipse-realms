@@ -35,7 +35,7 @@ const ZONE_AUDIO: Dictionary = {
 	},
 	"blacksmith": {
 		"music": "village_theme",
-		"ambient": ["forge_ambient"],
+		"ambient": ["fire_crackle"],
 		"music_volume_scale": 0.6,
 		"ambient_volume_scale": 0.25,
 	},
@@ -57,6 +57,28 @@ const ZONE_AUDIO: Dictionary = {
 		"music_volume_scale": 0.8,
 		"ambient_volume_scale": 0.3,
 	},
+	"creek": {
+		"music": "forest_theme",
+		"ambient": ["wind_gentle", "birds"],
+		"music_volume_scale": 0.8,
+		"ambient_volume_scale": 0.35,
+	},
+	"watchtower": {
+		"music": "forest_theme",
+		"ambient": ["wind_gentle"],
+		"music_volume_scale": 0.7,
+		"ambient_volume_scale": 0.25,
+	},
+}
+
+## Scene boundary IDs that share an existing audio profile. Keeping this mapping
+## here prevents world scenes from inventing track names that are not exported.
+const ZONE_AUDIO_ALIASES: Dictionary = {
+	"entrance": "forest",
+	"clearing": "forest",
+	"deep_forest": "forest",
+	"cavern": "caverns",
+	"camp": "hunters_camp",
 }
 
 ## ============================================================================
@@ -159,6 +181,7 @@ func _build_sfx_list() -> void:
 
 static func get_zone_music(zone_id: String) -> String:
 	"""Return the music track name for a zone, or empty string if none."""
+	zone_id = get_zone_audio_id(zone_id)
 	if ZONE_AUDIO.has(zone_id):
 		return ZONE_AUDIO[zone_id].get("music", "")
 	return ""
@@ -166,6 +189,7 @@ static func get_zone_music(zone_id: String) -> String:
 
 static func get_zone_ambient(zone_id: String) -> Array:
 	"""Return the list of ambient sound names for a zone."""
+	zone_id = get_zone_audio_id(zone_id)
 	if ZONE_AUDIO.has(zone_id):
 		return ZONE_AUDIO[zone_id].get("ambient", [])
 	return []
@@ -173,6 +197,7 @@ static func get_zone_ambient(zone_id: String) -> Array:
 
 static func get_zone_music_volume(zone_id: String) -> float:
 	"""Return the volume scale for zone music."""
+	zone_id = get_zone_audio_id(zone_id)
 	if ZONE_AUDIO.has(zone_id):
 		return ZONE_AUDIO[zone_id].get("music_volume_scale", 1.0)
 	return 1.0
@@ -180,6 +205,7 @@ static func get_zone_music_volume(zone_id: String) -> float:
 
 static func get_zone_ambient_volume(zone_id: String) -> float:
 	"""Return the volume scale for zone ambient sounds."""
+	zone_id = get_zone_audio_id(zone_id)
 	if ZONE_AUDIO.has(zone_id):
 		return ZONE_AUDIO[zone_id].get("ambient_volume_scale", 0.3)
 	return 0.3
@@ -188,6 +214,11 @@ static func get_zone_ambient_volume(zone_id: String) -> float:
 static func get_special_music(state: String) -> String:
 	"""Return the music track name for a special game state."""
 	return SPECIAL_MUSIC.get(state, "")
+
+
+static func get_zone_audio_id(zone_id: String) -> String:
+	"""Resolve a scene-zone alias to the canonical audio profile ID."""
+	return ZONE_AUDIO_ALIASES.get(zone_id, zone_id)
 
 
 static func get_sfx_for_category(category: String) -> Array:
@@ -206,4 +237,14 @@ static func get_all_music_tracks() -> Array[String]:
 		var track = SPECIAL_MUSIC[state]
 		if track != "" and not tracks.has(track):
 			tracks.append(track)
+	return tracks
+
+
+static func get_all_ambient_tracks() -> Array[String]:
+	"""Return all unique ambient asset names referenced by the zone catalog."""
+	var tracks: Array[String] = []
+	for zone_id in ZONE_AUDIO:
+		for track in ZONE_AUDIO[zone_id].get("ambient", []):
+			if track != "" and not tracks.has(track):
+				tracks.append(track)
 	return tracks

@@ -221,11 +221,14 @@ func _create_hit_particle(pos: Vector2, color: Color, size: float = 4.0) -> Node
 
 ## Spawn death explosion effect with ring + scatter
 func spawn_death_effect(pos: Vector2, color: Color = Color(1.0, 0.5, 0.0)) -> void:
+    var scene := get_tree().current_scene
+    if scene == null:
+        return
     # Inner burst ring
     for i in range(10):
         var size = randf_range(3.0, 5.0)
         var particle = _create_hit_particle(pos, color, size)
-        get_tree().current_scene.add_child(particle)
+        scene.add_child(particle)
 
         var angle = (i / 10.0) * PI * 2
         var dir = Vector2(cos(angle), sin(angle))
@@ -241,7 +244,7 @@ func spawn_death_effect(pos: Vector2, color: Color = Color(1.0, 0.5, 0.0)) -> vo
     # Outer scatter particles
     for i in range(6):
         var particle = _create_hit_particle(pos, color.lerp(Color.WHITE, 0.3), randf_range(2.0, 3.0))
-        get_tree().current_scene.add_child(particle)
+        scene.add_child(particle)
 
         var angle = randf() * PI * 2
         var dir = Vector2(cos(angle), sin(angle))

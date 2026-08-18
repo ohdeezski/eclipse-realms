@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  GODOT_VERSION: 4.2.2
+  GODOT_VERSION: 4.4
   EXPORT_NAME: eclipse-realms
 
 jobs:
@@ -17,7 +17,9 @@ jobs:
     name: Export Linux/X11
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:4.2.2
+      image: barichello/godot-ci:4.4
+    env:
+      EXPECTED_TEMPLATE: linux_release.x86_64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,28 +28,64 @@ jobs:
       
       - name: Setup Godot export templates
         run: |
-          mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz
-          tar -xzf Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
-          ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          TEMPLATES_DIR="${HOME}/.local/share/godot/export_templates/4.4.stable"
+          mkdir -p "$TEMPLATES_DIR"
+          if [ ! -f "$TEMPLATES_DIR/version.txt" ]; then
+            echo "Downloading Godot 4.4 export templates..."
+            # barichello/godot-ci:4.4 (Ubuntu 22.04) has wget but NOT curl
+            # .tpz is a ZIP that extracts files directly to the version dir
+            for attempt in 1 2 3; do
+              echo "Attempt $attempt..."
+              wget --tries=3 --timeout=300 --quiet \
+                -O /tmp/godot_templates.tpz \
+                "https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz" \
+                && break
+              echo "Download failed (attempt $attempt), retrying..."
+              sleep 10
+            done
+            test -f /tmp/godot_templates.tpz || { echo "FAILED: download failed after 3 attempts"; exit 1; }
+            echo "Download complete ($(du -h /tmp/godot_templates.tpz | cut -f1)), verifying ZIP..."
+            unzip -tq /tmp/godot_templates.tpz
+            echo "Extracting..."
+            # .tpz extracts files directly (version.txt, platform templates, etc.)
+            unzip -o -q /tmp/godot_templates.tpz -d "$TEMPLATES_DIR"
+            echo "Extraction complete. Verifying key templates:"
+            ls -la "$TEMPLATES_DIR"/version.txt
+            test -f "$TEMPLATES_DIR/version.txt"
+            test -f "$TEMPLATES_DIR/${EXPECTED_TEMPLATE}" || { echo "FAILED: $EXPECTED_TEMPLATE not found after extraction"; ls -la "$TEMPLATES_DIR"/ | head -30; exit 1; }
+          else
+            echo "Export templates already present, skipping download."
+            ls -la "$TEMPLATES_DIR"/
+          fi
       
       - name: Export Linux/X11
         working-directory: ./client
         run: |
           godot --headless --export-release "Linux/X11" build/desktop/${EXPORT_NAME}.x86_64
+
+      - name: Smoke-test Linux artifact
+        working-directory: ./client
+        run: |
+          build/desktop/${EXPORT_NAME}.x86_64 --headless --quit
+
+      - name: Generate Linux release manifest
+        run: |
+          bash tools/ci/generate_release_manifest.sh "Linux/X11" client/build/desktop client/build/desktop/release-manifest-linux.json
       
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: eclipse-realms-linux
-          path: client/build/desktop/${{ env.EXPORT_NAME }}.x86_64
+          path: client/build/desktop/
           retention-days: 7
 
   export-windows:
     name: Export Windows Desktop
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:4.2.2
+      image: barichello/godot-ci:4.4
+    env:
+      EXPECTED_TEMPLATE: windows_release_x86_64.exe
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,10 +94,35 @@ jobs:
       
       - name: Setup Godot export templates
         run: |
-          mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz
-          tar -xzf Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
-          ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          TEMPLATES_DIR="${HOME}/.local/share/godot/export_templates/4.4.stable"
+          mkdir -p "$TEMPLATES_DIR"
+          if [ ! -f "$TEMPLATES_DIR/version.txt" ]; then
+            echo "Downloading Godot 4.4 export templates..."
+            # barichello/godot-ci:4.4 (Ubuntu 22.04) has wget but NOT curl
+            # .tpz is a ZIP that extracts files directly to the version dir
+            for attempt in 1 2 3; do
+              echo "Attempt $attempt..."
+              wget --tries=3 --timeout=300 --quiet \
+                -O /tmp/godot_templates.tpz \
+                "https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz" \
+                && break
+              echo "Download failed (attempt $attempt), retrying..."
+              sleep 10
+            done
+            test -f /tmp/godot_templates.tpz || { echo "FAILED: download failed after 3 attempts"; exit 1; }
+            echo "Download complete ($(du -h /tmp/godot_templates.tpz | cut -f1)), verifying ZIP..."
+            unzip -tq /tmp/godot_templates.tpz
+            echo "Extracting..."
+            # .tpz extracts files directly (version.txt, platform templates, etc.)
+            unzip -o -q /tmp/godot_templates.tpz -d "$TEMPLATES_DIR"
+            echo "Extraction complete. Verifying key templates:"
+            ls -la "$TEMPLATES_DIR"/version.txt
+            test -f "$TEMPLATES_DIR/version.txt"
+            test -f "$TEMPLATES_DIR/${EXPECTED_TEMPLATE}" || { echo "FAILED: $EXPECTED_TEMPLATE not found after extraction"; ls -la "$TEMPLATES_DIR"/ | head -30; exit 1; }
+          else
+            echo "Export templates already present, skipping download."
+            ls -la "$TEMPLATES_DIR"/
+          fi
       
       - name: Install Wine for Windows export
         run: |
@@ -71,19 +134,30 @@ jobs:
         working-directory: ./client
         run: |
           godot --headless --export-release "Windows Desktop" build/desktop/${EXPORT_NAME}.exe
+
+      - name: Smoke-test Windows artifact with Wine
+        working-directory: ./client
+        run: |
+          wine build/desktop/${EXPORT_NAME}.exe --headless --quit
+
+      - name: Generate Windows release manifest
+        run: |
+          bash tools/ci/generate_release_manifest.sh "Windows Desktop" client/build/desktop client/build/desktop/release-manifest-windows.json
       
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: eclipse-realms-windows
-          path: client/build/desktop/${{ env.EXPORT_NAME }}.exe
+          path: client/build/desktop/
           retention-days: 7
 
   export-web:
     name: Export Web
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:4.2.2
+      image: barichello/godot-ci:4.4
+    env:
+      EXPECTED_TEMPLATE: web_release.zip
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -92,15 +166,44 @@ jobs:
       
       - name: Setup Godot export templates
         run: |
-          mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          wget -q https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz
-          tar -xzf Godot_v${GODOT_VERSION}-stable_linux_x11_64_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
-          ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+          TEMPLATES_DIR="${HOME}/.local/share/godot/export_templates/4.4.stable"
+          mkdir -p "$TEMPLATES_DIR"
+          if [ ! -f "$TEMPLATES_DIR/version.txt" ]; then
+            echo "Downloading Godot 4.4 export templates..."
+            # barichello/godot-ci:4.4 (Ubuntu 22.04) has wget but NOT curl
+            # .tpz is a ZIP that extracts files directly to the version dir
+            for attempt in 1 2 3; do
+              echo "Attempt $attempt..."
+              wget --tries=3 --timeout=300 --quiet \
+                -O /tmp/godot_templates.tpz \
+                "https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz" \
+                && break
+              echo "Download failed (attempt $attempt), retrying..."
+              sleep 10
+            done
+            test -f /tmp/godot_templates.tpz || { echo "FAILED: download failed after 3 attempts"; exit 1; }
+            echo "Download complete ($(du -h /tmp/godot_templates.tpz | cut -f1)), verifying ZIP..."
+            unzip -tq /tmp/godot_templates.tpz
+            echo "Extracting..."
+            # .tpz extracts files directly (version.txt, platform templates, etc.)
+            unzip -o -q /tmp/godot_templates.tpz -d "$TEMPLATES_DIR"
+            echo "Extraction complete. Verifying key templates:"
+            ls -la "$TEMPLATES_DIR"/version.txt
+            test -f "$TEMPLATES_DIR/version.txt"
+            test -f "$TEMPLATES_DIR/${EXPECTED_TEMPLATE}" || { echo "FAILED: $EXPECTED_TEMPLATE not found after extraction"; ls -la "$TEMPLATES_DIR"/ | head -30; exit 1; }
+          else
+            echo "Export templates already present, skipping download."
+            ls -la "$TEMPLATES_DIR"/
+          fi
       
       - name: Export Web
         working-directory: ./client
         run: |
           godot --headless --export-release "Web" build/web/index.html
+
+      - name: Generate Web release manifest
+        run: |
+          bash tools/ci/generate_release_manifest.sh "Web" client/build/web client/build/web/release-manifest-web.json
       
       - name: Upload Web artifact
         uses: actions/upload-artifact@v4
@@ -113,19 +216,34 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:4.2.2
+      image: barichello/godot-ci:4.4
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           lfs: true
       
-      - name: Run Godot lint/check
+      - name: Boot smoke (project loads, autoloads init)
         working-directory: ./client
         run: |
-          godot --headless --check-only --script *.gd 2>&1 | head -100 || true
+          godot --headless --path . --quit 2>&1
       
-      - name: Run tests
+      - name: Run test_runner (core assertions; fails build on any failure)
         working-directory: ./client
         run: |
-          godot --headless --path . -s res://tests/test_runner.gd 2>&1 || true
+          godot --headless --path . -s res://tests/test_runner.gd 2>&1
+
+      - name: Run release catalog contract test
+        working-directory: ./client
+        run: |
+          godot --headless --path . -s res://tests/test_release_catalogs.gd 2>&1
+      
+      - name: Run comprehensive_validation (no false positives)
+        working-directory: ./client
+        run: |
+          godot --headless -s res://tests/comprehensive_validation.gd 2>&1
+      
+      - name: Run multiplayer integration test
+        working-directory: ./client
+        run: |
+          godot --headless -s res://tests/test_multiplayer_integration.gd 2>&1

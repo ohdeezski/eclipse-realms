@@ -6,7 +6,8 @@
     "description": "A simple melee strike with your equipped weapon.",
     "cooldown": 0.4,
     "damage_multiplier": 1.0,
-    "mana_cost": 0
+    "mana_cost": 0,
+    "icon": "skills/basic_attack"
   },
   "guard": {
     "id": "guard",
@@ -16,7 +17,8 @@
     "cooldown": 2.0,
     "damage_multiplier": 0.5,
     "mana_cost": 0,
-    "duration": 1.0
+    "duration": 1.0,
+    "icon": "skills/guard"
   },
   "use_item": {
     "id": "use_item",
@@ -25,6 +27,50 @@
     "description": "Consume a health potion to restore HP.",
     "cooldown": 1.0,
     "damage_multiplier": 0.0,
-    "mana_cost": 0
+    "mana_cost": 0,
+    "icon": "skills/use_item"
+  },
+  "heal": {
+    "id": "heal",
+    "name": "Heal",
+    "description": "Restore a portion of health",
+    "type": "support",
+    "category": "heal",
+    "level": 5,
+    "requirements": {
+      "level": 5,
+      "intelligence": 10
+    },
+    "effects": [
+      {"type": "heal", "amount": 20, "scaling": "intelligence", "scale": 0.5, "target": "self"}
+    ],
+    "cooldown": 5.0,
+    "mana_cost": 15,
+    "range": 0,
+    "animation": "heal",
+    "icon": "skills/heal"
+  },
+  "fire_bolt": {
+    "id": "fire_bolt",
+    "name": "Fire Bolt",
+    "description": "Launch a bolt of fire at the enemy",
+    "type": "combat",
+    "category": "magic",
+    "element": "fire",
+    "level": 8,
+    "requirements": {
+      "level": 8,
+      "intelligence": 15
+    },
+    "effects": [
+      {"type": "damage", "amount": 15, "scaling": "intelligence", "scale": 0.8},
+      {"type": "burn", "chance": 0.3, "duration": 3, "damage_per_second": 2}
+    ],
+    "cooldown": 2.0,
+    "mana_cost": 20,
+    "range": 200,
+    "animation": "cast",
+    "projectile": "fire_bolt",
+    "icon": "skills/fire_bolt"
   }
 }

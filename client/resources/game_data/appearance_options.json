@@ -1,0 +1,52 @@
+{
+  "body_frames": {
+    "frame_a": {"id": "frame_a", "display_name": "Slim", "tags": ["humanoid"]},
+    "frame_b": {"id": "frame_b", "display_name": "Average", "tags": ["humanoid"]},
+    "frame_c": {"id": "frame_c", "display_name": "Broad", "tags": ["humanoid"]}
+  },
+  "skin_tones": {
+    "skin_01": {"id": "skin_01", "display_name": "Fair"},
+    "skin_02": {"id": "skin_02", "display_name": "Light"},
+    "skin_03": {"id": "skin_03", "display_name": "Warm"},
+    "skin_04": {"id": "skin_04", "display_name": "Tan"},
+    "skin_05": {"id": "skin_05", "display_name": "Brown"},
+    "skin_06": {"id": "skin_06", "display_name": "Deep"},
+    "skin_07": {"id": "skin_07", "display_name": "Cool"},
+    "skin_08": {"id": "skin_08", "display_name": "Copper"}
+  },
+  "hair_styles": {
+    "hair_short_01": {"id": "hair_short_01", "display_name": "Short"},
+    "hair_long_01": {"id": "hair_long_01", "display_name": "Long"},
+    "hair_braided_01": {"id": "hair_braided_01", "display_name": "Braided"},
+    "hair_curly_01": {"id": "hair_curly_01", "display_name": "Curly"},
+    "hair_none": {"id": "hair_none", "display_name": "No hair"}
+  },
+  "hair_colors": {
+    "hair_black": {"id": "hair_black", "display_name": "Black"},
+    "hair_brown": {"id": "hair_brown", "display_name": "Brown"},
+    "hair_blonde": {"id": "hair_blonde", "display_name": "Blonde"},
+    "hair_red": {"id": "hair_red", "display_name": "Red"},
+    "hair_silver": {"id": "hair_silver", "display_name": "Silver"},
+    "hair_blue": {"id": "hair_blue", "display_name": "Blue"}
+  },
+  "faces": {
+    "face_01": {"id": "face_01", "display_name": "Open"},
+    "face_02": {"id": "face_02", "display_name": "Focused"},
+    "face_03": {"id": "face_03", "display_name": "Bright"}
+  },
+  "eye_colors": {
+    "eye_brown": {"id": "eye_brown", "display_name": "Brown"},
+    "eye_hazel": {"id": "eye_hazel", "display_name": "Hazel"},
+    "eye_blue": {"id": "eye_blue", "display_name": "Blue"}
+  },
+  "markings": {
+    "marking_none": {"id": "marking_none", "display_name": "None"},
+    "freckles_01": {"id": "freckles_01", "display_name": "Freckles"},
+    "scar_01": {"id": "scar_01", "display_name": "Small scar"}
+  },
+  "starter_outfits": {
+    "oakrest_blue": {"id": "oakrest_blue", "display_name": "Oakrest Blue"},
+    "mosswood_green": {"id": "mosswood_green", "display_name": "Mosswood Green"},
+    "stonehearth_red": {"id": "stonehearth_red", "display_name": "Stonehearth Red"}
+  }
+}

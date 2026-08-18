@@ -1,0 +1,132 @@
+[gd_scene load_steps=2 format=3 uid="uid://credits01"]
+
+[ext_resource type="Script" path="res://scripts/ui/credits.gd" id="1"]
+
+[node name="Credits" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.03, 0.03, 0.06, 1)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_left = 0.2
+anchor_top = 0.1
+anchor_right = 0.8
+anchor_bottom = 0.9
+scroll_deadzone = 0
+
+[node name="CreditsPanel" type="VBoxContainer" parent="ScrollContainer"]
+custom_minimum_size = Vector2(0, 1500)
+
+[node name="Title" type="Label" parent="CreditsPanel"]
+text = "Eclipse Realms"
+horizontal_alignment = 1
+theme_override_font_size = 48
+theme_override_colors/font_color = Color(1, 0.9, 0.7, 1)
+
+[node name="Subtitle" type="Label" parent="CreditsPanel"]
+text = "A Beautiful Anime-Inspired MMORPG"
+horizontal_alignment = 1
+theme_override_font_size = 24
+theme_override_colors/font_color = Color(0.8, 0.8, 0.9, 1)
+
+[node name="Separator1" type="HSeparator" parent="CreditsPanel"]
+
+[node name="TeamHeader" type="Label" parent="CreditsPanel"]
+text = "DEVELOPMENT TEAM"
+horizontal_alignment = 1
+theme_override_font_size = 28
+theme_override_colors/font_color = Color(0.9, 0.7, 1, 1)
+
+[node name="TeamLead" type="Label" parent="CreditsPanel"]
+text = "Project Lead & Vision: StreetSmartNYC BusinessBase"
+horizontal_alignment = 1
+theme_override_font_size = 18
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
+
+[node name="AIAssistant" type="Label" parent="CreditsPanel"]
+text = "AI Development Assistant: Mistral Vibe"
+horizontal_alignment = 1
+theme_override_font_size = 18
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
+
+[node name="Separator2" type="HSeparator" parent="CreditsPanel"]
+
+[node name="EngineHeader" type="Label" parent="CreditsPanel"]
+text = "ENGINE & TOOLS"
+horizontal_alignment = 1
+theme_override_font_size = 28
+theme_override_colors/font_color = Color(0.9, 0.7, 1, 1)
+
+[node name="Godot" type="Label" parent="CreditsPanel"]
+text = "Godot Engine 4.x - Open Source Game Engine"
+horizontal_alignment = 1
+theme_override_font_size = 18
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
+
+[node name="VSCode" type="Label" parent="CreditsPanel"]
+text = "Visual Studio Code - Code Editor"
+horizontal_alignment = 1
+theme_override_font_size = 18
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
+
+[node name="Git" type="Label" parent="CreditsPanel"]
+text = "Git & GitHub - Version Control"
+horizontal_alignment = 1
+theme_override_font_size = 18
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
+
+[node name="Separator3" type="HSeparator" parent="CreditsPanel"]
+
+[node name="SpecialThanks" type="Label" parent="CreditsPanel"]
+text = "SPECIAL THANKS"
+horizontal_alignment = 1
+theme_override_font_size = 28
+theme_override_colors/font_color = Color(0.9, 0.7, 1, 1)
+
+[node name="Community" type="Label" parent="CreditsPanel"]
+text = "The Godot Community & Open Source Contributors"
+horizontal_alignment = 1
+theme_override_font_size = 18
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
+
+[node name="Players" type="Label" parent="CreditsPanel"]
+text = "Early Supporters & Playtesters"
+horizontal_alignment = 1
+theme_override_font_size = 18
+theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
+
+[node name="Separator4" type="HSeparator" parent="CreditsPanel"]
+
+[node name="VersionLabel" type="Label" parent="CreditsPanel"]
+text = "Version 0.1.0 - First Playable"
+horizontal_alignment = 1
+theme_override_font_size = 16
+theme_override_colors/font_color = Color(0.6, 0.6, 0.7, 1)
+
+[node name="BottomSpacer" type="Control" parent="CreditsPanel"]
+custom_minimum_size = Vector2(0, 200)
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 3
+anchors_preset = 9
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -120.0
+offset_top = -50.0
+offset_right = -10.0
+offset_bottom = -10.0
+text = "Back"
+custom_minimum_size = Vector2(100, 40)

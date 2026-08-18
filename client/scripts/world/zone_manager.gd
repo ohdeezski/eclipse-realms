@@ -26,6 +26,30 @@ const ZONE_DISPLAY_NAMES: Dictionary = {
 	"clearing": "Mosswood Clearing",
 	"deep_forest": "Deep Forest",
 	"caverns": "Whispering Caverns",
+	"village_transition": "Oakrest Village",
+	"cavern_transition": "Whispering Caverns",
+	"creek": "Silver Creek",
+	"camp": "Hunter's Camp",
+	"watchtower": "Old Watchtower",
+	"forest_transition": "Mosswood Forest",
+	"camp_transition": "Hunter's Camp",
+}
+
+## Music track per zone (maps zone_id → audio track key in AudioConfig)
+const ZONE_MUSIC: Dictionary = {
+	"village": "village",
+	"forest": "forest",
+	"training": "training",
+	"blacksmith": "blacksmith",
+	"inn": "inn",
+	"merchant": "merchant",
+	"entrance": "forest",
+	"clearing": "forest",
+	"deep_forest": "forest",
+	"caverns": "caverns",
+	"creek": "creek",
+	"camp": "hunters_camp",
+	"watchtower": "forest",
 }
 
 ## Which zone the player is currently in
@@ -42,14 +66,13 @@ func _ready() -> void:
 
 
 func _connect_zones() -> void:
-	for child in get_parent().get_children():
-		if child is Area2D and child.name.begins_with("Zone_"):
-			var zone_id = child.name.substr(5).to_lower()  # Strip "Zone_" prefix
-			if not child.body_entered.is_connected(_on_zone_body_entered):
-				child.body_entered.connect(_on_zone_body_entered.bind(zone_id))
-			if not child.body_exited.is_connected(_on_zone_body_exited):
-				child.body_exited.connect(_on_zone_body_exited.bind(zone_id))
-			print("[ZoneManager] Connected zone: %s (id=%s)" % [child.name, zone_id])
+	for child in get_parent().find_children("Zone_*", "Area2D", true, false):
+		var zone_id = child.name.substr(5).to_lower()  # Strip "Zone_" prefix
+		if not child.body_entered.is_connected(_on_zone_body_entered):
+			child.body_entered.connect(_on_zone_body_entered.bind(zone_id))
+		if not child.body_exited.is_connected(_on_zone_body_exited):
+			child.body_exited.connect(_on_zone_body_exited.bind(zone_id))
+		print("[ZoneManager] Connected zone: %s (id=%s)" % [child.name, zone_id])
 
 
 func set_player(p: Node) -> void:
@@ -70,6 +93,10 @@ func _on_zone_body_entered(body: Node, zone_id: String) -> void:
 	var display_name = ZONE_DISPLAY_NAMES.get(zone_id, zone_id.capitalize())
 
 	zone_entered.emit(zone_id, display_name)
+
+	# Trigger zone-based music via AudioManager
+	if has_node("/root/AudioManager"):
+		AudioManager.enter_zone(zone_id)
 
 	if previous_zone != zone_id and previous_zone != "":
 		zone_changed.emit(previous_zone, zone_id)

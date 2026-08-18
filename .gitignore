@@ -193,6 +193,10 @@ server/uploads/*
 # Environment and config
 server/.env
 
+# Secret files (e.g. db_password.txt placeholder + real secrets) — never commit
+secrets/
+server/secrets/
+
 # Node.js server
 dist/
 coverage/
@@ -257,7 +261,7 @@ crash.*
 # Backup files
 *.bak
 *.backup
-*~}
+*~
 
 # Swap files
 *.swp
@@ -290,3 +294,26 @@ crash.*
 #
 # =============================================================================orca-linux.AppImage
 orca-linux.AppImage
+.import
+.remap
+.wasm
+
+# ============================================================================
+# RUNTIME / BUILD CRUFT (added 2026-08-04 audit)
+# ============================================================================
+server/venv/
+server/__pycache__/
+server/**/__pycache__/
+server/server.log
+server/database/*.db
+__pycache__/
+*.pyc
+EclipseRealms_Demo_v0_0_1.zip
+builds/
+.orca-linux.AppImage
+
+# ============================================================================
+# AGENT / SOURCE-ART CRUFT (added 2026-08-15 WS-1 commit)
+# ============================================================================
+.omniagent/
+client/_masters/
