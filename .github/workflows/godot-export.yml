@@ -28,21 +28,33 @@ jobs:
       
       - name: Setup Godot export templates
         run: |
-          mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE} ]; then
-            echo "Downloading Godot ${GODOT_VERSION} export templates..."
-            curl -fSL -o Godot_v${GODOT_VERSION}-stable_export_templates.tpz \
-              "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
-              || { echo "FAILED: curl exit code $?"; ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/; exit 1; }
-            echo "Verifying ZIP archive..."
-            unzip -tq Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          TEMPLATES_DIR="/root/.local/share/godot/export_templates/4.4.stable"
+          mkdir -p "$TEMPLATES_DIR"
+          if [ ! -f "$TEMPLATES_DIR/version.txt" ]; then
+            echo "Downloading Godot 4.4 export templates..."
+            # Use curl with retry and timeout; .tpz is a ZIP that extracts directly to the version dir
+            for attempt in 1 2 3; do
+              echo "Attempt $attempt..."
+              curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 \
+                -fSL -o /tmp/godot_templates.tpz \
+                "https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz" \
+                && break
+              echo "Download failed (attempt $attempt), retrying..."
+              sleep 10
+            done
+            test -f /tmp/godot_templates.tpz || { echo "FAILED: download failed after 3 attempts"; exit 1; }
+            echo "Download complete, verifying ZIP..."
+            unzip -tq /tmp/godot_templates.tpz
             echo "Extracting..."
-            unzip -q Godot_v${GODOT_VERSION}-stable_export_templates.tpz -d /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
-            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/version.txt
-            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE}
+            # .tpz extracts files directly (version.txt, platform templates, etc.)
+            unzip -o -q /tmp/godot_templates.tpz -d "$TEMPLATES_DIR"
+            echo "Extraction complete. Verifying key templates:"
+            ls -la "$TEMPLATES_DIR"/version.txt "$TEMPLATES_DIR"/${EXPECTED_TEMPLATE}
+            test -f "$TEMPLATES_DIR/version.txt"
+            test -f "$TEMPLATES_DIR/${EXPECTED_TEMPLATE}" || { echo "FAILED: $EXPECTED_TEMPLATE not found after extraction"; ls -la "$TEMPLATES_DIR"/ | head -30; exit 1; }
           else
             echo "Export templates already present, skipping download."
-            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            ls -la "$TEMPLATES_DIR"/
           fi
       
       - name: Export Linux/X11
@@ -81,21 +93,33 @@ jobs:
       
       - name: Setup Godot export templates
         run: |
-          mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE} ]; then
-            echo "Downloading Godot ${GODOT_VERSION} export templates..."
-            curl -fSL -o Godot_v${GODOT_VERSION}-stable_export_templates.tpz \
-              "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
-              || { echo "FAILED: curl exit code $?"; ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/; exit 1; }
-            echo "Verifying ZIP archive..."
-            unzip -tq Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          TEMPLATES_DIR="/root/.local/share/godot/export_templates/4.4.stable"
+          mkdir -p "$TEMPLATES_DIR"
+          if [ ! -f "$TEMPLATES_DIR/version.txt" ]; then
+            echo "Downloading Godot 4.4 export templates..."
+            # Use curl with retry and timeout; .tpz is a ZIP that extracts directly to the version dir
+            for attempt in 1 2 3; do
+              echo "Attempt $attempt..."
+              curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 \
+                -fSL -o /tmp/godot_templates.tpz \
+                "https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz" \
+                && break
+              echo "Download failed (attempt $attempt), retrying..."
+              sleep 10
+            done
+            test -f /tmp/godot_templates.tpz || { echo "FAILED: download failed after 3 attempts"; exit 1; }
+            echo "Download complete, verifying ZIP..."
+            unzip -tq /tmp/godot_templates.tpz
             echo "Extracting..."
-            unzip -q Godot_v${GODOT_VERSION}-stable_export_templates.tpz -d /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
-            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/version.txt
-            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE}
+            # .tpz extracts files directly (version.txt, platform templates, etc.)
+            unzip -o -q /tmp/godot_templates.tpz -d "$TEMPLATES_DIR"
+            echo "Extraction complete. Verifying key templates:"
+            ls -la "$TEMPLATES_DIR"/version.txt "$TEMPLATES_DIR"/${EXPECTED_TEMPLATE}
+            test -f "$TEMPLATES_DIR/version.txt"
+            test -f "$TEMPLATES_DIR/${EXPECTED_TEMPLATE}" || { echo "FAILED: $EXPECTED_TEMPLATE not found after extraction"; ls -la "$TEMPLATES_DIR"/ | head -30; exit 1; }
           else
             echo "Export templates already present, skipping download."
-            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            ls -la "$TEMPLATES_DIR"/
           fi
       
       - name: Install Wine for Windows export
@@ -140,21 +164,33 @@ jobs:
       
       - name: Setup Godot export templates
         run: |
-          mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE} ]; then
-            echo "Downloading Godot ${GODOT_VERSION} export templates..."
-            curl -fSL -o Godot_v${GODOT_VERSION}-stable_export_templates.tpz \
-              "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
-              || { echo "FAILED: curl exit code $?"; ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/; exit 1; }
-            echo "Verifying ZIP archive..."
-            unzip -tq Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          TEMPLATES_DIR="/root/.local/share/godot/export_templates/4.4.stable"
+          mkdir -p "$TEMPLATES_DIR"
+          if [ ! -f "$TEMPLATES_DIR/version.txt" ]; then
+            echo "Downloading Godot 4.4 export templates..."
+            # Use curl with retry and timeout; .tpz is a ZIP that extracts directly to the version dir
+            for attempt in 1 2 3; do
+              echo "Attempt $attempt..."
+              curl --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 \
+                -fSL -o /tmp/godot_templates.tpz \
+                "https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz" \
+                && break
+              echo "Download failed (attempt $attempt), retrying..."
+              sleep 10
+            done
+            test -f /tmp/godot_templates.tpz || { echo "FAILED: download failed after 3 attempts"; exit 1; }
+            echo "Download complete, verifying ZIP..."
+            unzip -tq /tmp/godot_templates.tpz
             echo "Extracting..."
-            unzip -q Godot_v${GODOT_VERSION}-stable_export_templates.tpz -d /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
-            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/version.txt
-            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE}
+            # .tpz extracts files directly (version.txt, platform templates, etc.)
+            unzip -o -q /tmp/godot_templates.tpz -d "$TEMPLATES_DIR"
+            echo "Extraction complete. Verifying key templates:"
+            ls -la "$TEMPLATES_DIR"/version.txt "$TEMPLATES_DIR"/${EXPECTED_TEMPLATE}
+            test -f "$TEMPLATES_DIR/version.txt"
+            test -f "$TEMPLATES_DIR/${EXPECTED_TEMPLATE}" || { echo "FAILED: $EXPECTED_TEMPLATE not found after extraction"; ls -la "$TEMPLATES_DIR"/ | head -30; exit 1; }
           else
             echo "Export templates already present, skipping download."
-            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            ls -la "$TEMPLATES_DIR"/
           fi
       
       - name: Export Web
