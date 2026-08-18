@@ -1,4 +1,4 @@
-extends Node
+extends SceneTree
 ## test_multiplayer_integration.gd - Core Multiplayer Integration Testing
 ## Validates client-server WebSocket communication, player synchronization, and multiplayer game mechanics
 ## Run with: godot --headless -s tests/test_multiplayer_integration.gd
@@ -6,25 +6,37 @@ extends Node
 var _pass: int = 0
 var _fail: int = 0
 var network_manager = null
+var _mock_remote_players: Dictionary = {}
+enum MessageType { HELLO = 0, HELLO_REPLY = 1, PING = 2, PONG = 3, PLAYER_CONNECT = 4, PLAYER_DISCONNECT = 5, PLAYER_UPDATE = 6, CHAT_MESSAGE = 7 }
 
-func _init():
+func _init() -> void:
+    call_deferred("_start")
+
+
+func _start() -> void:
     print("\n========== Eclipse Realms - Multiplayer Integration Test Suite =========\n")
+
+    network_manager = get_root().get_node_or_null("NetworkManager")
+    if network_manager == null:
+        print("MULTIPLAYER TESTS FAILED: NetworkManager autoload is unavailable")
+        quit(1)
+        return
     
     # Register test message handlers
-    NetworkManager.register_message_handler(
-        NetworkManager.MessageType.HELLO_REPLY, 
+    network_manager.register_message_handler(
+        MessageType.HELLO_REPLY,
         _handle_hello_reply_test
     )
-    NetworkManager.register_message_handler(
-        NetworkManager.MessageType.PLAYER_CONNECT, 
+    network_manager.register_message_handler(
+        MessageType.PLAYER_CONNECT,
         _handle_player_connect_test
     )
-    NetworkManager.register_message_handler(
-        NetworkManager.MessageType.PLAYER_UPDATE, 
+    network_manager.register_message_handler(
+        MessageType.PLAYER_UPDATE,
         _handle_player_update_test
     )
-    NetworkManager.register_message_handler(
-        NetworkManager.MessageType.CHAT_MESSAGE, 
+    network_manager.register_message_handler(
+        MessageType.CHAT_MESSAGE,
         _handle_chat_message_test
     )
     
@@ -54,7 +66,7 @@ func _run_all_tests():
         print("MULTIPLAYER TESTS FAILED")
     else:
         print("ALL MULTIPLAYER TESTS PASSED")
-    get_tree().quit(_fail)
+    quit(_fail)
 
 # ============================================================================
 # Test: WebSocket Connection Handling
@@ -359,11 +371,14 @@ func _create_test_player(player_id: int, player_name: String) -> Dictionary:
 
 func _sync_player_state(player: Dictionary) -> bool:
     """Mock player state synchronization"""
-    # Simulate player state sync to server and back
-    return true
+    # Keep a server-like copy so the assertions exercise the payload that was sent.
+    _mock_remote_players[player["player_id"]] = player.duplicate(true)
+    return _mock_remote_players.has(player["player_id"])
 
 func _get_remote_player_state(player_id: int) -> Dictionary:
     """Get mocked remote player state"""
+    if _mock_remote_players.has(player_id):
+        return _mock_remote_players[player_id]
     return {
         "player_id": player_id,
         "name": "Player_%d" % player_id,

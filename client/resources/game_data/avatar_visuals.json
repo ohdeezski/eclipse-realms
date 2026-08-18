@@ -1,0 +1,86 @@
+{
+  "pc_human_adept_01": {
+    "kind": "player",
+    "display_name": "Human Adept",
+    "world": {
+      "idle": "assets/characters/player/player_idle.png",
+      "walk": "assets/characters/player/player_walk.png",
+      "frame_size": [48, 48],
+      "frames": 4,
+      "idle_fps": 4,
+      "walk_fps": 8,
+      "pivot": [24, 42]
+    },
+    "portraits": {
+      "neutral": "assets/characters/portraits/por_hero.png"
+    }
+  },
+  "npc_village_elder_mira": {
+    "kind": "npc",
+    "display_name": "Village Elder Mira",
+    "world": {
+      "idle": "assets/characters/npcs/npc_elder_alric.png",
+      "frame_size": [128, 128],
+      "frames": 1,
+      "idle_fps": 1,
+      "pivot": [64, 112]
+    },
+    "portraits": {
+      "neutral": "assets/characters/portraits/por_elder.png"
+    }
+  },
+  "npc_blacksmith_dorn": {
+    "kind": "npc",
+    "display_name": "Blacksmith Dorn",
+    "world": { "idle": "assets/characters/npcs/npc_blacksmith.png", "frame_size": [128, 128], "frames": 1, "idle_fps": 1, "pivot": [64, 112] },
+    "portraits": { "neutral": "assets/characters/portraits/por_blacksmith.png" }
+  },
+  "npc_ranger_silas": {
+    "kind": "npc",
+    "display_name": "Ranger Silas",
+    "world": { "idle": "assets/characters/npcs/npc_ranger.png", "frame_size": [128, 128], "frames": 1, "idle_fps": 1, "pivot": [64, 112] },
+    "portraits": { "neutral": "assets/characters/portraits/por_ranger.png" }
+  },
+  "npc_merchant_lira": {
+    "kind": "npc",
+    "display_name": "Merchant Lira",
+    "world": { "idle": "assets/characters/npcs/npc_merchant_lira.png", "frame_size": [128, 128], "frames": 1, "idle_fps": 1, "pivot": [64, 112] },
+    "portraits": { "neutral": "assets/characters/portraits/por_merchant.png" }
+  },
+  "npc_innkeeper_bram": {
+    "kind": "npc",
+    "display_name": "Innkeeper Bram",
+    "world": { "idle": "assets/characters/npcs/npc_innkeeper.png", "frame_size": [128, 128], "frames": 1, "idle_fps": 1, "pivot": [64, 112] },
+    "portraits": { "neutral": "assets/characters/portraits/por_innkeeper.png" }
+  },
+  "mob_moss_slime": {
+    "kind": "monster",
+    "display_name": "Moss Slime",
+    "world": {
+      "idle": "assets/characters/monsters/mon_slime.png",
+      "frame_size": [128, 128],
+      "frames": 1,
+      "idle_fps": 1,
+      "pivot": [64, 112]
+    },
+    "portraits": {}
+  },
+  "mob_forest_wolf": {
+    "kind": "monster",
+    "display_name": "Forest Wolf",
+    "world": { "idle": "assets/characters/monsters/mon_forest_wolf.png", "frame_size": [128, 128], "frames": 1, "idle_fps": 1, "pivot": [64, 112] },
+    "portraits": {}
+  },
+  "mob_thorn_wisp": {
+    "kind": "monster",
+    "display_name": "Thorn Wisp",
+    "world": { "idle": "assets/characters/monsters/mon_thorn_wisp.png", "frame_size": [128, 128], "frames": 1, "idle_fps": 1, "pivot": [64, 112] },
+    "portraits": {}
+  },
+  "boss_cave_guardian": {
+    "kind": "monster",
+    "display_name": "Cave Guardian",
+    "world": { "idle": "assets/characters/monsters/mon_cave_guardian.png", "frame_size": [256, 256], "frames": 1, "idle_fps": 1, "pivot": [128, 224] },
+    "portraits": {}
+  }
+}

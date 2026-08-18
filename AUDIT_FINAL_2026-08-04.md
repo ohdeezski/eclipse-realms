@@ -3,6 +3,9 @@
 Compiled by Tomoe (tencent/hy3, Nous Portal) for Roberto C. Agosto.
 All findings verified by tool output (git, godot run, md5, mesh presence/tasks).
 
+**SUPERSEDED BY: REALITY_AUDIT_V2.md (2026-08-16) — comprehensive re-audit with truth/false report/overlooked findings.**
+This document was valid for 2026-08-04 state only. All findings superseded by the V2 re-audit.
+
 ## STATUS AFTER REMEDIATION (commits on main: 8df3dcc B, 2ac4ac4 C, 5319dab D; ff-merge 4b9cee4)
 - Boot: `godot --headless --path client/ --quit` -> exit 0 (main scene now enabled; was disabled).
 - test_runner.gd: real gate, asserts project.godot content -> PASS (exit 0).

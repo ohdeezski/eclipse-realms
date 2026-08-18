@@ -294,15 +294,10 @@ func _equip_item(item_id: String) -> void:
     if item_data.is_empty():
         return
 
-    var equip_slot = item_data.get("slot", "")
-    if equip_slot in current_player.equipment:
-        # Unequip previous
-        var old_item = current_player.equipment[equip_slot]
-        current_player.inventory.append(old_item)
-
-    # Equip
-    current_player.equipment[equip_slot] = item_id
-    current_player.inventory.erase(item_id)
+    if not current_player.has_method("equip_item") or not current_player.equip_item(item_id):
+        UIManager.show_notification("Cannot equip: %s" % item_data["name"], "error")
+        return
+    var equip_slot = current_player.get_equipment_slot(item_id)
     item_equipped.emit(equip_slot, item_id)
 
     var slot_name = "Weapon" if equip_slot == "weapon" else equip_slot.capitalize()

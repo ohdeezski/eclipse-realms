@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://hunterscamp01"]
+[gd_scene load_steps=17 format=3 uid="uid://hunterscamp01"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="Script" path="res://scripts/entities/monster.gd" id="2_monster"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/world/zone_manager.gd" id="6_zone"]
 [ext_resource type="Script" path="res://scripts/world/camp_tilemap_builder.gd" id="7_builder"]
 [ext_resource type="TileSet" path="res://resources/tilesets/camp_tileset.tres" id="8_tileset"]
+[ext_resource type="Script" path="res://scripts/world/quest_objective_trigger.gd" id="9_quest_trigger"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_npc"]
 radius = 16.0
@@ -26,6 +27,9 @@ radius = 12.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_monster"]
 radius = 14.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_quest_objective"]
+radius = 36.0
 
 [node name="HuntersCamp" type="Node2D"]
 
@@ -114,6 +118,22 @@ color = Color(0.4, 0.7, 0.4, 1)
 
 [node name="Label" type="Label" parent="RangerNPC"]
 position = Vector2(-20, -40)
+
+[node name="MerchantArrival" type="Area2D" parent="."]
+position = Vector2(320, 384)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("9_quest_trigger")
+objective_type = "escort"
+target_id = "merchant"
+success_message = "Merchant Lira reaches Hunter's Camp safely. Speak to Ranger Silas."
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MerchantArrival"]
+shape = SubResource("CircleShape2D_quest_objective")
+
+[node name="Label" type="Label" parent="MerchantArrival"]
+position = Vector2(-56, -42)
+text = "Merchant Arrival"
 
 [node name="HUD" type="Control" parent="."]
 layout_mode = 3

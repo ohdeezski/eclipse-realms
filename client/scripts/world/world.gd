@@ -2,9 +2,10 @@ extends Node
 ## World.gd - Oakrest Village controller (v0.2 Phase 2).
 ## Initializes tilemap, entities from GameData, zone transitions, and player interaction.
 
-@onready var player: Node = $Player
-@onready var tilemap: TileMap = $TileMap if has_node("TileMap") else null
-@onready var zone_manager: Node = $ZoneManager if has_node("ZoneManager") else null
+@onready var world_root: Node = get_parent()
+@onready var player: Node = world_root.get_node_or_null("Player")
+@onready var tilemap: TileMap = world_root.get_node_or_null("TileMap")
+@onready var zone_manager: Node = world_root.get_node_or_null("ZoneManager")
 
 
 func _ready() -> void:
@@ -31,7 +32,7 @@ func _ready() -> void:
 func _build_tilemap() -> void:
 	if tilemap == null:
 		return
-	var builder_node = $TileMap/TilemapBuilder if has_node("TileMap/TilemapBuilder") else null
+	var builder_node = world_root.get_node_or_null("TileMap/TilemapBuilder")
 	if builder_node and builder_node.has_method("build"):
 		builder_node.build(tilemap)
 		print("[World] Tilemap built successfully")
@@ -77,7 +78,7 @@ func _on_zone_changed(old_zone: String, new_zone: String) -> void:
 ## ---------------------------------------------------------------------------
 
 func _configure_entities() -> void:
-	for node in get_children():
+	for node in world_root.get_children():
 		if node.is_in_group("enemy"):
 			var mid = "moss_slime" if "Slime" in node.name else "forest_wolf"
 			var mdata = GameData.get_monster(mid)

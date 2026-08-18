@@ -162,6 +162,48 @@ size = Vector2(28, 6)
 wait_time = 0.1
 one_shot = true
 
+[node name="Wisp4" type="CharacterBody2D" parent="."]
+position = Vector2(1050, 850)
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("2_monster")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wisp4"]
+shape = SubResource("CircleShape2D_monster")
+
+[node name="Sprite" type="ColorRect" parent="Wisp4"]
+size = Vector2(28, 28)
+color = Color(0.7, 0.3, 0.9, 1)
+
+[node name="HPBar" type="ProgressBar" parent="Wisp4"]
+position = Vector2(-14, -40)
+size = Vector2(28, 6)
+
+[node name="HitFlash" type="Timer" parent="Wisp4"]
+wait_time = 0.1
+one_shot = true
+
+[node name="Wisp5" type="CharacterBody2D" parent="."]
+position = Vector2(350, 1050)
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("2_monster")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wisp5"]
+shape = SubResource("CircleShape2D_monster")
+
+[node name="Sprite" type="ColorRect" parent="Wisp5"]
+size = Vector2(28, 28)
+color = Color(0.7, 0.3, 0.9, 1)
+
+[node name="HPBar" type="ProgressBar" parent="Wisp5"]
+position = Vector2(-14, -40)
+size = Vector2(28, 6)
+
+[node name="HitFlash" type="Timer" parent="Wisp5"]
+wait_time = 0.1
+one_shot = true
+
 [node name="CaveGuardian" type="CharacterBody2D" parent="."]
 position = Vector2(800, 1200)
 collision_layer = 4

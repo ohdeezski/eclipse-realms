@@ -21,7 +21,7 @@ func _ready() -> void:
 	
 	# Initialize audio
 	if AudioManager:
-		AudioManager.play_music("main_menu")
+		AudioManager.play_music(AudioConfig.get_special_music("main_menu"))
 	
 	print("[MainMenu] Main menu ready")
 
@@ -29,16 +29,28 @@ func _ready() -> void:
 func _on_new_game_pressed() -> void:
 	print("[MainMenu] New Game pressed")
 	# Transition to character creation
+	call_deferred("_transition_to_character_creation")
+
+
+func _transition_to_character_creation() -> void:
 	SceneManager.change_scene("res://scenes/ui/character_creation.tscn", "fade")
 
 
 func _on_settings_pressed() -> void:
 	print("[MainMenu] Settings pressed")
+	call_deferred("_transition_to_settings")
+
+
+func _transition_to_settings() -> void:
 	SceneManager.change_scene("res://scenes/ui/settings.tscn", "fade")
 
 
 func _on_credits_pressed() -> void:
 	print("[MainMenu] Credits pressed")
+	call_deferred("_transition_to_credits")
+
+
+func _transition_to_credits() -> void:
 	SceneManager.change_scene("res://scenes/ui/credits.tscn", "fade")
 
 

@@ -1,157 +1,32 @@
-[gd_resource type="TileSet" load_steps=1 format=3 uid="uid://foresttileset01"]
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://foresttileset01"]
+
+[ext_resource type="Texture2D" path="res://assets/environment/mosswood_forest/forest_tileset.png" id="1_forest"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_forest"]
+texture = ExtResource("1_forest")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+8:1/0 = 0
+9:1/0 = 0
 
 [resource]
-tile_map_array = false
-rendering_quadrant_size = 16
-texture = ExtResource("1")
-
-[ext_resource path="res://assets/environment/mosswood_forest/forest_tileset.png" type="Texture2D" id="1"]
-
-[source_0]
-name = "Forest Tileset"
-texture = ExtResource("1")
-texture_region = Rect2(0, 0, 512, 512)
 tile_size = Vector2i(32, 32)
-tile_spacing = Vector2i(0, 0)
-tile_offset = Vector2i(0, 0)
-collision_layers = 1
-
-# Tile 0,0 - Grass Light
-[source_0/atlas_coords/0/0]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
-
-# Tile 1,0 - Grass Dark
-[source_0/atlas_coords/1/0]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
-
-# Tile 2,0 - Grass Moss
-[source_0/atlas_coords/2/0]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
-
-# Tile 3,0 - Path Dirt
-[source_0/atlas_coords/3/0]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
-
-# Tile 4,0 - Path Stone
-[source_0/atlas_coords/4/0]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
-
-# Tile 5,0 - Water Shallow
-[source_0/atlas_coords/5/0]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {[0] = [{ "bounds": Rect2(0, 0, 32, 32), "points": PackedVector2Array(0, 0, 32, 0, 32, 32, 0, 32) }]}
-
-# Tile 6,0 - Water Deep
-[source_0/atlas_coords/6/0]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {[0] = [{ "bounds": Rect2(0, 0, 32, 32), "points": PackedVector2Array(0, 0, 32, 0, 32, 32, 0, 32) }]}
-
-# Tile 7,0 - Oak Tree
-[source_0/atlas_coords/7/0]
-modulate = Color(1, 1, 1, 1)
-z_index = 1
-navigation_polygon = null
-collision_polygons = {[0] = [{ "bounds": Rect2(8, 16, 16, 16), "points": PackedVector2Array(8, 16, 24, 16, 24, 32, 8, 32) }]}
-
-# Tile 8,0 - Pine Tree
-[source_0/atlas_coords/8/0]
-modulate = Color(1, 1, 1, 1)
-z_index = 1
-navigation_polygon = null
-collision_polygons = {[0] = [{ "bounds": Rect2(8, 16, 16, 16), "points": PackedVector2Array(8, 16, 24, 16, 24, 32, 8, 32) }]}
-
-# Tile 9,0 - Dead Tree
-[source_0/atlas_coords/9/0]
-modulate = Color(1, 1, 1, 1)
-z_index = 1
-navigation_polygon = null
-collision_polygons = {[0] = [{ "bounds": Rect2(8, 16, 16, 16), "points": PackedVector2Array(8, 16, 24, 16, 24, 32, 8, 32) }]}
-
-# Tile 0,1 - Bush
-[source_0/atlas_coords/0/1]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {[0] = [{ "bounds": Rect2(8, 8, 16, 16), "points": PackedVector2Array(8, 8, 24, 8, 24, 24, 8, 24) }]}
-
-# Tile 1,1 - Flowers
-[source_0/atlas_coords/1/1]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
-
-# Tile 2,1 - Mushroom
-[source_0/atlas_coords/2/1]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
-
-# Tile 3,1 - Rock
-[source_0/atlas_coords/3/1]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {[0] = [{ "bounds": Rect2(8, 8, 16, 24), "points": PackedVector2Array(8, 8, 24, 8, 24, 32, 8, 32) }]}
-
-# Tile 4,1 - Log
-[source_0/atlas_coords/4/1]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {[0] = [{ "bounds": Rect2(4, 8, 24, 16), "points": PackedVector2Array(4, 8, 28, 8, 28, 24, 4, 24) }]}
-
-# Tile 5,1 - Stump
-[source_0/atlas_coords/5/1]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {[0] = [{ "bounds": Rect2(8, 16, 16, 16), "points": PackedVector2Array(8, 16, 24, 16, 24, 32, 8, 32) }]}
-
-# Tile 6,1 - Clearing
-[source_0/atlas_coords/6/1]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
-
-# Tile 7,1 - Fern
-[source_0/atlas_coords/7/1]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
-
-# Tile 8,1 - Roots
-[source_0/atlas_coords/8/1]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
-
-# Tile 9,1 - Cave Entrance
-[source_0/atlas_coords/9/1]
-modulate = Color(1, 1, 1, 1)
-z_index = 0
-navigation_polygon = null
-collision_polygons = {}
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_forest")

@@ -2,9 +2,10 @@ extends Node
 ## CampWorld.gd - Hunter's Camp controller.
 ## Ranger outpost with campfire, training dummies, quest hub.
 
-@onready var player: Node = $Player
-@onready var tilemap: TileMap = $TileMap if has_node("TileMap") else null
-@onready var zone_manager: Node = $ZoneManager if has_node("ZoneManager") else null
+@onready var world: Node = get_parent()
+@onready var player: Node = world.get_node_or_null("Player") if world else null
+@onready var tilemap: TileMap = world.get_node_or_null("TileMap") if world else null
+@onready var zone_manager: Node = world.get_node_or_null("ZoneManager") if world else null
 
 
 func _ready() -> void:
@@ -24,7 +25,7 @@ func _ready() -> void:
 	
 	# Play camp music
 	if AudioManager:
-		AudioManager.play_music("camp_theme")
+		AudioManager.play_music(AudioConfig.get_zone_music("camp"))
 	
 	UIManager.show_notification("Welcome to Hunter's Camp. Ranger Elias awaits.", "info")
 
@@ -36,7 +37,7 @@ func _ready() -> void:
 func _build_tilemap() -> void:
 	if tilemap == null:
 		return
-	var builder_node = $TileMap/TilemapBuilder if has_node("TileMap/TilemapBuilder") else null
+	var builder_node = tilemap.get_node_or_null("TilemapBuilder") if tilemap else null
 	if builder_node and builder_node.has_method("build"):
 		builder_node.build(tilemap)
 		# Add camp details (fence, torches, wood piles, wagon, flag, details)
@@ -68,6 +69,7 @@ func _on_zone_changed(old_zone: String, new_zone: String) -> void:
 	# Handle zone transitions that load new scenes
 	match new_zone:
 		"forest_transition":
+			GameManager.session_data["transition_spawn"] = {"x": 1400.0, "y": 768.0}
 			SceneManager.change_scene("res://scenes/world/mosswood_forest.tscn", "fade")
 		"watchtower_transition":
 			SceneManager.change_scene("res://scenes/world/old_watchtower.tscn", "fade")
@@ -82,7 +84,7 @@ func _on_zone_changed(old_zone: String, new_zone: String) -> void:
 ## ---------------------------------------------------------------------------
 
 func _configure_entities() -> void:
-	for node in get_children():
+	for node in world.get_children():
 		if node.is_in_group("enemy"):
 			var mid = "moss_slime" if "Slime" in node.name else "forest_wolf"
 			var mdata = GameData.get_monster(mid)

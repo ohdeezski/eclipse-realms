@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: barichello/godot-ci:4.4
+    env:
+      EXPECTED_TEMPLATE: linux_release.x86_64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,15 +29,17 @@ jobs:
       - name: Setup Godot export templates
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux/x11_64/release.cfg ]; then
+          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE} ]; then
             echo "Downloading Godot ${GODOT_VERSION} export templates..."
             curl -fSL -o Godot_v${GODOT_VERSION}-stable_export_templates.tpz \
               "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
               || { echo "FAILED: curl exit code $?"; ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/; exit 1; }
+            echo "Verifying ZIP archive..."
+            unzip -tq Godot_v${GODOT_VERSION}-stable_export_templates.tpz
             echo "Extracting..."
-            tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
-            echo "Verifying..."
-            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            unzip -q Godot_v${GODOT_VERSION}-stable_export_templates.tpz -d /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/version.txt
+            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE}
           else
             echo "Export templates already present, skipping download."
             ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
@@ -45,12 +49,21 @@ jobs:
         working-directory: ./client
         run: |
           godot --headless --export-release "Linux/X11" build/desktop/${EXPORT_NAME}.x86_64
+
+      - name: Smoke-test Linux artifact
+        working-directory: ./client
+        run: |
+          build/desktop/${EXPORT_NAME}.x86_64 --headless --quit
+
+      - name: Generate Linux release manifest
+        run: |
+          bash tools/ci/generate_release_manifest.sh "Linux/X11" client/build/desktop client/build/desktop/release-manifest-linux.json
       
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: eclipse-realms-linux
-          path: client/build/desktop/${{ env.EXPORT_NAME }}.x86_64
+          path: client/build/desktop/
           retention-days: 7
 
   export-windows:
@@ -58,6 +71,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: barichello/godot-ci:4.4
+    env:
+      EXPECTED_TEMPLATE: windows_release_x86_64.exe
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,15 +82,17 @@ jobs:
       - name: Setup Godot export templates
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux/x11_64/release.cfg ]; then
+          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE} ]; then
             echo "Downloading Godot ${GODOT_VERSION} export templates..."
             curl -fSL -o Godot_v${GODOT_VERSION}-stable_export_templates.tpz \
               "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
               || { echo "FAILED: curl exit code $?"; ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/; exit 1; }
+            echo "Verifying ZIP archive..."
+            unzip -tq Godot_v${GODOT_VERSION}-stable_export_templates.tpz
             echo "Extracting..."
-            tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
-            echo "Verifying..."
-            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            unzip -q Godot_v${GODOT_VERSION}-stable_export_templates.tpz -d /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/version.txt
+            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE}
           else
             echo "Export templates already present, skipping download."
             ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
@@ -91,12 +108,21 @@ jobs:
         working-directory: ./client
         run: |
           godot --headless --export-release "Windows Desktop" build/desktop/${EXPORT_NAME}.exe
+
+      - name: Smoke-test Windows artifact with Wine
+        working-directory: ./client
+        run: |
+          wine build/desktop/${EXPORT_NAME}.exe --headless --quit
+
+      - name: Generate Windows release manifest
+        run: |
+          bash tools/ci/generate_release_manifest.sh "Windows Desktop" client/build/desktop client/build/desktop/release-manifest-windows.json
       
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: eclipse-realms-windows
-          path: client/build/desktop/${{ env.EXPORT_NAME }}.exe
+          path: client/build/desktop/
           retention-days: 7
 
   export-web:
@@ -104,6 +130,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: barichello/godot-ci:4.4
+    env:
+      EXPECTED_TEMPLATE: web_release.zip
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -113,15 +141,17 @@ jobs:
       - name: Setup Godot export templates
         run: |
           mkdir -p /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/linux/x11_64/release.cfg ]; then
+          if [ ! -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE} ]; then
             echo "Downloading Godot ${GODOT_VERSION} export templates..."
             curl -fSL -o Godot_v${GODOT_VERSION}-stable_export_templates.tpz \
               "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
               || { echo "FAILED: curl exit code $?"; ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/; exit 1; }
+            echo "Verifying ZIP archive..."
+            unzip -tq Godot_v${GODOT_VERSION}-stable_export_templates.tpz
             echo "Extracting..."
-            tar -xzf Godot_v${GODOT_VERSION}-stable_export_templates.tpz -C /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
-            echo "Verifying..."
-            ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            unzip -q Godot_v${GODOT_VERSION}-stable_export_templates.tpz -d /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
+            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/version.txt
+            test -f /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/${EXPECTED_TEMPLATE}
           else
             echo "Export templates already present, skipping download."
             ls -la /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable/
@@ -131,6 +161,10 @@ jobs:
         working-directory: ./client
         run: |
           godot --headless --export-release "Web" build/web/index.html
+
+      - name: Generate Web release manifest
+        run: |
+          bash tools/ci/generate_release_manifest.sh "Web" client/build/web client/build/web/release-manifest-web.json
       
       - name: Upload Web artifact
         uses: actions/upload-artifact@v4
@@ -159,6 +193,11 @@ jobs:
         working-directory: ./client
         run: |
           godot --headless --path . -s res://tests/test_runner.gd 2>&1
+
+      - name: Run release catalog contract test
+        working-directory: ./client
+        run: |
+          godot --headless --path . -s res://tests/test_release_catalogs.gd 2>&1
       
       - name: Run comprehensive_validation (no false positives)
         working-directory: ./client

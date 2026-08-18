@@ -6,10 +6,22 @@ extends SceneTree
 
 var _pass: int = 0
 var _fail: int = 0
+var SaveManager = null
+var GameManager = null
 
 
 func _init() -> void:
+    call_deferred("_start")
+
+
+func _start() -> void:
     print("\n========== Eclipse Realms - Save/Load Test Suite ==========\n")
+    SaveManager = get_root().get_node_or_null("SaveManager")
+    GameManager = get_root().get_node_or_null("GameManager")
+    if SaveManager == null or GameManager == null:
+        print("TESTS FAILED: required autoloads are unavailable")
+        quit(1)
+        return
     _test_save_slot_basics()
     _test_collect_and_apply_game_data()
     _test_player_serialization()

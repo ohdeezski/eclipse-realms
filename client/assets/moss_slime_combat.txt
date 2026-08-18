@@ -1,0 +1,3 @@
+# Moss Slime combat
+# Placeholder for actual sprite
+# Replace with final art

@@ -138,7 +138,8 @@ character={
 
 [rendering]
 
-renderer/rendering_method="forward_plus"
+; Compatibility keeps the 2D/2.5D client portable to WebGL2 and low-end devices.
+renderer/rendering_method="gl_compatibility"
 renderer/vram_compression_mode="auto"
 
 ; Performance settings for mobile and desktop

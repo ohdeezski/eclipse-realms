@@ -19,7 +19,8 @@
     ],
     "zones": ["mosswood_forest"],
     "behavior": "wander",
-    "sprite": "assets/characters/monsters/mon_slime.png"
+    "sprite": "assets/characters/monsters/mon_slime.png",
+    "visual_id": "mob_moss_slime"
   },
   "forest_wolf": {
     "id": "forest_wolf",
@@ -41,7 +42,8 @@
     ],
     "zones": ["mosswood_forest"],
     "behavior": "chase",
-    "sprite": "assets/characters/monsters/mon_forest_wolf.png"
+    "sprite": "assets/characters/monsters/mon_forest_wolf.png",
+    "visual_id": "mob_forest_wolf"
   },
   "thorn_wisp": {
     "id": "thorn_wisp",
@@ -63,7 +65,8 @@
     ],
     "zones": ["whispering_caverns"],
     "behavior": "wander",
-    "sprite": "assets/characters/monsters/mon_thorn_wisp.png"
+    "sprite": "assets/characters/monsters/mon_thorn_wisp.png",
+    "visual_id": "mob_thorn_wisp"
   },
   "cave_guardian": {
     "id": "cave_guardian",
@@ -87,6 +90,7 @@
     "zones": ["whispering_caverns"],
     "behavior": "chase",
     "is_boss": true,
-    "sprite": "assets/characters/monsters/mon_cave_guardian.png"
+    "sprite": "assets/characters/monsters/mon_cave_guardian.png",
+    "visual_id": "boss_cave_guardian"
   }
 }

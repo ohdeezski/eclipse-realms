@@ -2,9 +2,10 @@ extends Node
 ## ForestWorld.gd - Mosswood Forest controller.
 ## Handles tilemap, entities, zone transitions back to village and to caverns.
 
-@onready var player: Node = $Player
-@onready var tilemap: TileMap = $TileMap if has_node("TileMap") else null
-@onready var zone_manager: Node = $ZoneManager if has_node("ZoneManager") else null
+@onready var world: Node = get_parent()
+@onready var player: Node = world.get_node_or_null("Player") if world else null
+@onready var tilemap: TileMap = world.get_node_or_null("TileMap") if world else null
+@onready var zone_manager: Node = world.get_node_or_null("ZoneManager") if world else null
 
 
 func _ready() -> void:
@@ -36,7 +37,7 @@ func _ready() -> void:
 func _build_tilemap() -> void:
 	if tilemap == null:
 		return
-	var builder_node = $TileMap/TilemapBuilder if has_node("TileMap/TilemapBuilder") else null
+	var builder_node = tilemap.get_node_or_null("TilemapBuilder") if tilemap else null
 	if builder_node and builder_node.has_method("build"):
 		builder_node.build(tilemap)
 		# Add procedural forest details
@@ -71,6 +72,9 @@ func _on_zone_changed(old_zone: String, new_zone: String) -> void:
 			SceneManager.change_scene("res://scenes/world/oakrest_village.tscn", "fade")
 		"cavern_transition":
 			SceneManager.change_scene("res://scenes/world/whispering_caverns.tscn", "fade")
+		"camp_transition":
+			GameManager.session_data["transition_spawn"] = {"x": 256.0, "y": 384.0}
+			SceneManager.change_scene("res://scenes/world/hunters_camp.tscn", "fade")
 		"forest":
 			if get_tree().current_scene.scene_file_path != "res://scenes/world/mosswood_forest.tscn":
 				SceneManager.change_scene("res://scenes/world/mosswood_forest.tscn", "fade")
@@ -85,7 +89,7 @@ func _on_zone_changed(old_zone: String, new_zone: String) -> void:
 ## ---------------------------------------------------------------------------
 
 func _configure_entities() -> void:
-	for node in get_children():
+	for node in world.get_children():
 		if node.is_in_group("enemy"):
 			var mid = "moss_slime" if "Slime" in node.name else "forest_wolf"
 			var mdata = GameData.get_monster(mid)

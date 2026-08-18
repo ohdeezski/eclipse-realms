@@ -12,9 +12,11 @@
       "quest_complete": "You have done Oakrest a great service. Take this, and welcome."
     },
     "services": ["quest_giver"],
-    "related_quest": "wolf_hunt",
+    "related_quest": "tutorial_quest",
+    "quests": ["tutorial_quest", "find_missing_item"],
     "sprite": "assets/characters/npcs/npc_elder_alric.png",
-    "portrait": "assets/characters/portraits/por_elder.png"
+    "portrait": "assets/characters/portraits/por_elder.png",
+    "visual_id": "npc_village_elder_mira"
   },
   "blacksmith": {
     "id": "blacksmith",
@@ -29,7 +31,8 @@
     "services": ["shop"],
     "sells": ["wooden_sword", "leather_boots", "health_potion"],
     "sprite": "assets/characters/npcs/npc_blacksmith.png",
-    "portrait": "assets/characters/portraits/por_blacksmith.png"
+    "portrait": "assets/characters/portraits/por_blacksmith.png",
+    "visual_id": "npc_blacksmith_dorn"
   },
   "ranger": {
     "id": "ranger",
@@ -44,9 +47,11 @@
       "quest_complete": "The caverns are safe. Take this, hunter."
     },
     "services": ["quest_giver"],
-    "related_quest": "clear_thorn_wisp",
+    "related_quest": "hunt_forest_wolf",
+    "quests": ["hunt_forest_wolf", "clear_thorn_wisp"],
     "sprite": "assets/characters/npcs/npc_ranger.png",
-    "portrait": "assets/characters/portraits/por_ranger.png"
+    "portrait": "assets/characters/portraits/por_ranger.png",
+    "visual_id": "npc_ranger_silas"
   },
   "merchant": {
     "id": "merchant",
@@ -63,8 +68,10 @@
     "services": ["shop", "quest_giver"],
     "sells": ["health_potion", "mana_potion", "antidote"],
     "related_quest": "escort_merchant",
+    "quests": ["escort_merchant"],
     "sprite": "assets/characters/npcs/npc_merchant_lira.png",
-    "portrait": "assets/characters/portraits/por_merchant.png"
+    "portrait": "assets/characters/portraits/por_merchant.png",
+    "visual_id": "npc_merchant_lira"
   },
   "innkeeper": {
     "id": "innkeeper",
@@ -78,6 +85,7 @@
     },
     "services": ["inn"],
     "sprite": "assets/characters/npcs/npc_innkeeper.png",
-    "portrait": "assets/characters/portraits/por_innkeeper.png"
+    "portrait": "assets/characters/portraits/por_innkeeper.png",
+    "visual_id": "npc_innkeeper_bram"
   }
 }

@@ -2,9 +2,10 @@ extends Node
 ## MosswoodForest.gd - Mosswood Forest controller (Phase 3).
 ## Initializes tilemap, entities from GameData, zone transitions, and player interaction.
 
-@onready var player: Node = $Player
-@onready var tilemap: TileMap = $TileMap if has_node("TileMap") else null
-@onready var zone_manager: Node = $ZoneManager if has_node("ZoneManager") else null
+@onready var world: Node = get_parent()
+@onready var player: Node = world.get_node_or_null("Player") if world else null
+@onready var tilemap: TileMap = world.get_node_or_null("TileMap") if world else null
+@onready var zone_manager: Node = world.get_node_or_null("ZoneManager") if world else null
 
 ## Respawn timers for monsters
 var _respawn_timers: Dictionary = {}
@@ -35,7 +36,7 @@ func _ready() -> void:
 func _build_tilemap() -> void:
 	if tilemap == null:
 		return
-	var builder_node = $TileMap/TilemapBuilder if has_node("TileMap/TilemapBuilder") else null
+    var builder_node = tilemap.get_node_or_null("TilemapBuilder") if tilemap else null
 	if builder_node and builder_node.has_method("build"):
 		builder_node.build(tilemap)
 		print("[MosswoodForest] Tilemap built successfully")
@@ -69,7 +70,7 @@ func _on_zone_changed(old_zone: String, new_zone: String) -> void:
 ## ---------------------------------------------------------------------------
 
 func _configure_entities() -> void:
-	for node in get_children():
+    for node in world.get_children():
 		if node.is_in_group("enemy"):
 			var mid = _resolve_monster_id(node.name)
 			var mdata = GameData.get_monster(mid)

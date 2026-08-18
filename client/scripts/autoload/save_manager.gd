@@ -3,6 +3,8 @@ extends Node
 ## Handles saving and loading game state to/from disk
 ## Load order: Second (after GameManager)
 
+const CharacterProfileData = preload("res://scripts/character/character_profile.gd")
+
 ## Signals
 signal save_started
 signal save_completed(success: bool, message: String)
@@ -153,24 +155,27 @@ func _collect_game_data() -> Dictionary:
         save_data["quests"] = _collect_quest_data(player)
         save_data["equipment"] = _collect_equipment_data(player)
     else:
-        # Fallback defaults when no player exists (e.g. saving from main menu)
-        save_data["player"] = {
-			"name": "Player",
-			"level": 1,
-			"experience": 0,
-			"species": "human",
-			"appearance": {},
-			"position_x": 0.0,
-			"position_y": 0.0,
-			"stats": {
-				"health": 100,
-				"max_health": 100,
-				"mana": 50,
-				"max_mana": 50,
-				"attack": 10,
-				"defense": 5
-			}
-		}
+        # Preserve a newly created player before the world scene has spawned.
+        var session_player: Dictionary = GameManager.session_data.get("player", {})
+        if not session_player.is_empty():
+            save_data["player"] = CharacterProfileData.migrate(session_player)
+        else:
+            # Fallback defaults when no player exists (e.g. saving from main menu)
+            save_data["player"] = CharacterProfileData.migrate({
+                "name": "Player",
+                "level": 1,
+                "experience": 0,
+                "position_x": 0.0,
+                "position_y": 0.0,
+                "stats": {
+                    "health": 100,
+                    "max_health": 100,
+                    "mana": 50,
+                    "max_mana": 50,
+                    "attack": 10,
+                    "defense": 5
+                }
+            })
         save_data["inventory"] = { "items": [], "gold": 0 }
         save_data["quests"] = { "active": {}, "completed": [] }
         save_data["equipment"] = {}
@@ -192,12 +197,22 @@ func _find_player():
 
 
 func _collect_player_data(player) -> Dictionary:
-    return {
-        "name": "Player",
+    var record: Dictionary = CharacterProfileData.migrate({
+        "name": player.character_name,
         "level": player.level,
         "experience": player.experience,
-        "species": "human",
-        "appearance": {},
+        "species_id": player.species_id,
+        "job_id": player.job_id,
+        "avatar_id": player.avatar_id,
+        "appearance": player.appearance.duplicate(true),
+        "profile": {
+            "gender_identity": player.gender_identity,
+            "gender_identity_custom": player.gender_identity_custom,
+            "pronouns": player.pronouns,
+            "pronouns_custom": player.pronouns_custom,
+            "sharing_enabled": player.profile_sharing_enabled
+        },
+        "cosmetic_loadout": player.cosmetic_loadout.duplicate(true),
         "position_x": player.global_position.x,
         "position_y": player.global_position.y,
         "stats": {
@@ -207,8 +222,15 @@ func _collect_player_data(player) -> Dictionary:
             "max_mana": player.max_mana,
             "attack": player.attack,
             "defense": player.defense
+        },
+        "base_stats": {
+            "max_health": player._base_max_health,
+            "max_mana": player._base_max_mana,
+            "attack": player._base_attack,
+            "defense": player._base_defense
         }
-    }
+    })
+    return record
 
 
 func _collect_inventory_data(player) -> Dictionary:
@@ -326,6 +348,8 @@ func _apply_loaded_data(save_data: Dictionary) -> void:
         _apply_inventory_data(save_data.get("inventory", {}), player)
         _apply_quest_data(save_data.get("quests", {}), player)
         _apply_equipment_data(save_data.get("equipment", {}), player)
+        if player.has_method("recalculate_derived_stats"):
+            player.recalculate_derived_stats()
     else:
         # Store pending data so the Player can pick it up on spawn
         _pending_player_data = save_data.get("player", {})
@@ -406,11 +430,14 @@ func _apply_inventory_data(data: Dictionary, player) -> void:
 func _apply_quest_data(data: Dictionary, player) -> void:
     if data.is_empty():
         return
-    # Active quests: Dict[str, Dict]  (quest_id -> {current: int})
+    # Active quests: Dict[str, Dict]  (quest_id -> {objective_index: int, current: int})
     var raw_active = data.get("active", {})
     player.active_quests.clear()
     for qid in raw_active.keys():
-        player.active_quests[qid] = {"current": raw_active[qid].get("current", 0)}
+        player.active_quests[qid] = {
+            "objective_index": raw_active[qid].get("objective_index", 0),
+            "current": raw_active[qid].get("current", 0)
+        }
     player.completed_quests = data.get("completed", []).duplicate()
 
 

@@ -1,0 +1,3 @@
+# Moss Slime world
+# Placeholder for actual sprite
+# Replace with final art

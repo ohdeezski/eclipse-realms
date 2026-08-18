@@ -8,8 +8,18 @@ extends Control
 @onready var face_select: OptionButton = $Panel/FaceSelect
 @onready var hair_select: OptionButton = $Panel/HairSelect
 @onready var body_select: OptionButton = $Panel/BodySelect
-@onready var preview_sprite: ColorRect = $Preview/PreviewSprite
+@onready var gender_select: OptionButton = $Panel/GenderSelect
+@onready var gender_custom_input: LineEdit = $Panel/GenderCustomInput
+@onready var pronouns_select: OptionButton = $Panel/PronounsSelect
+@onready var pronouns_custom_input: LineEdit = $Panel/PronounsCustomInput
+@onready var preview_sprite: Sprite2D = $Preview/PreviewSprite
+@onready var stats_label: Label = $Preview/StatsLabel
+@onready var step_progress_label: Label = $Panel/StepProgressLabel
+@onready var step_description_label: Label = $Panel/StepDescriptionLabel
+@onready var job_summary_label: Label = $Panel/JobSummaryLabel
+@onready var review_label: Label = $Panel/ReviewLabel
 @onready var back_btn: Button = $ButtonContainer/BackButton
+@onready var next_btn: Button = $ButtonContainer/NextButton
 @onready var create_btn: Button = $ButtonContainer/CreateButton
 
 # Character customization options
@@ -22,6 +32,11 @@ var species_options: Dictionary = {
 var faces: Array = ["Default", "Smiling", "Serious", "Happy"]
 var hairs: Array = ["Short", "Long", "Braided", "Bald"]
 var bodies: Array = ["Slim", "Average", "Muscular", "Sturdy"]
+const GENDER_IDENTITIES: Array[String] = ["Woman", "Man", "Nonbinary", "Genderfluid", "Self-describe", "Prefer not to say"]
+const PRONOUN_SETS: Array[String] = ["They/them", "She/her", "He/him", "Use my name", "Custom", "Prefer not to say"]
+const CREATION_STEPS: Array[String] = ["Basics", "Ancestry", "Calling", "Review"]
+var _is_submitting: bool = false
+var _current_step: int = 0
 
 func _ready() -> void:
     # Populate dropdowns
@@ -33,27 +48,36 @@ func _ready() -> void:
         hair_select.add_item(hair)
     for body in bodies:
         body_select.add_item(body)
+    for identity in GENDER_IDENTITIES:
+        gender_select.add_item(identity)
+    for pronoun_set in PRONOUN_SETS:
+        pronouns_select.add_item(pronoun_set)
 
     # Connect signals
     species_select.item_selected.connect(_on_species_changed)
+    body_select.item_selected.connect(_on_body_changed)
+    gender_select.item_selected.connect(_on_gender_identity_changed)
+    pronouns_select.item_selected.connect(_on_pronouns_changed)
     create_btn.pressed.connect(_on_create_pressed)
     back_btn.pressed.connect(_on_back_pressed)
+    next_btn.pressed.connect(_on_next_pressed)
 
     # Set defaults
     species_select.select(0)
     face_select.select(0)
     hair_select.select(0)
     body_select.select(0)
+    gender_select.select(GENDER_IDENTITIES.find("Prefer not to say"))
+    pronouns_select.select(PRONOUN_SETS.find("They/them"))
     _update_preview_color()
 
     name_input.text = ""
     name_input.grab_focus()
-
-    # Start in menu state
-    GameManager.change_state(GameManager.GameState.MAIN_MENU)
+    create_btn.disabled = true
 
     # Initialize character creation polish features
     _initialize_polish_features()
+    _set_creation_step(0)
 
 
 func _initialize_polish_features() -> void:
@@ -92,6 +116,8 @@ func _on_name_text_changed(new_text: String) -> void:
         if new_text.contains(c):
             name_input.add_theme_color_override("font_color", Color(1, 0.5, 0.5))
             break
+
+    create_btn.disabled = not _is_create_button_enabled()
 
 
 func _setup_button_interactions() -> void:
@@ -133,6 +159,82 @@ func _is_create_button_enabled() -> bool:
     return name_ok and species_ok
 
 
+func _set_creation_step(step: int) -> void:
+    _current_step = clampi(step, 0, CREATION_STEPS.size() - 1)
+    var is_basics := _current_step == 0
+    var is_ancestry := _current_step == 1
+    var is_calling := _current_step == 2
+    var is_review := _current_step == 3
+
+    $Panel/NameLabel.visible = is_basics
+    name_input.visible = is_basics
+    $Panel/GenderLabel.visible = is_basics
+    gender_select.visible = is_basics
+    $Panel/PronounsLabel.visible = is_basics
+    pronouns_select.visible = is_basics
+    gender_custom_input.visible = is_basics and gender_select.get_item_text(gender_select.selected) == "Self-describe"
+    pronouns_custom_input.visible = is_basics and pronouns_select.get_item_text(pronouns_select.selected) == "Custom"
+
+    $Panel/SpeciesLabel.visible = is_ancestry
+    species_select.visible = is_ancestry
+    job_summary_label.visible = is_calling
+    review_label.visible = is_review
+    next_btn.visible = not is_review
+    create_btn.visible = is_review
+    create_btn.disabled = not _is_create_button_enabled()
+    back_btn.text = "Back" if _current_step > 0 else "Main Menu"
+
+    step_progress_label.text = "%d / %d  •  %s" % [_current_step + 1, CREATION_STEPS.size(), CREATION_STEPS[_current_step].to_upper()]
+    match _current_step:
+        0:
+            step_description_label.text = "Choose how your character is addressed. Identity and pronouns are private by default."
+            name_input.grab_focus()
+        1:
+            step_description_label.text = "Choose an ancestry. It currently changes the preview tint and your story profile; gameplay stats stay equal."
+        2:
+            step_description_label.text = "Choose your calling. Only fully playable callings are offered."
+            _update_job_summary()
+        3:
+            step_description_label.text = "Check the choices that will be saved to this device."
+            _update_review()
+
+
+func _on_next_pressed() -> void:
+    if _current_step == 0 and name_input.text.strip_edges().is_empty():
+        UIManager.show_notification("Enter a character name first.", "warning")
+        name_input.grab_focus()
+        return
+    _set_creation_step(_current_step + 1)
+
+
+func _update_job_summary() -> void:
+    var job: Dictionary = GameData.get_job("adept")
+    var stats: Dictionary = job.get("base_stats", {})
+    var skills: Array = job.get("starting_skill_ids", [])
+    var equipment: Dictionary = job.get("starting_equipment", {})
+    job_summary_label.text = "%s\n%s\n\nHP %d  •  MP %d  •  ATK %d  •  DEF %d\nSkills: %s\nStarter weapon: %s" % [
+        job.get("display_name", "Adept"),
+        job.get("description", "A balanced starting path."),
+        int(stats.get("health", 0)), int(stats.get("mana", 0)), int(stats.get("attack", 0)), int(stats.get("defense", 0)),
+        ", ".join(skills).replace("_", " ").capitalize(),
+        str(equipment.get("weapon", "wooden_sword")).replace("_", " ").capitalize()
+    ]
+
+
+func _update_review() -> void:
+    var species_key: String = species_options.keys()[species_select.selected]
+    var identity := gender_select.get_item_text(gender_select.selected)
+    if identity == "Self-describe" and not gender_custom_input.text.strip_edges().is_empty():
+        identity = gender_custom_input.text.strip_edges()
+    var pronouns := pronouns_select.get_item_text(pronouns_select.selected)
+    if pronouns == "Custom" and not pronouns_custom_input.text.strip_edges().is_empty():
+        pronouns = pronouns_custom_input.text.strip_edges()
+    review_label.text = "%s\n\n%s  •  %s\n%s\n\nCalling: Adept\nStarter kit: sword, clothes, 2 potions, rope, torch\n\nIdentity details are private by default." % [
+        name_input.text.strip_edges(),
+        species_options[species_key]["name"], identity, pronouns
+    ]
+
+
 func _setup_preview_animations() -> void:
     """Setup character preview animations."""
     # Add subtle pulsing animation to preview sprite
@@ -144,89 +246,35 @@ func _setup_preview_animations() -> void:
 
 func _initialize_stat_calculations() -> void:
     """Initialize character stat calculations and display."""
-    # Pre-calculate base stats for each species
-    _calculate_species_base_stats()
+    # Jobs own gameplay starting stats; ancestry and appearance stay cosmetic.
+    _calculate_job_starting_stats()
     
     # Setup stat modifiers display
     _setup_stat_modifiers_display()
 
 
-func _calculate_species_base_stats() -> void:
-    """Calculate and display base stats for selected species."""
-    var species_key = species_options.keys()[species_select.selected]
-    var base_stats = _get_species_base_stats(species_key)
+func _calculate_job_starting_stats() -> void:
+    """Calculate and display the current job's starting stats."""
+    var base_stats = _get_job_starting_stats("adept")
     
     # Store base stats in session for later use
     GameManager.session_data["character_creation_base_stats"] = base_stats
 
 
-func _get_species_base_stats(species: String) -> Dictionary:
-    """Get base stats for a species."""
-    match species:
-        "human":
-            return {
-                "health": 100,
-                "mana": 50,
-                "attack": 10,
-                "defense": 10,
-                "speed": 10,
-                "intelligence": 10
-            }
-        "elf":
-            return {
-                "health": 80,
-                "mana": 80,
-                "attack": 8,
-                "defense": 8,
-                "speed": 12,
-                "intelligence": 12
-            }
-        "dwarf":
-            return {
-                "health": 120,
-                "mana": 30,
-                "attack": 12,
-                "defense": 15,
-                "speed": 6,
-                "intelligence": 6
-            }
-        _:
-            return {
-                "health": 100,
-                "mana": 50,
-                "attack": 10,
-                "defense": 10,
-                "speed": 10,
-                "intelligence": 10
-            }
+func _get_job_starting_stats(job_id: String) -> Dictionary:
+    """Get gameplay stats from a job. Ancestry and appearance do not alter them."""
+    var job: Dictionary = GameData.get_job(GameData.resolve_job_id(job_id))
+    return job.get("base_stats", {}).duplicate(true)
 
 
 func _setup_stat_modifiers_display() -> void:
     """Setup stat modifiers display section."""
-    # Create stat display panel if it doesn't exist
-    if not $Panel/StatDisplay:
-        var stat_display = Panel.new()
-        stat_display.name = "StatDisplay"
-        stat_display.position = Vector2(400, 100)
-        stat_display.size = Vector2(200, 150)
-        stat_display.visible = false
-        $Panel.add_child(stat_display)
-    
-    # Setup stat labels
     _update_stat_display()
 
 
 func _update_stat_display() -> void:
     """Update character stat display based on selections."""
-    var species_key = species_options.keys()[species_select.selected]
-    var base_stats = _get_species_base_stats(species_key)
-    
-    # Apply body type modifiers
-    var body_modifier = _get_body_type_modifier(bodies[body_select.selected])
-    for stat_key in base_stats:
-        base_stats[stat_key] *= body_modifier
-    
-    # Display stat modifiers
+    var base_stats = _get_job_starting_stats("adept")
     _display_stat_modifiers(base_stats)
 
 
@@ -250,7 +298,8 @@ func _display_stat_modifiers(stats: Dictionary) -> void:
         var value = int(stats[stat_key])
         stat_text += "%s: %d\n" % [display_name, value]
     
-    # Store for potential use in game
+    if stats_label:
+        stats_label.text = stat_text
     GameManager.session_data["character_creation_display_text"] = stat_text
 
 
@@ -268,12 +317,35 @@ func _format_stat_name(stat_name: String) -> String:
 
 func _update_preview_color() -> void:
     var species_key = species_options.keys()[species_select.selected]
-    preview_sprite.color = species_options[species_key]["color"]
+    preview_sprite.modulate = species_options[species_key]["color"]
 
 func _on_species_changed(index: int) -> void:
     _update_preview_color()
+    _update_stat_display()
+
+func _on_body_changed(index: int) -> void:
+    _update_stat_display()
+
+func _on_gender_identity_changed(index: int) -> void:
+    gender_custom_input.visible = gender_select.get_item_text(index) == "Self-describe"
+    if not gender_custom_input.visible:
+        gender_custom_input.text = ""
+
+func _on_pronouns_changed(index: int) -> void:
+    pronouns_custom_input.visible = pronouns_select.get_item_text(index) == "Custom"
+    if not pronouns_custom_input.visible:
+        pronouns_custom_input.text = ""
 
 func _on_create_pressed() -> void:
+    if _is_submitting:
+        return
+    if not _is_create_button_enabled():
+        UIManager.show_notification("Enter a character name first.", "warning")
+        return
+
+    _is_submitting = true
+    create_btn.disabled = true
+
     var name = name_input.text.strip_edges()
     if name.is_empty():
         name = "Adventurer"
@@ -281,19 +353,29 @@ func _on_create_pressed() -> void:
         name = name.substr(0, 16)
 
     var species_key = species_options.keys()[species_select.selected]
+    var job_id = "adept"
 
-    # Calculate final character stats
-    var base_stats = _get_species_base_stats(species_key)
-    var body_modifier = _get_body_type_modifier(bodies[body_select.selected])
-    var final_stats = _apply_body_modifiers(base_stats, body_modifier)
+    # Jobs own gameplay stats. Ancestry and presentation remain cosmetic.
+    var base_stats = _get_job_starting_stats(job_id)
+    var final_stats = base_stats.duplicate(true)
+    var gender_identity = gender_select.get_item_text(gender_select.selected)
+    var pronouns = pronouns_select.get_item_text(pronouns_select.selected)
 
     # Store character data in session (SaveManager picks this up later)
     GameManager.session_data["character"] = {
         "name": name,
         "species": species_key,
+        "species_id": species_key,
+        "job_id": job_id,
         "face": faces[face_select.selected],
         "hair": hairs[hair_select.selected],
         "body": bodies[body_select.selected],
+        "avatar_id": "pc_human_adept_01",
+        "gender_identity": gender_identity,
+        "gender_identity_custom": gender_custom_input.text.strip_edges() if gender_identity == "Self-describe" else "",
+        "pronouns": pronouns,
+        "pronouns_custom": pronouns_custom_input.text.strip_edges() if pronouns == "Custom" else "",
+        "profile_sharing_enabled": false,
         "level": 1,
         "experience": 0,
         "position": Vector2(300, 360),
@@ -309,6 +391,10 @@ func _on_create_pressed() -> void:
     _save_character_creation()
     
     # Fade to world
+    call_deferred("_transition_to_world")
+
+
+func _transition_to_world() -> void:
     SceneManager.change_scene("res://scenes/world/oakrest_village.tscn", "fade")
 
 
@@ -318,8 +404,9 @@ func _save_character_creation() -> void:
     var character_data = GameManager.session_data["character"].duplicate(true)
     
     # Add inventory data for new character
-    var species_key = character_data["species"]
-    var starting_items = _get_starting_inventory(species_key)
+    var job_id: String = character_data.get("job_id", "adept")
+    var starting_items = _get_starting_inventory(job_id)
+    var starting_equipment: Dictionary = GameData.get_job(GameData.resolve_job_id(job_id)).get("starting_equipment", {}).duplicate(true)
     
     # Create temporary player-like structure for SaveManager
     var temp_player_data = {
@@ -329,12 +416,20 @@ func _save_character_creation() -> void:
         "stats": character_data["stats"],
         "inventory": starting_items,
         "gold": 100,  # Starting gold
-        "equipment": {},  # Empty equipment
+        "equipment": starting_equipment,
         "active_quests": ["tutorial_quest"],  # Start with tutorial quest
         "completed_quests": [],
         "position_x": character_data["position"].x,
         "position_y": character_data["position"].y,
         "species": character_data["species"],
+        "species_id": character_data["species_id"],
+        "job_id": job_id,
+        "avatar_id": character_data["avatar_id"],
+        "gender_identity": character_data["gender_identity"],
+        "gender_identity_custom": character_data["gender_identity_custom"],
+        "pronouns": character_data["pronouns"],
+        "pronouns_custom": character_data["pronouns_custom"],
+        "profile_sharing_enabled": false,
         "appearance": {
             "face": character_data["face"],
             "hair": character_data["hair"],
@@ -349,7 +444,7 @@ func _save_character_creation() -> void:
     SaveManager.save_game()
     
     # Show confirmation notification
-    UIManager.show_notification("Character %s created successfully!" % name, "success")
+    UIManager.show_notification("Character %s created successfully!" % character_data["name"], "success")
 
 
 func _apply_body_modifiers(base_stats: Dictionary, modifier: float) -> Dictionary:
@@ -360,28 +455,17 @@ func _apply_body_modifiers(base_stats: Dictionary, modifier: float) -> Dictionar
     return final_stats
 
 
-func _get_starting_inventory(species: String) -> Array:
-    """Get starting inventory items based on species."""
-    var starting_items: Array = []
-    
-    # All characters start with basic supplies
-    starting_items.append("health_potion")
-    starting_items.append("health_potion")
-    starting_items.append("rope")
-    starting_items.append("torch")
-    
-    # Species-specific starting items
-    match species:
-        "human":
-            starting_items.append("wooden_sword")
-        "elf":
-            starting_items.append("leather_armor")
-        "dwarf":
-            starting_items.append("chainmail")
-        _:
-            starting_items.append("wooden_sword")
-    
-    return starting_items
+func _get_starting_inventory(job_id: String) -> Array:
+    """Get an equivalent starter kit from the selected job."""
+    var job: Dictionary = GameData.get_job(GameData.resolve_job_id(job_id))
+    return job.get("starting_item_ids", []).duplicate()
 
 func _on_back_pressed() -> void:
+    if _current_step > 0:
+        _set_creation_step(_current_step - 1)
+        return
+    call_deferred("_transition_to_menu")
+
+
+func _transition_to_menu() -> void:
     SceneManager.change_scene("res://scenes/main_menu/main_menu.tscn", "fade")

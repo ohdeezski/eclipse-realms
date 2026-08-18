@@ -120,13 +120,15 @@ func go_to_main_menu() -> void:
 func _change_scene_instant() -> void:
     is_transitioning = true
     var from_path = current_scene.scene_file_path if current_scene else ""
+    var old_scene = current_scene
+    _persist_player_session()
     
     # Free current scene
-    if current_scene:
-        scene_unloading.emit(current_scene.scene_file_path)
-        previous_scene = current_scene
-        current_scene.free()
-        scene_unloaded.emit(current_scene.scene_file_path)
+    if old_scene:
+        scene_unloading.emit(from_path)
+        previous_scene = old_scene
+        old_scene.queue_free()
+        scene_unloaded.emit(from_path)
     
     # Load new scene
     var new_scene = load(next_scene_path)
@@ -167,11 +169,13 @@ func _start_fade_transition() -> void:
 func _complete_transition() -> void:
     # Scene is fully faded out, now change it
     var old_scene = current_scene
+    var old_path = old_scene.scene_file_path if old_scene else ""
+    _persist_player_session()
     
     if old_scene:
-        scene_unloading.emit(old_scene.scene_file_path)
-        old_scene.free()
-        scene_unloaded.emit(old_scene.scene_file_path)
+        scene_unloading.emit(old_path)
+        old_scene.queue_free()
+        scene_unloaded.emit(old_path)
     
     # Load new scene
     var new_scene = load(next_scene_path)
@@ -195,10 +199,13 @@ func _complete_transition() -> void:
     
     # Check if GameManager is available before emitting scene_changed
     if GameManager != null:
-        scene_changed.emit(
-            old_scene.scene_file_path if old_scene else "",
-            next_scene_path
-        )
+        scene_changed.emit(old_path, next_scene_path)
+
+
+func _persist_player_session() -> void:
+    var players = get_tree().get_nodes_in_group("player")
+    if players.size() > 0 and players[0].has_method("get_transition_data"):
+        GameManager.session_data["player"] = players[0].get_transition_data()
 
 
 func _update_transition_alpha() -> void:

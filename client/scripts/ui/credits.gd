@@ -10,7 +10,7 @@ func _ready() -> void:
 	back_btn.grab_focus()
 	
 	if AudioManager:
-		AudioManager.play_music("main_menu")
+		AudioManager.play_music(AudioConfig.get_special_music("main_menu"))
 	
 	GameManager.change_state(GameManager.GameState.MAIN_MENU)
 	print("[Credits] Credits screen ready")

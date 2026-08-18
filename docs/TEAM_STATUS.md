@@ -1,7 +1,7 @@
 # Eclipse Realms — LIVE TEAM STATUS BOARD
 
-**Single source of truth.** Read this first. Update it when your status changes.
-Last refresh: 2026-08-03 23:25 EDT by Agent Zero (live-verified).
+**Historical snapshot — not the current source of truth.** Use the [current release ledger](./production/RELEASE_LEDGER_2026-08-17.md) and its linked master plan for active status.
+Last historical refresh: 2026-08-03 23:25 EDT by Agent Zero.
 
 ---
 

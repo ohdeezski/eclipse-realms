@@ -1,0 +1,9 @@
+{
+  "release_version": "0.1.0",
+  "release_channel": "development",
+  "content_version": 1,
+  "save_schema_version": 2,
+  "protocol_version": "0.1.0",
+  "target_platforms": ["Windows Desktop"],
+  "online_mode": "offline_local_first"
+}

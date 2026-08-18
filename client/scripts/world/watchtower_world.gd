@@ -24,7 +24,7 @@ func _ready() -> void:
 	
 	# Play watchtower music
 	if AudioManager:
-		AudioManager.play_music("watchtower_theme")
+		AudioManager.play_music(AudioConfig.get_zone_music("watchtower"))
 	
 	UIManager.show_notification("Welcome to the Old Watchtower. Ancient stones hold many secrets.", "info")
 

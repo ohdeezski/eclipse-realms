@@ -30,7 +30,7 @@ func _ready() -> void:
 	
 	# Keep menu music playing
 	if AudioManager:
-		AudioManager.play_music("main_menu")
+		AudioManager.play_music(AudioConfig.get_special_music("main_menu"))
 	
 	GameManager.change_state(GameManager.GameState.MAIN_MENU)
 	print("[Settings] Settings menu ready")

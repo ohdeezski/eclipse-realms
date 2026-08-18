@@ -47,7 +47,8 @@ enum MessageType {
     SYNC_REQUEST = 8,
     SYNC_DATA = 9,
     COMMAND = 10,
-    ERROR = 11
+    ERROR = 11,
+    MONSTER_UPDATE = 12
 }
 
 ## Static variables
@@ -479,6 +480,15 @@ func send_chat_message(text: String) -> bool:
         "message": text
     }
     return send_message(MessageType.CHAT_MESSAGE, message_data)
+
+func send_monster_update(monster_id: String, position: Vector2, state: String) -> bool:
+    var message_data = {
+        "monster_id": monster_id,
+        "position": {"x": position.x, "y": position.y},
+        "state": state,
+        "peer_id": client_id
+    }
+    return send_message(MessageType.MONSTER_UPDATE, message_data)
 
 
 func send_sync_request(data_type: String, request_data: Dictionary = {}) -> bool:

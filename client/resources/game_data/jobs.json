@@ -1,0 +1,47 @@
+{
+  "adept": {
+    "id": "adept",
+    "display_name": "Adept",
+    "role": "generalist",
+    "description": "A balanced path for new adventurers: blade, guard, and practical supplies.",
+    "base_stats": {
+      "health": 100,
+      "max_health": 100,
+      "mana": 50,
+      "max_mana": 50,
+      "attack": 10,
+      "defense": 5,
+      "speed": 1.0
+    },
+    "starting_skill_ids": ["basic_attack", "guard", "use_item"],
+    "starting_item_ids": ["health_potion", "health_potion", "rope", "torch"],
+    "starting_equipment": {
+      "weapon": "wooden_sword",
+      "chest": "cloth_shirt",
+      "feet": "leather_boots"
+    },
+    "animation_profile_id": "humanoid_melee",
+    "enabled": true
+  },
+  "vanguard": {
+    "id": "vanguard",
+    "display_name": "Vanguard",
+    "role": "defender",
+    "description": "A defensive melee calling. Unlock once shield skills and combat effects are ready.",
+    "enabled": false
+  },
+  "ranger": {
+    "id": "ranger",
+    "display_name": "Ranger",
+    "role": "ranged",
+    "description": "A mobile ranged calling. Unlock once bow aiming and projectiles are ready.",
+    "enabled": false
+  },
+  "arcanist": {
+    "id": "arcanist",
+    "display_name": "Arcanist",
+    "role": "caster",
+    "description": "A mana-based calling. Unlock once a level-one spell and cast effects are ready.",
+    "enabled": false
+  }
+}

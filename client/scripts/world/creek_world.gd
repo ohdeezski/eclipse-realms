@@ -24,7 +24,7 @@ func _ready() -> void:
 	
 	# Play creek music
 	if AudioManager:
-		AudioManager.play_music("creek_theme")
+		AudioManager.play_music(AudioConfig.get_zone_music("creek"))
 	
 	UIManager.show_notification("Welcome to Silver Creek. The water flows peacefully.", "info")
 

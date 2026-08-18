@@ -32,6 +32,7 @@ const ZONE_DISPLAY_NAMES: Dictionary = {
 	"camp": "Hunter's Camp",
 	"watchtower": "Old Watchtower",
 	"forest_transition": "Mosswood Forest",
+	"camp_transition": "Hunter's Camp",
 }
 
 ## Music track per zone (maps zone_id → audio track key in AudioConfig)
@@ -65,14 +66,13 @@ func _ready() -> void:
 
 
 func _connect_zones() -> void:
-	for child in get_parent().get_children():
-		if child is Area2D and child.name.begins_with("Zone_"):
-			var zone_id = child.name.substr(5).to_lower()  # Strip "Zone_" prefix
-			if not child.body_entered.is_connected(_on_zone_body_entered):
-				child.body_entered.connect(_on_zone_body_entered.bind(zone_id))
-			if not child.body_exited.is_connected(_on_zone_body_exited):
-				child.body_exited.connect(_on_zone_body_exited.bind(zone_id))
-			print("[ZoneManager] Connected zone: %s (id=%s)" % [child.name, zone_id])
+	for child in get_parent().find_children("Zone_*", "Area2D", true, false):
+		var zone_id = child.name.substr(5).to_lower()  # Strip "Zone_" prefix
+		if not child.body_entered.is_connected(_on_zone_body_entered):
+			child.body_entered.connect(_on_zone_body_entered.bind(zone_id))
+		if not child.body_exited.is_connected(_on_zone_body_exited):
+			child.body_exited.connect(_on_zone_body_exited.bind(zone_id))
+		print("[ZoneManager] Connected zone: %s (id=%s)" % [child.name, zone_id])
 
 
 func set_player(p: Node) -> void:

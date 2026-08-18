@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://mosswoodforest01"]
+[gd_scene load_steps=22 format=3 uid="uid://mosswoodforest01"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="Script" path="res://scripts/entities/monster.gd" id="2_monster"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/world/zone_manager.gd" id="6_zone"]
 [ext_resource type="Script" path="res://scripts/world/forest_tilemap_builder.gd" id="7_builder"]
 [ext_resource type="TileSet" path="res://resources/tilesets/forest_tileset.tres" id="8_tileset"]
+[ext_resource type="Script" path="res://scripts/world/quest_objective_trigger.gd" id="9_quest_trigger"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_npc"]
 radius = 16.0
@@ -23,6 +24,9 @@ radius = 12.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_monster"]
 radius = 14.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_quest_objective"]
+radius = 28.0
 
 [node name="MosswoodForest" type="Node2D"]
 
@@ -60,6 +64,14 @@ collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ZoneBoundaries/Zone_Cavern_Transition"]
 shape = SubResource("RectangleShape2D_village_transition")
 
+[node name="Zone_Camp_Transition" type="Area2D" parent="ZoneBoundaries"]
+position = Vector2(1400, 768)
+collision_layer = 32
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ZoneBoundaries/Zone_Camp_Transition"]
+shape = SubResource("CircleShape2D_quest_objective")
+
 [node name="ZoneLabels" type="Node2D" parent="."]
 
 [node name="ForestLabel" type="Label" parent="ZoneLabels"]
@@ -73,6 +85,26 @@ text = "← Oakrest Village"
 [node name="CavernTransitionLabel" type="Label" parent="ZoneLabels"]
 position = Vector2(1800, 1400)
 text = "Whispering Caverns →"
+
+[node name="CampTransitionLabel" type="Label" parent="ZoneLabels"]
+position = Vector2(1320, 700)
+text = "Hunter's Camp →"
+
+[node name="ElderAmulet" type="Area2D" parent="."]
+position = Vector2(1100, 760)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("9_quest_trigger")
+objective_type = "find"
+target_id = "elder_amulet"
+success_message = "You found Elder Mira's amulet. Return it to her in Oakrest."
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ElderAmulet"]
+shape = SubResource("CircleShape2D_quest_objective")
+
+[node name="Label" type="Label" parent="ElderAmulet"]
+position = Vector2(-44, -42)
+text = "Lost Amulet"
 
 [node name="Player" type="CharacterBody2D" parent="."]
 position = Vector2(256, 768)
@@ -198,6 +230,27 @@ position = Vector2(-16, -44)
 size = Vector2(32, 6)
 
 [node name="HitFlash" type="Timer" parent="Wolf2"]
+wait_time = 0.1
+one_shot = true
+
+[node name="Wolf3" type="CharacterBody2D" parent="."]
+position = Vector2(1550, 1000)
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("2_monster")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wolf3"]
+shape = SubResource("CircleShape2D_monster")
+
+[node name="Sprite" type="ColorRect" parent="Wolf3"]
+size = Vector2(32, 32)
+color = Color(0.5, 0.5, 0.55, 1)
+
+[node name="HPBar" type="ProgressBar" parent="Wolf3"]
+position = Vector2(-16, -44)
+size = Vector2(32, 6)
+
+[node name="HitFlash" type="Timer" parent="Wolf3"]
 wait_time = 0.1
 one_shot = true
 

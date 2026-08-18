@@ -3,6 +3,9 @@
 ## Executive Summary
 
 **Project Status:** Genesis Phase (Phase 0)
+
+**SUPERSEDED BY: REALITY_AUDIT_V2.md (2026-08-16) — comprehensive re-audit with truth/false report/overlooked findings.**
+This document was valid for the earlier audit state only. All findings superseded by the V2 re-audit.
 **Current State:** Planning & Vision Complete, Ready for Implementation
 **Target:** Cross-platform anime-inspired MMORPG
 

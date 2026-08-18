@@ -261,7 +261,7 @@ crash.*
 # Backup files
 *.bak
 *.backup
-*~}
+*~
 
 # Swap files
 *.swp

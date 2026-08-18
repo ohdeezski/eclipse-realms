@@ -1,0 +1,3 @@
+# Elder Mira portrait
+# Placeholder for actual sprite
+# Replace with final art

@@ -103,7 +103,9 @@ func setup(data: Dictionary) -> void:
 	if portrait_rect:
 		var npc_data = GameData.get_npc(npc_id) if npc_id != "" else {}
 		if not npc_data.is_empty() and npc_data.has("portrait"):
-			var portrait_path = "res://%s" % npc_data["portrait"]
+			var visual = GameData.get_avatar_visual(npc_data.get("visual_id", ""))
+			var portraits: Dictionary = visual.get("portraits", {})
+			var portrait_path = "res://%s" % portraits.get(data.get("portrait_expression", "neutral"), npc_data["portrait"])
 			if ResourceLoader.exists(portrait_path):
 				portrait_rect.texture = load(portrait_path)
 				portrait_rect.visible = true

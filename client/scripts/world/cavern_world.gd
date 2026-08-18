@@ -2,9 +2,10 @@ extends Node
 ## CavernWorld.gd - Whispering Caverns controller.
 ## Dark cave system with Thorn Wisps, crystals, and a boss chamber.
 
-@onready var player: Node = $Player
-@onready var tilemap: TileMap = $TileMap if has_node("TileMap") else null
-@onready var zone_manager: Node = $ZoneManager if has_node("ZoneManager") else null
+@onready var world: Node = get_parent()
+@onready var player: Node = world.get_node_or_null("Player") if world else null
+@onready var tilemap: TileMap = world.get_node_or_null("TileMap") if world else null
+@onready var zone_manager: Node = world.get_node_or_null("ZoneManager") if world else null
 
 
 func _ready() -> void:
@@ -24,7 +25,7 @@ func _ready() -> void:
 	
 	# Play cavern music
 	if AudioManager:
-		AudioManager.play_music("cavern_theme")
+		AudioManager.play_music(AudioConfig.get_zone_music("caverns"))
 	
 	UIManager.show_notification("Welcome to Whispering Caverns. The darkness watches.", "info")
 
@@ -36,7 +37,7 @@ func _ready() -> void:
 func _build_tilemap() -> void:
 	if tilemap == null:
 		return
-	var builder_node = $TileMap/TilemapBuilder if has_node("TileMap/TilemapBuilder") else null
+	var builder_node = tilemap.get_node_or_null("TilemapBuilder") if tilemap else null
 	if builder_node and builder_node.has_method("build"):
 		builder_node.build(tilemap)
 		# Add cavern details (stalactites, stalagmites, crystals, mushrooms, bones, webbing)
@@ -85,7 +86,7 @@ func _on_zone_changed(old_zone: String, new_zone: String) -> void:
 ## ---------------------------------------------------------------------------
 
 func _configure_entities() -> void:
-	for node in get_children():
+	for node in world.get_children():
 		if node.is_in_group("enemy"):
 			var mid = "thorn_wisp" if "Wisp" in node.name else "cave_guardian"
 			var mdata = GameData.get_monster(mid)

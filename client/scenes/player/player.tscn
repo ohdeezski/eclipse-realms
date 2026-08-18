@@ -1,8 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://c3k7m2p9r5t1"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
-[ext_resource type="Texture2D" path="res://assets/characters/player/player_idle.png" id="2_idle_tex"]
-[ext_resource type="Texture2D" path="res://assets/characters/player/player_walk.png" id="3_walk_tex"]
+[ext_resource type="Script" path="res://scripts/visual/avatar_sprite_2d.gd" id="2_avatar"]
+[ext_resource type="Texture2D" path="res://assets/characters/player/player_idle.png" id="3_idle_tex"]
+[ext_resource type="Texture2D" path="res://assets/characters/player/player_walk.png" id="4_walk_tex"]
 
 [sub_resource type="RectangleShape2D" id="col_shape_1"]
 size = Vector2(28, 28)
@@ -14,11 +15,14 @@ script = ExtResource("1_player")
 shape = SubResource("col_shape_1")
 
 [node name="Sprite" type="Sprite2D" parent="."]
-position = Vector2(-16, -16)
-texture = ExtResource("2_idle_tex")
+texture_filter = 1
+position = Vector2(0, 0)
+texture = ExtResource("3_idle_tex")
+offset = Vector2(24, 42)
 hframes = 4
 vframes = 1
 frame = 0
+script = ExtResource("2_avatar")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 

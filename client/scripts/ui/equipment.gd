@@ -154,9 +154,7 @@ func _update_stat_totals(equipment: Dictionary) -> void:
 func _on_unequip_pressed(slot: String, item_id: String) -> void:
 	if not current_player:
 		return
-	if current_player.equipment.has(slot):
-		current_player.inventory.append(current_player.equipment[slot])
-		current_player.equipment.erase(slot)
+	if current_player.has_method("unequip_item") and current_player.unequip_item(slot):
 		item_unequipped.emit(slot, item_id)
 		SaveManager.save_game()
 		_populate()

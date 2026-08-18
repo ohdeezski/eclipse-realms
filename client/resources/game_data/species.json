@@ -1,0 +1,35 @@
+{
+  "human": {
+    "id": "human",
+    "display_name": "Human",
+    "description": "Adaptable travelers and longtime residents of Greenhaven.",
+    "sort_order": 10,
+    "default_avatar_id": "pc_human_adept_01",
+    "body_frame_ids": ["frame_a", "frame_b", "frame_c"],
+    "appearance_tags": ["humanoid", "human"],
+    "lore_tags": ["greenhaven"],
+    "enabled": true
+  },
+  "elf": {
+    "id": "elf",
+    "display_name": "Elf",
+    "description": "Forest-blooded wanderers with a deep connection to Mosswood.",
+    "sort_order": 20,
+    "default_avatar_id": "pc_human_adept_01",
+    "body_frame_ids": ["frame_a", "frame_b", "frame_c"],
+    "appearance_tags": ["humanoid", "elf"],
+    "lore_tags": ["mosswood"],
+    "enabled": true
+  },
+  "dwarf": {
+    "id": "dwarf",
+    "display_name": "Dwarf",
+    "description": "Stonewise makers whose craft is valued throughout Oakrest.",
+    "sort_order": 30,
+    "default_avatar_id": "pc_human_adept_01",
+    "body_frame_ids": ["frame_a", "frame_b", "frame_c"],
+    "appearance_tags": ["humanoid", "dwarf"],
+    "lore_tags": ["oakrest"],
+    "enabled": true
+  }
+}

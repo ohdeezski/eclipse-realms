@@ -6,19 +6,24 @@ extends SceneTree
 var _started: bool = false
 var _total: int = 0
 var _passed: int = 0
+var _exit_code: int = 1
 
 
-func _idle(delta: float) -> bool:
-	if not _started:
-		_started = true
-		_run()
-	return false
+func _init() -> void:
+	# Direct `godot -s` runs do not invoke SceneTree._idle(). Defer until
+	# autoloads have entered the tree, then exit deterministically.
+	call_deferred("_run_once")
+
+
+func _run_once() -> void:
+	if _started:
+		return
+	_started = true
+	_run()
 
 
 func _singleton(name: String):
-	if Engine.has_singleton(name):
-		return Engine.get_singleton(name)
-	return null
+	return get_root().get_node_or_null(name)
 
 
 func _run():
@@ -73,16 +78,21 @@ func _run():
 
 	if _passed == _total:
 		print("🎉 COMPREHENSIVE VALIDATION PASSED")
-		quit(0)
+		_exit_code = 0
 	else:
 		print("❌ COMPREHENSIVE VALIDATION FAILED (%d of %d)" % [_total - _passed, _total])
-		quit(1)
+		_exit_code = 1
+	call_deferred("_finish")
+
+
+func _finish() -> void:
+	quit(_exit_code)
 
 
 func _test(name: String, ok: bool):
 	_total += 1
 	if ok:
 		_passed += 1
-		print("  ✓ %s" % name)
+		print("	 ✓ %s" % name)
 	else:
-		print("  ✗ %s" % name)
+		print("	 ✗ %s" % name)
