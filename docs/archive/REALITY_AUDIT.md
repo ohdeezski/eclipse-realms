@@ -5,7 +5,7 @@
 **Project:** Eclipse Realms
 **Location:** `Desktop/StreetSmartNYC-BusinessBase/Obsidian-Vault/game-projects-(to monetize)/project-eclipse-realms/`
 
-**SUPERSEDED BY: REALITY_AUDIT_V2.md (2026-08-16) — comprehensive re-audit with truth/false report/overlooked findings.**
+**SUPERSEDED BY: docs/REALITY_AUDIT_V2.md (2026-08-16, relocated 2026-08-18) — comprehensive re-audit with truth/false report/overlooked findings. This document is archived historical evidence only.**
 This document was valid for 2026-08-03 state only. All findings superseded by the V2 re-audit.
 
 ---
